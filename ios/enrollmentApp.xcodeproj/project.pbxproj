@@ -11,9 +11,9 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		6B9E0E3F5638E1B1308CB6B3 /* libPods-enrollmentApp-enrollmentAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6C2ABE4155A58540ADFBCDF /* libPods-enrollmentApp-enrollmentAppTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		D24B6B1080FC3FB3742C0DCC /* libPods-enrollmentApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E608457D26029A193F451613 /* libPods-enrollmentApp.a */; };
+		8327CAF8A24D053BC92009E4 /* libPods-enrollmentApp-enrollmentAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B54C5704E6BD0B0ED31F1D /* libPods-enrollmentApp-enrollmentAppTests.a */; };
+		953946429AA93C295EAB7FC9 /* libPods-enrollmentApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10081D8ECB750195FCE61052 /* libPods-enrollmentApp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,20 +30,20 @@
 		00E356EE1AD99517003FC87E /* enrollmentAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = enrollmentAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* enrollmentAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = enrollmentAppTests.m; sourceTree = "<group>"; };
+		10081D8ECB750195FCE61052 /* libPods-enrollmentApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-enrollmentApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12B116E82BA7791AA1CE079E /* Pods-enrollmentApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp.release.xcconfig"; path = "Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* enrollmentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = enrollmentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = enrollmentApp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = enrollmentApp/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = enrollmentApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = enrollmentApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = enrollmentApp/main.m; sourceTree = "<group>"; };
-		2DF3ABA5B12F3530896CC9B5 /* Pods-enrollmentApp-enrollmentAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp-enrollmentAppTests.release.xcconfig"; path = "Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests.release.xcconfig"; sourceTree = "<group>"; };
-		5649F4C080E68F4FA3E6F173 /* Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig"; path = "Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		21B54C5704E6BD0B0ED31F1D /* libPods-enrollmentApp-enrollmentAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-enrollmentApp-enrollmentAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		586A881824D3FE80D3E7A6D3 /* Pods-enrollmentApp-enrollmentAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp-enrollmentAppTests.release.xcconfig"; path = "Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = enrollmentApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		9C5BB1EB517CB25AFCA1C51E /* Pods-enrollmentApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp.release.xcconfig"; path = "Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp.release.xcconfig"; sourceTree = "<group>"; };
-		D6C2ABE4155A58540ADFBCDF /* libPods-enrollmentApp-enrollmentAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-enrollmentApp-enrollmentAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E608457D26029A193F451613 /* libPods-enrollmentApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-enrollmentApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E783DD305CDBFD6EB73C0F1C /* Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig"; path = "Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FF8136BEC19109CF16C39568 /* Pods-enrollmentApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp.debug.xcconfig"; path = "Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp.debug.xcconfig"; sourceTree = "<group>"; };
+		F25F84E8DBB60964F4ED2BF4 /* Pods-enrollmentApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-enrollmentApp.debug.xcconfig"; path = "Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B9E0E3F5638E1B1308CB6B3 /* libPods-enrollmentApp-enrollmentAppTests.a in Frameworks */,
+				8327CAF8A24D053BC92009E4 /* libPods-enrollmentApp-enrollmentAppTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D24B6B1080FC3FB3742C0DCC /* libPods-enrollmentApp.a in Frameworks */,
+				953946429AA93C295EAB7FC9 /* libPods-enrollmentApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,21 +100,20 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				E608457D26029A193F451613 /* libPods-enrollmentApp.a */,
-				D6C2ABE4155A58540ADFBCDF /* libPods-enrollmentApp-enrollmentAppTests.a */,
+				10081D8ECB750195FCE61052 /* libPods-enrollmentApp.a */,
+				21B54C5704E6BD0B0ED31F1D /* libPods-enrollmentApp-enrollmentAppTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5F34E727D044B3CCFBA70684 /* Pods */ = {
+		5C4593E1A0D009EE684D27B2 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				FF8136BEC19109CF16C39568 /* Pods-enrollmentApp.debug.xcconfig */,
-				9C5BB1EB517CB25AFCA1C51E /* Pods-enrollmentApp.release.xcconfig */,
-				5649F4C080E68F4FA3E6F173 /* Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig */,
-				2DF3ABA5B12F3530896CC9B5 /* Pods-enrollmentApp-enrollmentAppTests.release.xcconfig */,
+				F25F84E8DBB60964F4ED2BF4 /* Pods-enrollmentApp.debug.xcconfig */,
+				12B116E82BA7791AA1CE079E /* Pods-enrollmentApp.release.xcconfig */,
+				E783DD305CDBFD6EB73C0F1C /* Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig */,
+				586A881824D3FE80D3E7A6D3 /* Pods-enrollmentApp-enrollmentAppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -133,7 +132,7 @@
 				00E356EF1AD99517003FC87E /* enrollmentAppTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				5F34E727D044B3CCFBA70684 /* Pods */,
+				5C4593E1A0D009EE684D27B2 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -156,12 +155,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "enrollmentAppTests" */;
 			buildPhases = (
-				82F84A1766D89876B6EE3550 /* [CP] Check Pods Manifest.lock */,
+				D3B055353BF07D7793FBD87D /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				A6995E1F4FB728021A9A30E1 /* [CP] Embed Pods Frameworks */,
-				6C0F2DF2D21C55B6A3F7EAF6 /* [CP] Copy Pods Resources */,
+				D8D290B5AB9781707269DA3C /* [CP] Embed Pods Frameworks */,
+				F076B5D6E0337EC70510A357 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -177,14 +176,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "enrollmentApp" */;
 			buildPhases = (
-				15C5905E06B5F75E7B80D443 /* [CP] Check Pods Manifest.lock */,
+				BF055AEBB4CDE51FA0E9C31E /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				2138E853B67A98F1BBBC29D3 /* [CP] Embed Pods Frameworks */,
-				B60551C598D972815ECF3AC2 /* [CP] Copy Pods Resources */,
+				3C5E1156604E0E93DC787158 /* [CP] Embed Pods Frameworks */,
+				B1B65DC7B3B6965BFB528A8D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -265,7 +264,41 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		15C5905E06B5F75E7B80D443 /* [CP] Check Pods Manifest.lock */ = {
+		3C5E1156604E0E93DC787158 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B1B65DC7B3B6965BFB528A8D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BF055AEBB4CDE51FA0E9C31E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -287,41 +320,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2138E853B67A98F1BBBC29D3 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6C0F2DF2D21C55B6A3F7EAF6 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		82F84A1766D89876B6EE3550 /* [CP] Check Pods Manifest.lock */ = {
+		D3B055353BF07D7793FBD87D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -343,7 +342,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A6995E1F4FB728021A9A30E1 /* [CP] Embed Pods Frameworks */ = {
+		D8D290B5AB9781707269DA3C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -360,21 +359,21 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B60551C598D972815ECF3AC2 /* [CP] Copy Pods Resources */ = {
+		F076B5D6E0337EC70510A357 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp/Pods-enrollmentApp-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-enrollmentApp-enrollmentAppTests/Pods-enrollmentApp-enrollmentAppTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -429,7 +428,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5649F4C080E68F4FA3E6F173 /* Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig */;
+			baseConfigurationReference = E783DD305CDBFD6EB73C0F1C /* Pods-enrollmentApp-enrollmentAppTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -456,7 +455,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2DF3ABA5B12F3530896CC9B5 /* Pods-enrollmentApp-enrollmentAppTests.release.xcconfig */;
+			baseConfigurationReference = 586A881824D3FE80D3E7A6D3 /* Pods-enrollmentApp-enrollmentAppTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -480,11 +479,12 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FF8136BEC19109CF16C39568 /* Pods-enrollmentApp.debug.xcconfig */;
+			baseConfigurationReference = F25F84E8DBB60964F4ED2BF4 /* Pods-enrollmentApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5CK7GRZLLG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = enrollmentApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -506,11 +506,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C5BB1EB517CB25AFCA1C51E /* Pods-enrollmentApp.release.xcconfig */;
+			baseConfigurationReference = 12B116E82BA7791AA1CE079E /* Pods-enrollmentApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5CK7GRZLLG;
 				INFOPLIST_FILE = enrollmentApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
