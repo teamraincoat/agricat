@@ -19,7 +19,7 @@ const Home = () => {
       .catch((err) => alert('Unable to get data'));
   }, []);
 
-  let viewItemSeparator = () => {
+  let listViewItemSeparator = () => {
     return <View style={{height: 20}} />;
   };
 
