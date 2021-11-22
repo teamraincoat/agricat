@@ -24,3 +24,4 @@ https://reactnative.dev/docs/environment-setup
 1. run `docker compose up -d`
 2. open `http://127.0.0.1:5984/_utils/` in the browser
 3. login with username: `admin` and password `couchdb`
+4. create a database names `enrollees`
