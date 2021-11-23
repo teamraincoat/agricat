@@ -19,7 +19,7 @@ const Home = () => {
       .catch((err) => alert('Unable to get data'));
   }, []);
 
-  let listViewItemSeparator = () => {
+  let viewItemSeparator = () => {
     return <View style={{height: 20}} />;
   };
 
@@ -44,7 +44,7 @@ const Home = () => {
       <View style={{flex: 1, padding: 16}}>
         <FlatList
           data={flatListItems}
-          ItemSeparatorComponent={listViewItemSeparator}
+          ItemSeparatorComponent={viewItemSeparator}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => listItemView(item)}
         />

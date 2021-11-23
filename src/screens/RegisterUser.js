@@ -5,16 +5,22 @@ import {
   KeyboardAvoidingView,
   Alert,
   SafeAreaView,
-  Text,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  Image
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
 import db from '../config';
-
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
 const RegisterUser = ({navigation}) => {
   let [userName, setUserName] = useState('');
   let [userContact, setUserContact] = useState('');
   let [userAddress, setUserAddress] = useState('');
+  let [isScanOpen, setScannerStatus] = useState(false);
+
   let nextId = 1;
 
   useEffect(() => {
@@ -24,6 +30,20 @@ const RegisterUser = ({navigation}) => {
       console.log('nextId', nextId);
     });
   }, []);
+
+  const onPressScanner = () => {
+    setScannerStatus(!isScanOpen);
+  }
+
+  const onScanData = (e) => {
+    setTimeout(() => {
+      if(e){
+        alert(JSON.stringify(e))
+      }
+      console.log("Scan data =>", e);
+    }, 2000);
+    
+  }
 
   let register_user = () => {
     console.log(userName, userContact, userAddress);
@@ -98,10 +118,50 @@ const RegisterUser = ({navigation}) => {
               <EButton title="Submit" onClick={register_user} />
             </KeyboardAvoidingView>
           </ScrollView>
+          <View style={localStyles.scannerButtonContainer}>
+          <TouchableOpacity style={localStyles.scannerButton} onPress={onPressScanner}>
+          <Image source={require('../assets/scan.jpeg')} style={{height: 50, width: 50}} resizeMode="contain"></Image>
+          </TouchableOpacity>
+          </View>
+        {isScanOpen && 
+        <Modal isVisible={isScanOpen} style={{flex: 1, backgroundColor: 'black'}}>
+        <View style={{flex: 1, backgroundColor: 'black'}}>
+          <TouchableOpacity onPress={onPressScanner} style={{marginTop: 50, marginLeft: 20, marginRight: 'auto', height: 30, width: 30}}>
+            <Image source={require('../assets/close.png')} style={{height: 20, width: 20}} resizeMode="contain"></Image>
+          </TouchableOpacity>
+          <QRCodeScanner 
+          onRead={onScanData}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          showMarker
+          >
+          </QRCodeScanner>
+        </View>
+        </Modal>
+        
+        }
         </View>
     </View>
+    
     </SafeAreaView>
   );
 };
 
 export default RegisterUser;
+
+const localStyles = StyleSheet.create({
+  scannerButtonContainer: {
+    justifyContent: 'center',
+    marginBottom: 10,
+    marginRight: 10,
+    marginLeft: 'auto',
+    height: 50,
+    width: 50,
+    //backgroundColor: 'black',
+    borderRadius: 25,
+  },
+  scannerButton: {
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+  }
+});
