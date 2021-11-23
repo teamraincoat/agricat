@@ -52,9 +52,9 @@ Coordenadas | geoJson | The enrollee's coordinates in geoJson
 Superficie asegurada | coveredArea | The enrollee's covered crop  area
 Cultivo | crop | The enrollee's covered crop
 Tipo de cultivo | cropType | The enrollee's covered crop type
-Ciclo (Temporada de Cobertura) | cycle | The season for the covered crop
+Ciclo (Temporada de Cobertura) | cropCycle | The season for the covered crop
 Fecha de solicitud | applicationTime | The date of application
 Folio de seguimiento | publicId | The policy's public id
-Inicio de Vigencia | activeTime |The policy's active date
+Inicio de Vigencia | effectiveTime |The policy's active date
 CLABE | TBD | TBD
 Numero de tarjeta | TBD | TBD
