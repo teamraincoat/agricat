@@ -1,8 +1,8 @@
 import PouchDB from 'pouchdb-react-native';
 import PouchAuth from 'pouchdb-authentication';
 
-const localDB = new PouchDB('_users');
-const remoteDB = new PouchDB('http://127.0.0.1/:5984/docs', {skip_setup: true});
+const localDB = new PouchDB('enrollees');
+const remoteDB = new PouchDB('http://127.0.0.1/:5984/enrollees', {skip_setup: true});
 PouchDB.plugin(PouchAuth);
 
 const syncStates = [
