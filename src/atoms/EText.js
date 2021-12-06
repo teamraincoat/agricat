@@ -1,18 +1,15 @@
 import React from 'react';
 import {Text, StyleSheet} from 'react-native';
 
-const EText = (props) => {
-  return <Text style={styles.text}>{props.text}</Text>;
+const EText = props => {
+  return <Text style={[localStyles.text, props.style]}>{props.children}</Text>;
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   text: {
-    color: '#111825',
-    fontSize: 18,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-    textAlign: 'center',
+    // color: '#111825',
+    // fontSize: 18,
+    // textAlign: 'center',
   },
 });
 

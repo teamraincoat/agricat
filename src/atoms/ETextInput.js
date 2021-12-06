@@ -1,18 +1,14 @@
 import React from 'react';
-import {View, TextInput} from 'react-native';
+import {View, TextInput, StyleSheet} from 'react-native';
+import {colors, styles} from '../styles';
 
-const ETextInput = (props) => {
+const ETextInput = props => {
   return (
-    <View
-      style={{
-        marginTop: 10,
-        borderColor: '#007FFF',
-        borderWidth: 1,
-      }}>
+    <View style={[localStyles.mainContainer, styles.mt10]}>
       <TextInput
         underlineColorAndroid="transparent"
         placeholder={props.placeholder}
-        placeholderTextColor="#007FFF"
+        placeholderTextColor={colors.grey}
         keyboardType={props.keyboardType}
         onChangeText={props.onChangeText}
         returnKeyType={props.returnKeyType}
@@ -22,9 +18,18 @@ const ETextInput = (props) => {
         style={props.style}
         blurOnSubmit={false}
         value={props.value}
+        onTouchStart={props.onPress}
+        maxLength={props.maxLength}
       />
     </View>
   );
 };
+
+const localStyles = StyleSheet.create({
+  mainContainer: {
+    borderColor: colors.lightBlue,
+    borderWidth: 1,
+  },
+});
 
 export default ETextInput;
