@@ -5,10 +5,10 @@ import Home from './src/screens/Home';
 import RegisterUser from './src/screens/RegisterUser';
 import appReducer from './src/redux/store';
 import {Provider} from 'react-redux';
-// import {PersistGate} from 'redux-persist/integration/react';
 import {applyMiddleware, createStore} from 'redux';
 import ReduxThunk from 'redux-thunk';
 import RootProvider from './src/contex/index';
+import {UsersProvider} from './src/provider/UsersProvider';
 
 const reduxStore = createStore(appReducer, {}, applyMiddleware(ReduxThunk));
 
@@ -19,12 +19,14 @@ function App() {
     <RootProvider>
       <Provider store={reduxStore}>
         <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            screenOptions={{headerShown: false}}>
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Register" component={RegisterUser} />
-          </Stack.Navigator>
+          <UsersProvider>
+            <Stack.Navigator
+              initialRouteName="Home"
+              screenOptions={{headerShown: false}}>
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Register" component={RegisterUser} />
+            </Stack.Navigator>
+          </UsersProvider>
         </NavigationContainer>
       </Provider>
     </RootProvider>

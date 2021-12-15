@@ -1,11 +1,6 @@
-// Building Offline First App in React Native using PouchDB and CouchDB
-// https://aboutreact.com/react-native-offline-app-using-pouchdb-couchdb/
-// Screen to view all the user*/
-
 import React, {useState, useEffect} from 'react';
 import {
   FlatList,
-  Text,
   View,
   SafeAreaView,
   RefreshControl,
@@ -15,37 +10,21 @@ import {
 import ETextInput from '../atoms/ETextInput';
 import ScanIcon from '../assets/icons/ScanIcon';
 import {colors, styles} from '../styles';
-import {connect} from 'react-redux';
 import {setEnrollDataInStore} from '../redux/action/EnrollActions';
 import {useLocal} from '../contex/index';
-import {useDispatch} from 'react-redux';
-import {initDBAction} from '../redux/action/CommonActions';
 import EText from '../atoms/EText';
+import {useUsers} from '../provider/UsersProvider';
+import moment from 'moment';
 
 const Home = props => {
-  const {
-    navigation,
-    setEnrollDataInStore,
-    initDBAction,
-    enrollData,
-    isDBInitiate,
-  } = props;
+  const {navigation} = props;
 
   const [refresh, setRefresh] = useState(false);
   const [searchWord, setSearchWord] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const {translations} = useLocal();
+  const {users: enrollData} = useUsers();
 
-  useEffect(() => {
-    if (isDBInitiate) {
-      setEnrollDataInStore();
-    }
-  }, [isDBInitiate]);
-  useEffect(() => {
-    if (!isDBInitiate) {
-      initDBAction();
-    }
-  }, [isDBInitiate]);
   useEffect(() => {
     onSearch();
   }, [searchWord]);
@@ -72,8 +51,10 @@ const Home = props => {
         <EText>{`${translations['LastName']}: ${item.lastName}`}</EText>
         <EText>{`${translations['SurName']}: ${item.surName}`}</EText>
         <EText>{`${translations['Gender']}: ${item.gender}`}</EText>
-        <EText> {`${translations['MobilePhone']}: ${item.mobilePhone}`}</EText>
-        <EText>{`${translations['Dob']}: ${item.dob}`}</EText>
+        <EText> {`${translations['MobilePhone']}: ${item.contactNo}`}</EText>
+        <EText>{`${translations['Dob']}: ${moment(item.dateOfBirth).format(
+          'DD/MM/YYYY',
+        )}`}</EText>
         <EText>{`${translations['Locality']}: ${item.locality}`}</EText>
         <EText>{`${translations['Sublocality']}: ${item.sublocality}`}</EText>
         <EText>{`${translations['GeoJson']}: ${item.geoJson}`}</EText>
@@ -82,7 +63,9 @@ const Home = props => {
         <EText>{`${translations['CropType']}: ${item.cropType}`}</EText>
         <EText>{`${translations['CropCycle']}: ${item.cropCycle}`}</EText>
         <EText>
-          {`${translations['ApplicationTime']}: ${item.applicationTime}`}
+          {`${translations['ApplicationTime']}: ${moment(
+            item.dateOfApplication,
+          ).format('DD/MM/YYYY')}`}
         </EText>
       </View>
     );
@@ -136,19 +119,4 @@ const localStyles = StyleSheet.create({
   searchInput: {textAlignVertical: 'top'},
 });
 
-const mapStateToProps = ({EnrollReducers, CommonReducer}) => {
-  const {enrollData} = EnrollReducers;
-  const {isDBInitiate} = CommonReducer;
-  return {
-    enrollData,
-    isDBInitiate,
-  };
-};
-
-const mapDispatchToProps = {
-  setEnrollDataInStore,
-  initDBAction,
-};
-
-// export default Home;
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

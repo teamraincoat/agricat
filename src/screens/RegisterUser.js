@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import db from '../config';
 import ScanModal from './ScanModal';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {colors, styles} from '../styles';
@@ -23,6 +22,8 @@ import EText from '../atoms/EText';
 import ActionSheetBox from '../atoms/ActionSheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImagesContainer from '../atoms/ImagesContainer';
+import {useUsers} from '../provider/UsersProvider';
+import uuid from 'react-native-uuid';
 
 const gender = [
   {label: 'Male', value: 'male'},
@@ -68,6 +69,7 @@ const RegisterUser = ({navigation, enrollData}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const {createUser} = useUsers();
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -138,52 +140,39 @@ const RegisterUser = ({navigation, enrollData}) => {
   }, [qrInfo]);
 
   let register_user = data => {
-    //checking that data is available or not
-
-    // const checkEnrollmentInData = !!enrollData.filter(
-    //   item => item._id === data.enrollId,
-    // );
-
-    // if (checkEnrollmentInData) {
-    //   Alert.alert('User Already exits');
-    //   return;
-    // }
-    db.post({
+    createUser({
       firstName: data.firstName,
       lastName: data.lastName,
       surName: data.surName,
       gender: data.gender,
-      mobilePhone: data.contactNo,
-      dob: data.dateOfBirth,
+      contactNo: data.contactNo,
+      dateOfBirth: new Date(data.dateOfBirth),
       locality: data.locality,
       sublocality: data.municipality,
+      municipality: data.municipality,
+      policyPublicId: data.policyPublicId,
+      policyActiveId: data.policyActiveId,
       geoJson: data.geoJson,
       coveredArea: data.coveredArea,
       crop: data.crop,
       cropType: data.cropType,
       cropCycle: data.cropCycle,
-      applicationTime: data.dateOfApplication,
-      // effectiveTime: '2021-10-20T13:33:10Z',
-    })
-      .then(doc => {
-        console.log('doc', doc);
-        if (!doc.ok) {
-          alert(translations['Registration.fail']);
-          return;
-        }
-        Alert.alert(
-          translations['Success'],
-          translations['Registration.success'],
-          [
-            {
-              text: 'Ok',
-              onPress: () => navigation.navigate('Home'),
-            },
-          ],
-          {cancelable: false},
-        );
-      })
-      .catch(error => alert(translations['Error.Registration'] + error));
+      dateOfApplication: data.dateOfApplication,
+      enrollId: 'rewrwerwer',
+      _id: uuid.v4(),
+    });
+
+    Alert.alert(
+      translations['Success'],
+      translations['Registration.success'],
+      [
+        {
+          text: 'Ok',
+          onPress: () => navigation.navigate('Home'),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   const onHandleScan = () => {
@@ -249,7 +238,7 @@ const RegisterUser = ({navigation, enrollData}) => {
   };
 
   return (
-    <View style={styles.flex}>
+    <SafeAreaView style={styles.flex}>
       <ActionSheetBox
         ActionRef={sheetRef}
         captureFromCamera={onCameraPress}
@@ -693,7 +682,7 @@ const RegisterUser = ({navigation, enrollData}) => {
         onCancel={hideDatePicker}
         maximumDate={new Date()}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
