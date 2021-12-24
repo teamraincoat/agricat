@@ -1,73 +1,81 @@
 import React, {useContext, useState, useEffect, useRef} from 'react';
-import Realm from 'realm';
-import {User} from '../../schemas';
 
+import getRealm, { app } from '../database/realmConfig';
+import {ObjectId} from 'bson';
+import { getStorageData } from '../utils/localStorage';
+import Constants from '../constants/Constants';
 const UsersContext = React.createContext(null);
 
-const UsersProvider = ({children, projectPartition = {}}) => {
-  const [users, setUsers] = useState([]);
-
-  const realmRef = useRef(null);
+ const UsersProvider = ({children, projectPartition = {}}) => {
+ const [users, setUsers] = useState([]);
+ const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const config = {
-      schema: [User],
-      path: 'myrealm',
-    };
-    // open a realm for this particular project
-    Realm.open(config).then(projectRealm => {
-      realmRef.current = projectRealm;
+        getStorageData(Constants.STORAGE.USER_ID)
+        .then(result => {
+          if (result) {
+              setUserId(result);
+          } else {
+            console.log('No Result found')
+          }
+        })
+        .catch((e) => {
+          console.log('error localStorage',e)
+        });
 
-      const syncUsers = projectRealm.objects('User');
-      let sortedUsers = syncUsers.sorted('firstName');
-      setUsers([...sortedUsers]);
-      sortedUsers.addListener(() => {
-        setUsers([...sortedUsers]);
-      });
-    });
-
-    return () => {
-      // cleanup function
-      const projectRealm = realmRef.current;
-      if (projectRealm) {
-        projectRealm.close();
-        realmRef.current = null;
-        setUsers([]);
-      }
-    };
+        return fetchUsersListCall();
   }, []);
 
-  const createUser = UserInfo => {
-    const projectRealm = realmRef.current;
-    projectRealm.write(() => {
-      projectRealm.create('User', {
-        firstName: UserInfo.firstName,
-        lastName: UserInfo.lastName,
-        surName: UserInfo.surName,
-        dateOfBirth: UserInfo.dateOfBirth,
-        enrollId: UserInfo.enrollId,
-        gender: UserInfo.gender,
-        contactNo: UserInfo.contactNo,
-        locality: UserInfo.locality,
-        municipality: UserInfo.municipality,
-        sublocality: UserInfo.sublocality,
-        dateOfApplication: UserInfo.dateOfApplication,
-        policyPublicId: UserInfo.policyPublicId,
-        policyActiveId: UserInfo.policyActiveId,
-        geoJson: UserInfo.geoJson,
-        coveredArea: UserInfo.coveredArea,
-        crop: UserInfo.crop,
-        cropType: UserInfo.cropType,
-        cropCycle: UserInfo.cropCycle,
-        _id: UserInfo._id,
+
+  const fetchUsersListCall = () => {
+    getRealm()
+      .then(realm => {
+        const usersList = realm.objects('User');
+        setUsers(usersList);
+        usersList.addListener(() => {
+          setUsers([...usersList]);
+        });
+        return () => {
+          const usersList = realm.objects('User');
+          usersList.removeAllListeners();
+          realm.close();
+        };
+      })
+      .catch(error => {
+        console.log(error, 'ERROR');
       });
-    });
   };
+
+
+  const submitAddUser = async UserInfo => {
+    if (UserInfo.firstName) {
+      try {
+          const newUser = {
+              ...UserInfo,
+            _id: new ObjectId(),
+            realm_id: userId ? userId : app.currentUser.id// app.currentUser.id,
+          };
+                const realm = await getRealm();
+                if (UserInfo.firstName) {
+                  realm.write(() => {
+                    realm.create('User', newUser);
+                  });
+                  const userListUpdated = realm.objects('User');
+                  setUsers([...userListUpdated]);
+                }
+
+      } catch (error) {
+        console.log('error==>', error);
+      }
+    }
+  };
+
+
 
   return (
     <UsersContext.Provider
       value={{
-        createUser,
+        submitAddUser,
         users,
       }}>
       {children}

@@ -9,26 +9,35 @@ import {applyMiddleware, createStore} from 'redux';
 import ReduxThunk from 'redux-thunk';
 import RootProvider from './src/contex/index';
 import {UsersProvider} from './src/provider/UsersProvider';
+import LoginScreen from './src/screens/LoginScreen';
+
 
 const reduxStore = createStore(appReducer, {}, applyMiddleware(ReduxThunk));
 
 const Stack = createNativeStackNavigator();
-
+const MainStack = createNativeStackNavigator();
 function App() {
+  const MainStackNavigator = () => (
+    <UsersProvider>
+      <MainStack.Navigator screenOptions={{headerShown: false}}>
+        <MainStack.Screen name="Home" component={Home} />
+        <MainStack.Screen name="Register" component={RegisterUser} />
+      </MainStack.Navigator>
+    </UsersProvider>
+  );
   return (
     <RootProvider>
-      <Provider store={reduxStore}>
-        <NavigationContainer>
-          <UsersProvider>
+        <Provider store={reduxStore}>
+
+          <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="Home"
+              initialRouteName="Login"
               screenOptions={{headerShown: false}}>
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Register" component={RegisterUser} />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Main" component={MainStackNavigator} />
             </Stack.Navigator>
-          </UsersProvider>
-        </NavigationContainer>
-      </Provider>
+          </NavigationContainer>
+        </Provider>
     </RootProvider>
   );
 }

@@ -1,28 +1,26 @@
-const User = {
-  path: 'UserDatabase.realm',
-  name: 'User',
-  properties: {
-    _id: 'string',
-    firstName: 'string',
-    lastName: 'string?',
-    surName: 'string',
-    dateOfBirth: 'date',
-    enrollId: 'string',
-    gender: 'string',
-    contactNo: 'string',
-    locality: 'string',
-    municipality: 'string',
-    sublocality: 'string',
-    dateOfApplication: 'date?',
-    policyPublicId: 'string',
-    policyActiveId: 'string',
-    geoJson: 'string',
-    coveredArea: 'string',
-    crop: 'string',
-    cropType: 'string',
-    cropCycle: 'string',
-  },
-  primaryKey: 'firstName',
-};
+ const UserSchema = {
+    name: 'User',
+    properties: {
+      _id: 'objectId',
+      TBD: 'string?',
+      address1: 'string',
+      applicationTime: 'date?',
+      coveredArea: 'string?',
+      crop: 'string',
+      cropCycle: 'string?',
+      cropType: 'string?',
+      dob: 'date',
+      firstName: 'string',
+      gender: 'string',
+      geoJson: 'string?',
+      lastName: 'string',
+      locality: 'string?',
+      mobilePhone: 'string',
+      municipality: 'string',
+      realm_id: 'string?',
+      surName: 'string?',
+    },
+    primaryKey: '_id',
+  };
 
-export {User};
+export {UserSchema};

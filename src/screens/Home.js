@@ -26,7 +26,9 @@ const Home = props => {
   const {users: enrollData} = useUsers();
 
   useEffect(() => {
-    onSearch();
+    if (enrollData && enrollData.length > 0) {
+      onSearch();
+    }
   }, [searchWord]);
 
   const onSearch = () => {
@@ -51,12 +53,12 @@ const Home = props => {
         <EText>{`${translations['LastName']}: ${item.lastName}`}</EText>
         <EText>{`${translations['SurName']}: ${item.surName}`}</EText>
         <EText>{`${translations['Gender']}: ${item.gender}`}</EText>
-        <EText> {`${translations['MobilePhone']}: ${item.contactNo}`}</EText>
+        <EText> {`${translations['MobilePhone']}: ${item.mobilePhone}`}</EText>
         <EText>{`${translations['Dob']}: ${moment(item.dateOfBirth).format(
           'DD/MM/YYYY',
         )}`}</EText>
         <EText>{`${translations['Locality']}: ${item.locality}`}</EText>
-        <EText>{`${translations['Sublocality']}: ${item.sublocality}`}</EText>
+        <EText>{`${translations['Sublocality']}: ${item.municipality}`}</EText>
         <EText>{`${translations['GeoJson']}: ${item.geoJson}`}</EText>
         <EText>{`${translations['CoveredArea']}: ${item.coveredArea}`}</EText>
         <EText>{`${translations['Crop']}: ${item.crop}`}</EText>

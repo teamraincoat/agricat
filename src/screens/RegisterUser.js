@@ -24,7 +24,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImagesContainer from '../atoms/ImagesContainer';
 import {useUsers} from '../provider/UsersProvider';
 import uuid from 'react-native-uuid';
-
+import { ObjectId } from "bson";
 const gender = [
   {label: 'Male', value: 'male'},
   {label: 'Female', value: 'female'},
@@ -37,6 +37,7 @@ const RegisterUser = ({navigation, enrollData}) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const {translations} = useLocal();
   const sheetRef = useRef();
+
   const {
     control,
     getValues,
@@ -45,31 +46,31 @@ const RegisterUser = ({navigation, enrollData}) => {
     reset,
   } = useForm({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      surName: '',
+      firstName: 'testF',
+      lastName: 'TestL',
+      surName: 'TestS',
       dateOfBirth: '',
-      enrollId: '',
+      enrollId: '222',
       gender: '',
-      contactNo: '',
-      address: '',
-      locality: '',
-      municipality: '',
+      contactNo: '855',
+      address: '842,grihi',
+      locality: 'ggreg',
+      municipality: 'gergr',
       dateOfApplication: '',
-      policyPublicId: '',
-      policyActiveId: '',
-      geoJson: '',
-      coveredArea: '',
-      crop: '',
-      cropType: '',
-      cropCycle: '',
+      policyPublicId: 'ger',
+      policyActiveId: 'geg',
+      geoJson: 'feggg',
+      coveredArea: '223',
+      crop: '222',
+      cropType: 'khkh',
+      cropCycle: 'iiih',
       images: [],
     },
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const {createUser} = useUsers();
+  const {submitAddUser} = useUsers();
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -140,15 +141,16 @@ const RegisterUser = ({navigation, enrollData}) => {
   }, [qrInfo]);
 
   let register_user = data => {
-    createUser({
+    submitAddUser({
       firstName: data.firstName,
       lastName: data.lastName,
       surName: data.surName,
       gender: data.gender,
-      contactNo: data.contactNo,
-      dateOfBirth: new Date(data.dateOfBirth),
+      mobilePhone: data.contactNo,
+      address1:data.address,
+      dob: new Date(data.dateOfBirth),
       locality: data.locality,
-      sublocality: data.municipality,
+      TBD: data.municipality,
       municipality: data.municipality,
       policyPublicId: data.policyPublicId,
       policyActiveId: data.policyActiveId,
@@ -666,6 +668,10 @@ const RegisterUser = ({navigation, enrollData}) => {
                 title={translations['Submit']}
                 onClick={handleSubmit(register_user)}
               />
+               {/* <EButton
+                title={translations['Submit']}
+                onClick={() => submitAddEditBook()}
+              /> */}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
