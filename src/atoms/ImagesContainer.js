@@ -25,7 +25,7 @@ const ImagesContainer = props => {
   const ImagesViewContainer = React.memo(({item}) => {
     return (
       <View style={localStyles.imageInnerContainer}>
-        <Image source={{uri: item.uri}} style={localStyles.imageStyle} />
+          <Image source={{ uri: `data:image/png;base64,${item.uri}`}} style={localStyles.imageStyle}  />
         <TouchableOpacity
           style={localStyles.deleteIcon}
           onPress={() => removeImage(item.name)}>

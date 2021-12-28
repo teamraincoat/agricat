@@ -6,6 +6,8 @@ import {
   RefreshControl,
   Pressable,
   StyleSheet,
+  Image,
+  ScrollView,
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import ScanIcon from '../assets/icons/ScanIcon';
@@ -69,6 +71,19 @@ const Home = props => {
             item.dateOfApplication,
           ).format('DD/MM/YYYY')}`}
         </EText>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={localStyles.imageContainer} >
+        {
+        item &&
+          item.images &&
+          item.images.length > 0 &&
+          item.images.map(img => (
+              <Image
+              key={img.name}
+                source={{uri: `data:image/png;base64,${img.uri}`}}
+                style={localStyles.imageStyle}
+              />
+              ))}
+              </ScrollView>
       </View>
     );
   };
@@ -119,6 +134,17 @@ const localStyles = StyleSheet.create({
     padding: 16,
   },
   searchInput: {textAlignVertical: 'top'},
+  imageContainer:{
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  imageStyle: {
+    height: 80,
+    width: 80,
+    marginLeft:0,
+    marginRight: 10,
+    borderRadius: 10,
+  },
 });
 
 export default Home;

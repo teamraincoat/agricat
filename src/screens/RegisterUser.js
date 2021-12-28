@@ -24,7 +24,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImagesContainer from '../atoms/ImagesContainer';
 import {useUsers} from '../provider/UsersProvider';
 import uuid from 'react-native-uuid';
-import { ObjectId } from "bson";
+import ImgToBase64 from 'react-native-image-base64';
 const gender = [
   {label: 'Male', value: 'male'},
   {label: 'Female', value: 'female'},
@@ -147,7 +147,7 @@ const RegisterUser = ({navigation, enrollData}) => {
       surName: data.surName,
       gender: data.gender,
       mobilePhone: data.contactNo,
-      address1:data.address,
+      address1: data.address,
       dob: new Date(data.dateOfBirth),
       locality: data.locality,
       TBD: data.municipality,
@@ -161,6 +161,7 @@ const RegisterUser = ({navigation, enrollData}) => {
       cropCycle: data.cropCycle,
       dateOfApplication: data.dateOfApplication,
       enrollId: 'rewrwerwer',
+      images: data.images,
       _id: uuid.v4(),
     });
 
@@ -186,38 +187,63 @@ const RegisterUser = ({navigation, enrollData}) => {
     reset({...values, images: selectedFiles});
   }, [selectedFiles]);
 
-  const onImageLibraryPress = () => {
+  const formatImage = sourceUri => {
+    return new Promise(function (resolve, reject) {
+      ImgToBase64.getBase64String(sourceUri)
+        .then(base64String => {
+          resolve(base64String);
+        })
+        .catch(err => {
+          console.log('image encode error', err);
+          reject(err);
+        });
+    });
+  };
+  const onImageLibraryPress = async () => {
     ImagePicker.openPicker({
       cropping: false,
       multiple: true,
       maxFiles: 5,
     })
       .then(images => {
-        const selectedImage = images.map(item => {
-          return {
-            name:
-              Platform.OS === 'ios'
-                ? item.filename
-                : item.path.substring(item.path.lastIndexOf('/') + 1),
-            size: item.size,
-            uri: Platform.OS === 'ios' ? item.sourceURL : item.path,
-            type: item.mime,
-          };
-        });
-        const finalFilesList = [...selectedImage, ...selectedFiles].filter(
-          (
-            set => o =>
-              set.has(o.name) ? false : set.add(o.name)
-          )(new Set()),
-        );
-        setSelectedFiles(finalFilesList);
+        if (images.didCancel) {
+          console.log('User cancelled photo picker');
+        } else if (images.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (images.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+        } else {
+          let listOfImages = [];
+          images.map(item => {
+            let sourceUri = Platform.OS === 'ios' ? item.sourceURL : item.path;
+            formatImage(sourceUri).then(response => {
+              listOfImages.push({
+                name:
+                  Platform.OS === 'ios'
+                    ? item.filename
+                    : item.path.substring(item.path.lastIndexOf('/') + 1),
+                size: item.size.toString(),
+                uri: response,
+                type: item.mime,
+              });
+              if (selectedFiles && selectedFiles.length > 0) {
+                function getUniqueListBy(arr, key) {
+                  return [
+                    ...new Map(arr.map(item => [item[key], item])).values(),
+                  ];
+                }
+                const finalFilesList = [...listOfImages, ...selectedFiles];
+                const uniqueFilesList = getUniqueListBy(finalFilesList, 'name');
+                setSelectedFiles(uniqueFilesList);
+              } else {
+                setSelectedFiles([...listOfImages]);
+              }
+            });
+          });
+        }
       })
       .catch(err => {
-        if (err.code === 'E_PICKER_CANCELLED') {
-          console.log('Picker Cancelled by user');
-        } else {
-          console.log('Error===>', JSON.stringify(err));
-        }
+        console.log('error while choose image from Library===>', err);
       });
   };
 
@@ -226,17 +252,22 @@ const RegisterUser = ({navigation, enrollData}) => {
       width: 300,
       height: 300,
       cropping: true,
-    }).then(image => {
-      const selectedImage = [
-        {
-          name: image.path.substring(image.path.lastIndexOf('/') + 1),
-          size: image.size,
-          uri: image.path,
-          type: image.mime,
-        },
-      ];
-      setSelectedFiles(selectedFiles.concat(selectedImage));
-    });
+    })
+      .then(image => {
+        let selectedImage = [];
+        formatImage(image.path).then(response => {
+          selectedImage.push({
+            name: image.path.substring(image.path.lastIndexOf('/') + 1),
+            size: image.size.toString(),
+            uri: response,
+            type: image.mime,
+          });
+          setSelectedFiles(selectedFiles.concat(selectedImage));
+        });
+      })
+      .catch(err => {
+        console.log('error while choose image from Camera===>', err);
+      });
   };
 
   return (

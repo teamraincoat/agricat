@@ -7,28 +7,13 @@ import { getStorageData, saveStorageData } from '../utils/localStorage';
 
 
 const LoginScreen = ({navigation}) => {
- const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    getStorageData(Constants.STORAGE.USER_ID)
-    .then(result => {
-      if (result) {
-          navigation.navigate('Main');
-      } else {
-        console.log('No Result found')
-      }
-    })
-    .catch((e) => {
-      console.log('error localStorage',e)
-    });
-
-}, [userId]);
 
   const onPressSignIn = async () => {
     const credentials = Realm.Credentials.anonymous();
     try {
       const newUser = await app.logIn(credentials);
       saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
-      setUserId(newUser.id);
+      navigation.navigate('Main');
       return newUser;
     } catch (err) {
       console.error("Failed to log in", err.message);

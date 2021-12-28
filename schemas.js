@@ -19,8 +19,20 @@
       municipality: 'string',
       realm_id: 'string?',
       surName: 'string?',
+      images: 'User_images[]',
     },
     primaryKey: '_id',
   };
 
-export {UserSchema};
+ const User_imagesSchema = {
+    name: 'User_images',
+    embedded: true,
+    properties: {
+      name: 'string?',
+      size: 'string?',
+      type: 'string?',
+      uri: 'string?',
+    },
+  };
+
+export {UserSchema , User_imagesSchema};
