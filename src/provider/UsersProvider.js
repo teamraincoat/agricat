@@ -17,7 +17,8 @@ const UsersProvider = ({children, projectPartition = {}}) => {
       .then(result => {
         if (result) {
           setUserId(result);
-          getRealm(result)
+        }
+        getRealm(result)
           .then(projectRealm => {
             realmRef.current = projectRealm;
             const syncUsers = projectRealm.objects('User');
@@ -46,9 +47,6 @@ const UsersProvider = ({children, projectPartition = {}}) => {
           .catch(error => {
             console.log('error---', error);
           });
-        } else {
-          console.log('No Result found');
-        }
       })
       .catch(e => {
         console.log('error localStorage', e);
@@ -84,16 +82,22 @@ const UsersProvider = ({children, projectPartition = {}}) => {
           _id: new ObjectId(),
           realm_id: userId ? userId : app.currentUser.id,
         };
-        saveStorageData(Constants.STORAGE.USER_DATA, [
-          ...storedUserData,
-          newUser,
-        ]);
-        setStoredUserData([...storedUserData, newUser]);
+        console.log('=====newUser Info=====>', newUser);
+        if (storedUserData && storedUserData.length > 0) {
+          saveStorageData(Constants.STORAGE.USER_DATA, [
+            ...storedUserData,
+            newUser,
+          ]);
+          setStoredUserData([...storedUserData, newUser]);
+        } else {
+          saveStorageData(Constants.STORAGE.USER_DATA, [newUser]);
+          setStoredUserData([newUser]);
+        }
         const realm = realmRef.current;
         realm.write(() => {
           realm.create('User', newUser);
         });
-        const userListUpdated = realm.objects('User');
+        const userListUpdated = await realm.objects('User');
         setUsers([...userListUpdated]);
       } catch (error) {
         console.log('error==>', error);
@@ -112,7 +116,9 @@ const UsersProvider = ({children, projectPartition = {}}) => {
       users: storedUserData,
     };
   }
-  return <UsersContext.Provider value={userData}>{children}</UsersContext.Provider>;
+  return (
+    <UsersContext.Provider value={userData}>{children}</UsersContext.Provider>
+  );
 };
 
 const useUsers = () => {

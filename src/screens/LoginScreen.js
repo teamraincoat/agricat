@@ -14,7 +14,6 @@ const LoginScreen = ({navigation}) => {
       const newUser = await app.logIn(credentials);
       saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
       navigation.navigate('Main');
-      return newUser;
     } catch (err) {
       console.error("Failed to log in", err.message);
     }
