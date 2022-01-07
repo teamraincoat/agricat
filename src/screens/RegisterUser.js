@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import db from '../config';
 import ScanModal from './ScanModal';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {colors, styles} from '../styles';
@@ -23,7 +22,9 @@ import EText from '../atoms/EText';
 import ActionSheetBox from '../atoms/ActionSheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImagesContainer from '../atoms/ImagesContainer';
-
+import {useUsers} from '../provider/UsersProvider';
+import uuid from 'react-native-uuid';
+import ImgToBase64 from 'react-native-image-base64';
 const gender = [
   {label: 'Male', value: 'male'},
   {label: 'Female', value: 'female'},
@@ -36,6 +37,7 @@ const RegisterUser = ({navigation, enrollData}) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const {translations} = useLocal();
   const sheetRef = useRef();
+
   const {
     control,
     getValues,
@@ -44,30 +46,31 @@ const RegisterUser = ({navigation, enrollData}) => {
     reset,
   } = useForm({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      surName: '',
+      firstName: 'testF',
+      lastName: 'TestL',
+      surName: 'TestS',
       dateOfBirth: '',
-      enrollId: '',
+      enrollId: '222',
       gender: '',
-      contactNo: '',
-      address: '',
-      locality: '',
-      municipality: '',
+      contactNo: '855',
+      address: '842,grihi',
+      locality: 'ggreg',
+      municipality: 'gergr',
       dateOfApplication: '',
-      policyPublicId: '',
-      policyActiveId: '',
-      geoJson: '',
-      coveredArea: '',
-      crop: '',
-      cropType: '',
-      cropCycle: '',
+      policyPublicId: 'ger',
+      policyActiveId: 'geg',
+      geoJson: 'feggg',
+      coveredArea: '223',
+      crop: '222',
+      cropType: 'khkh',
+      cropCycle: 'iiih',
       images: [],
     },
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const {submitAddUser} = useUsers();
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -138,52 +141,41 @@ const RegisterUser = ({navigation, enrollData}) => {
   }, [qrInfo]);
 
   let register_user = data => {
-    //checking that data is available or not
-
-    // const checkEnrollmentInData = !!enrollData.filter(
-    //   item => item._id === data.enrollId,
-    // );
-
-    // if (checkEnrollmentInData) {
-    //   Alert.alert('User Already exits');
-    //   return;
-    // }
-    db.post({
+    submitAddUser({
       firstName: data.firstName,
       lastName: data.lastName,
       surName: data.surName,
       gender: data.gender,
       mobilePhone: data.contactNo,
-      dob: data.dateOfBirth,
+      address1: data.address,
+      dob: new Date(data.dateOfBirth),
       locality: data.locality,
-      sublocality: data.municipality,
+      TBD: data.municipality,
+      municipality: data.municipality,
+      policyPublicId: data.policyPublicId,
+      policyActiveId: data.policyActiveId,
       geoJson: data.geoJson,
       coveredArea: data.coveredArea,
       crop: data.crop,
       cropType: data.cropType,
       cropCycle: data.cropCycle,
-      applicationTime: data.dateOfApplication,
-      // effectiveTime: '2021-10-20T13:33:10Z',
-    })
-      .then(doc => {
-        console.log('doc', doc);
-        if (!doc.ok) {
-          alert(translations['Registration.fail']);
-          return;
-        }
-        Alert.alert(
-          translations['Success'],
-          translations['Registration.success'],
-          [
-            {
-              text: 'Ok',
-              onPress: () => navigation.navigate('Home'),
-            },
-          ],
-          {cancelable: false},
-        );
-      })
-      .catch(error => alert(translations['Error.Registration'] + error));
+      dateOfApplication: data.dateOfApplication,
+      enrollId: 'rewrwerwer',
+      images: data.images,
+      _id: uuid.v4(),
+    });
+
+    Alert.alert(
+      translations['Success'],
+      translations['Registration.success'],
+      [
+        {
+          text: 'Ok',
+          onPress: () => navigation.navigate('Home'),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   const onHandleScan = () => {
@@ -195,38 +187,63 @@ const RegisterUser = ({navigation, enrollData}) => {
     reset({...values, images: selectedFiles});
   }, [selectedFiles]);
 
-  const onImageLibraryPress = () => {
+  const formatImage = sourceUri => {
+    return new Promise(function (resolve, reject) {
+      ImgToBase64.getBase64String(sourceUri)
+        .then(base64String => {
+          resolve(base64String);
+        })
+        .catch(err => {
+          console.log('image encode error', err);
+          reject(err);
+        });
+    });
+  };
+  const onImageLibraryPress = async () => {
     ImagePicker.openPicker({
       cropping: false,
       multiple: true,
       maxFiles: 5,
     })
       .then(images => {
-        const selectedImage = images.map(item => {
-          return {
-            name:
-              Platform.OS === 'ios'
-                ? item.filename
-                : item.path.substring(item.path.lastIndexOf('/') + 1),
-            size: item.size,
-            uri: Platform.OS === 'ios' ? item.sourceURL : item.path,
-            type: item.mime,
-          };
-        });
-        const finalFilesList = [...selectedImage, ...selectedFiles].filter(
-          (
-            set => o =>
-              set.has(o.name) ? false : set.add(o.name)
-          )(new Set()),
-        );
-        setSelectedFiles(finalFilesList);
+        if (images.didCancel) {
+          console.log('User cancelled photo picker');
+        } else if (images.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (images.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+        } else {
+          let listOfImages = [];
+          images.map(item => {
+            let sourceUri = Platform.OS === 'ios' ? item.sourceURL : item.path;
+            formatImage(sourceUri).then(response => {
+              listOfImages.push({
+                name:
+                  Platform.OS === 'ios'
+                    ? item.filename
+                    : item.path.substring(item.path.lastIndexOf('/') + 1),
+                size: item.size.toString(),
+                uri: response,
+                type: item.mime,
+              });
+              if (selectedFiles && selectedFiles.length > 0) {
+                function getUniqueListBy(arr, key) {
+                  return [
+                    ...new Map(arr.map(item => [item[key], item])).values(),
+                  ];
+                }
+                const finalFilesList = [...listOfImages, ...selectedFiles];
+                const uniqueFilesList = getUniqueListBy(finalFilesList, 'name');
+                setSelectedFiles(uniqueFilesList);
+              } else {
+                setSelectedFiles([...listOfImages]);
+              }
+            });
+          });
+        }
       })
       .catch(err => {
-        if (err.code === 'E_PICKER_CANCELLED') {
-          console.log('Picker Cancelled by user');
-        } else {
-          console.log('Error===>', JSON.stringify(err));
-        }
+        console.log('error while choose image from Library===>', err);
       });
   };
 
@@ -235,21 +252,26 @@ const RegisterUser = ({navigation, enrollData}) => {
       width: 300,
       height: 300,
       cropping: true,
-    }).then(image => {
-      const selectedImage = [
-        {
-          name: image.path.substring(image.path.lastIndexOf('/') + 1),
-          size: image.size,
-          uri: image.path,
-          type: image.mime,
-        },
-      ];
-      setSelectedFiles(selectedFiles.concat(selectedImage));
-    });
+    })
+      .then(image => {
+        let selectedImage = [];
+        formatImage(image.path).then(response => {
+          selectedImage.push({
+            name: image.path.substring(image.path.lastIndexOf('/') + 1),
+            size: image.size.toString(),
+            uri: response,
+            type: image.mime,
+          });
+          setSelectedFiles(selectedFiles.concat(selectedImage));
+        });
+      })
+      .catch(err => {
+        console.log('error while choose image from Camera===>', err);
+      });
   };
 
   return (
-    <View style={styles.flex}>
+    <SafeAreaView style={styles.flex}>
       <ActionSheetBox
         ActionRef={sheetRef}
         captureFromCamera={onCameraPress}
@@ -677,6 +699,10 @@ const RegisterUser = ({navigation, enrollData}) => {
                 title={translations['Submit']}
                 onClick={handleSubmit(register_user)}
               />
+               {/* <EButton
+                title={translations['Submit']}
+                onClick={() => submitAddEditBook()}
+              /> */}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
@@ -693,7 +719,7 @@ const RegisterUser = ({navigation, enrollData}) => {
         onCancel={hideDatePicker}
         maximumDate={new Date()}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

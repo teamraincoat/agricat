@@ -1,53 +1,36 @@
-// Building Offline First App in React Native using PouchDB and CouchDB
-// https://aboutreact.com/react-native-offline-app-using-pouchdb-couchdb/
-// Screen to view all the user*/
-
 import React, {useState, useEffect} from 'react';
 import {
   FlatList,
-  Text,
   View,
   SafeAreaView,
   RefreshControl,
   Pressable,
   StyleSheet,
+  Image,
+  ScrollView,
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import ScanIcon from '../assets/icons/ScanIcon';
 import {colors, styles} from '../styles';
-import {connect} from 'react-redux';
 import {setEnrollDataInStore} from '../redux/action/EnrollActions';
 import {useLocal} from '../contex/index';
-import {useDispatch} from 'react-redux';
-import {initDBAction} from '../redux/action/CommonActions';
 import EText from '../atoms/EText';
+import {useUsers} from '../provider/UsersProvider';
+import moment from 'moment';
 
 const Home = props => {
-  const {
-    navigation,
-    setEnrollDataInStore,
-    initDBAction,
-    enrollData,
-    isDBInitiate,
-  } = props;
+  const {navigation} = props;
 
   const [refresh, setRefresh] = useState(false);
   const [searchWord, setSearchWord] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const {translations} = useLocal();
+  const {users: enrollData} = useUsers();
 
   useEffect(() => {
-    if (isDBInitiate) {
-      setEnrollDataInStore();
+    if (enrollData && enrollData.length > 0) {
+      onSearch();
     }
-  }, [isDBInitiate]);
-  useEffect(() => {
-    if (!isDBInitiate) {
-      initDBAction();
-    }
-  }, [isDBInitiate]);
-  useEffect(() => {
-    onSearch();
   }, [searchWord]);
 
   const onSearch = () => {
@@ -73,17 +56,34 @@ const Home = props => {
         <EText>{`${translations['SurName']}: ${item.surName}`}</EText>
         <EText>{`${translations['Gender']}: ${item.gender}`}</EText>
         <EText> {`${translations['MobilePhone']}: ${item.mobilePhone}`}</EText>
-        <EText>{`${translations['Dob']}: ${item.dob}`}</EText>
+        <EText>{`${translations['Dob']}: ${moment(item.dateOfBirth).format(
+          'DD/MM/YYYY',
+        )}`}</EText>
         <EText>{`${translations['Locality']}: ${item.locality}`}</EText>
-        <EText>{`${translations['Sublocality']}: ${item.sublocality}`}</EText>
+        <EText>{`${translations['Sublocality']}: ${item.municipality}`}</EText>
         <EText>{`${translations['GeoJson']}: ${item.geoJson}`}</EText>
         <EText>{`${translations['CoveredArea']}: ${item.coveredArea}`}</EText>
         <EText>{`${translations['Crop']}: ${item.crop}`}</EText>
         <EText>{`${translations['CropType']}: ${item.cropType}`}</EText>
         <EText>{`${translations['CropCycle']}: ${item.cropCycle}`}</EText>
         <EText>
-          {`${translations['ApplicationTime']}: ${item.applicationTime}`}
+          {`${translations['ApplicationTime']}: ${moment(
+            item.dateOfApplication,
+          ).format('DD/MM/YYYY')}`}
         </EText>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={localStyles.imageContainer} >
+        {
+        item &&
+          item.images &&
+          item.images.length > 0 &&
+          item.images.map(img => (
+              <Image
+              key={img.name}
+                source={{uri: `data:image/png;base64,${img.uri}`}}
+                style={localStyles.imageStyle}
+              />
+              ))}
+              </ScrollView>
       </View>
     );
   };
@@ -134,21 +134,17 @@ const localStyles = StyleSheet.create({
     padding: 16,
   },
   searchInput: {textAlignVertical: 'top'},
+  imageContainer:{
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  imageStyle: {
+    height: 80,
+    width: 80,
+    marginLeft:0,
+    marginRight: 10,
+    borderRadius: 10,
+  },
 });
 
-const mapStateToProps = ({EnrollReducers, CommonReducer}) => {
-  const {enrollData} = EnrollReducers;
-  const {isDBInitiate} = CommonReducer;
-  return {
-    enrollData,
-    isDBInitiate,
-  };
-};
-
-const mapDispatchToProps = {
-  setEnrollDataInStore,
-  initDBAction,
-};
-
-// export default Home;
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;
