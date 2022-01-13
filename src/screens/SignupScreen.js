@@ -1,33 +1,30 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Pressable,
-  Button,
-  Alert,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Constants from '../constants/Constants';
-import {app, signIn} from '../database/realmConfig';
-import {getStorageData, saveStorageData} from '../utils/localStorage';
+import React, { useState } from 'react';
+import {View, StyleSheet, Pressable, Alert} from 'react-native';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-const LoginScreen = ({navigation}) => {
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { signIn, signUp } from '../database/realmConfig';
+const SignupScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const onPressSignIn = async () => {
+  console.log('email', email);
+    console.log('password', password);
+  const onPressSignUp = async () => {
+      console.log("Press sign up");
     try {
-      await signIn(email, password,navigation);
+      await signUp(email, password);
+      console.log('Sign up success');
+      signIn(email, password, navigation);
+    //   navigation.navigate('Main');
     } catch (error) {
-      Alert.alert(`Failed to sign in: ${error.message}`);
+        console.log('Sign up error', error);
+      Alert.alert(`Failed to sign up: ${error.message}`);
     }
   };
   return (
     <SafeAreaView style={styles.container}>
-      <EText style={styles.title}>Login</EText>
+      <EText style={styles.title}>SignUp</EText>
       <View style={styles.inputContainer}>
         <ETextInput
           onChangeText={setEmail}
@@ -46,23 +43,18 @@ const LoginScreen = ({navigation}) => {
           secureTextEntry
         />
       </View>
-      <View style={styles.linkContainer}>
-        <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
-          <EText style={styles.forgotText}>{'Forgot Password?'}</EText>
-        </Pressable >
-
-        <Pressable onPress={() => navigation.navigate('SignUp')}>
-          <EText style={styles.signupText}>{'Signup here'}</EText>
-        </Pressable>
-      </View>
+      <Pressable onPress={() => navigation.navigate('Login')}>
+        <EText style={styles.loginText}>{'Login?'}</EText>
+      </Pressable>
       <EButton
         style={styles.button}
-        onClick={() => onPressSignIn()}
-        title="Sign In"
+        onClick={onPressSignUp}
+        title="Sign up"
       />
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -72,8 +64,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  forgotText: {
+  loginText: {
     textAlign: 'left',
+    paddingHorizontal: 5,
+    marginTop: 10,
   },
   linkContainer: {
     flexDirection: 'row',
@@ -100,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;
