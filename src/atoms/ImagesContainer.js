@@ -66,6 +66,7 @@ const localStyles = StyleSheet.create({
   imageInnerContainer: {
     position: 'relative',
     margin: 5,
+    marginLeft:20
   },
   deleteIcon: {
     position: 'absolute',

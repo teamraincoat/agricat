@@ -1,6 +1,7 @@
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {colors, styles} from '../styles';
+
 
 const EButton = props => {
   return (
@@ -13,15 +14,20 @@ const EButton = props => {
         props.style,
       ]}
       onPress={props.onClick}>
-      <Text style={[localStyles.text, props.textStyle]}>{props.title}</Text>
+        {props.loading ? <ActivityIndicator /> :  <Text style={[localStyles.text, props.textStyle]}>{props.title}</Text>}
     </TouchableOpacity>
   );
 };
 
 const localStyles = StyleSheet.create({
   button: {
-    backgroundColor: colors.darkGreen,
+    backgroundColor: colors.darkBlack,
     color: colors.white,
+    height: 50,
+    width: '90%',
+    alignSelf:'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   text: {
     color: colors.white,

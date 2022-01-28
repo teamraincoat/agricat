@@ -36,7 +36,7 @@ function App() {
   }, []);
   const MainStackNavigator = () => (
     <UsersProvider>
-      <MainStack.Navigator screenOptions={{headerShown: false}}>
+      <MainStack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Home" component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
       </MainStack.Navigator>

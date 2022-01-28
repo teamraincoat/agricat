@@ -2,25 +2,24 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   Pressable,
-  Button,
   Alert,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Constants from '../constants/Constants';
-import {app, signIn} from '../database/realmConfig';
-import {getStorageData, saveStorageData} from '../utils/localStorage';
+
+import { signIn} from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
+
 const LoginScreen = ({navigation}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState({value: 'tj1@yopmail.com', error: ''});
+  const [password, setPassword] = useState({value: '123456', error: ''});
+  const [loading, setLoading] = useState(false)
   const onPressSignIn = async () => {
     try {
-      await signIn(email, password,navigation);
+      await signIn(email.value, password.value,data=null, navigation);
     } catch (error) {
       Alert.alert(`Failed to sign in: ${error.message}`);
     }
@@ -28,28 +27,40 @@ const LoginScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <EText style={styles.title}>Login</EText>
-      <View style={styles.inputContainer}>
+      <View>
         <ETextInput
-          onChangeText={setEmail}
-          value={email}
-          placeholder="email"
-          style={styles.inputStyle}
+          email
+          defaultValue={email.value}
+          onChangeText={text => setEmail({value: text, error: ''})}
+          error={!!email.error}
+          errorText={email.error}
+          label={<Text>Email</Text>}
           autoCapitalize="none"
+          placeholder="enter email"
+          returnKeyType="next"
+          blurOnSubmit={false}
+          keyboardShouldPersistTaps
         />
       </View>
-      <View style={styles.inputContainer}>
+      <View>
         <ETextInput
-          onChangeText={text => setPassword(text)}
-          value={password}
-          placeholder="password"
-          style={styles.inputStyle}
-          secureTextEntry
+          password
+          secure
+          defaultValue={password.value}
+          error={!!email.error}
+          errorText={email.error}
+          onChangeText={text => setPassword({value: text, error: ''})}
+          returnKeyType="done"
+          placeholder="enter password"
+          label={<Text>Password</Text>}
+          onSubmitEditing={() => console.warn('submit')}
+          keyboardShouldPersistTaps
         />
       </View>
       <View style={styles.linkContainer}>
         <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
           <EText style={styles.forgotText}>{'Forgot Password?'}</EText>
-        </Pressable >
+        </Pressable>
 
         <Pressable onPress={() => navigation.navigate('SignUp')}>
           <EText style={styles.signupText}>{'Signup here'}</EText>
@@ -59,6 +70,8 @@ const LoginScreen = ({navigation}) => {
         style={styles.button}
         onClick={() => onPressSignIn()}
         title="Sign In"
+        loading={loading}
+        textStyle={styles.buttonText}
       />
     </SafeAreaView>
   );
@@ -66,6 +79,7 @@ const LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ECF0F3',
   },
   title: {
     fontSize: 30,
@@ -74,25 +88,29 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     textAlign: 'left',
+    fontSize: 16,
+  },
+  signupText: {
+    fontSize: 16,
   },
   linkContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 25,
   },
   button: {
-    padding: 10,
+    position: 'absolute',
+    bottom: 40,
     paddingVertical: 12,
-    margin: 5,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 55,
+    borderRadius: 30,
   },
-  inputContainer: {
-    padding: 5,
+  buttonText: {
+    fontSize: 16,
   },
+
   inputStyle: {
     borderColor: 'black',
     padding: 10,

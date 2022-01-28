@@ -50,7 +50,6 @@ const RegisterUser = ({navigation, enrollData}) => {
       lastName: 'TestL',
       surName: 'TestS',
       dateOfBirth: '',
-      enrollId: '222',
       gender: '',
       contactNo: '855',
       address: '842,grihi',
@@ -120,7 +119,6 @@ const RegisterUser = ({navigation, enrollData}) => {
         lastName: lastName ? lastName : '',
         surName: surName ? surName : '',
         dateOfBirth: dob ? moment(dob).format('DD/MM/YYYY') : '',
-        enrollId: _id,
         gender: gender ? gender : '',
         contactNo: mobilePhone ? mobilePhone : '',
         address: `${locality ? locality : ''}${sublocality ? sublocality : ''}`,
@@ -150,17 +148,13 @@ const RegisterUser = ({navigation, enrollData}) => {
       address1: data.address,
       dob: new Date(data.dateOfBirth),
       locality: data.locality,
-      TBD: data.municipality,
       municipality: data.municipality,
-      policyPublicId: data.policyPublicId,
-      policyActiveId: data.policyActiveId,
       geoJson: data.geoJson,
       coveredArea: data.coveredArea,
       crop: data.crop,
       cropType: data.cropType,
       cropCycle: data.cropCycle,
-      dateOfApplication: data.dateOfApplication,
-      enrollId: 'rewrwerwer',
+      applicationTime: data.dateOfApplication,
       images: data.images,
       _id: uuid.v4(),
     });
@@ -278,12 +272,13 @@ const RegisterUser = ({navigation, enrollData}) => {
         onImageLibraryPress={onImageLibraryPress}
       />
       <View style={[localStyles.mainContainer, styles.flex, styles.p15]}>
-        <View style={[styles.rowSpaceBetween, styles.mb20]}>
+        <View style={[localStyles.headerContainer, styles.mb20]}>
           <EButton
+          style={localStyles.headerButton}
             title={translations['Back']}
             onClick={() => navigation.goBack(null)}
           />
-          <EButton title={translations['Scan']} onClick={onHandleScan} />
+          <EButton style={localStyles.headerButton} title={translations['Scan']} onClick={onHandleScan} />
         </View>
         <View style={styles.flex}>
           <KeyboardAvoidingView
@@ -369,8 +364,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     textStyle={[
                       styles.selfStart,
                       {
-                        color: !value ? colors.grey : colors.black,
-                        fontWeight: 'normal',
+                        color: !value ? colors.grey : "#121212",
                       },
                     ]}
                   />
@@ -386,46 +380,34 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.enrollId']}
-                    keyboardType="numeric"
-                    style={styles.p10}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                  />
-                )}
-                name="enrollId"
-              />
-              {errors.enrollId && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
                 render={({field: {value, onChange}}) => {
                   return (
                     <DropDownPicker
-                      placeholder={translations['Placeholder.gender']}
-                      open={openDropDown}
-                      value={value}
-                      items={gender}
-                      setOpen={setOpenDropDown}
-                      setValue={onChange}
-                      onChangeValue={value => {
-                        onChange(value);
-                      }}
-                      style={[localStyles.dropDownStyle, styles.mt10]}
-                      disableBorderRadius={true}
-                      textStyle={{
-                        color: !value ? colors.grey : colors.black,
-                      }}
-                      listMode="SCROLLVIEW"
-                    />
+                    placeholder={translations['Placeholder.gender']}
+                    open={openDropDown}
+                    value={value}
+                    items={gender}
+                    setOpen={setOpenDropDown}
+                    setValue={onChange}
+                    onChangeValue={value => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      styles.mt10,
+                      {borderColor: errors.gender ? 'red' : colors.darkBlack},
+                    ]}
+                    disableBorderRadius={true}
+                    textStyle={{
+                      color: !value ? colors.grey : colors.black,
+                    }}
+                    dropDownContainerStyle={{
+                      width: '90%',
+                      alignSelf: 'center',
+                      borderRadius: 10,
+                    }}
+                    listMode="SCROLLVIEW"
+                  />
                   );
                 }}
                 name="gender"
@@ -532,8 +514,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     textStyle={[
                       styles.selfStart,
                       {
-                        color: !value ? colors.grey : colors.black,
-                        fontWeight: 'normal',
+                        color: !value ? colors.grey : "#121212",
                       },
                     ]}
                   />
@@ -727,16 +708,42 @@ const localStyles = StyleSheet.create({
   mainContainer: {
     backgroundColor: colors.white,
   },
+  headerContainer:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    paddingHorizontal:10
+  },
+  headerButton:{
+    width:'40%',
+    marginHorizontal:10
+  },
   dropDownStyle: {
-    backgroundColor: colors.white,
-    borderColor: colors.lightBlue,
-    borderRadius: 0,
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    borderWidth: 2,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    alignSelf: 'center',
+    width: '90%',
   },
   datePicker: {
     backgroundColor: colors.white,
-    borderColor: colors.black,
-    borderWidth: 1,
-    borderColor: colors.lightBlue,
+    fontWeight: '500',
+    color: '#121212',
+    marginHorizontal: 20,
+    borderRadius: 10,
+    borderColor: '#000000',
+    borderWidth: 2,
+    marginVertical: 5,
+    height: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    fontSize: 16,
+  },
+  dropDownContainer:{
+    backgroundColor:colors.white,
+    width: '90%',
+    alignSelf: 'center',
   },
   addImageButton: {
     backgroundColor: 'green',
