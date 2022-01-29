@@ -56,7 +56,7 @@ const EnrollmentSchema = {
     adminArea: 'string',
     adminAreaId: 'string',
     applicationTime: 'date?',
-    campaign: 'Campaign',
+    //campaign: 'object',
     coveredAreaHa: 'decimal128?',
     crop: 'string',
     cropId: 'string?',
@@ -111,7 +111,6 @@ const LocationSchema = {
     partition: 'string?',
   },
 };
-
 export {
     OrganizerSchema,
     UserSchema,

@@ -136,7 +136,7 @@ const UsersProvider = ({children, projectPartition = {}}) => {
         const userListUpdated = await realm.objects('Enrollment');
         setUsers([...userListUpdated]);
       } catch (error) {
-        console.log('error==>', error);
+        console.log('submitAddUser error==>', error);
       }
     }
   };

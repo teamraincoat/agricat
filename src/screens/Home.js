@@ -148,7 +148,7 @@ const Home = ({route, navigation}) => {
         </View>
 
       </View>
-      <Pressable
+      {/* <Pressable
         style={[styles.p10]}
         onPress={() => {
           if (userInfoData) {
@@ -156,7 +156,7 @@ const Home = ({route, navigation}) => {
           }
         }}>
         <ScanIcon />
-      </Pressable>
+      </Pressable> */}
       <Pressable
         style={[styles.absolute, styles.p10, localStyles.scanIconButton]}
         onPress={() => navigation.navigate('Register')}>

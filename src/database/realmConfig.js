@@ -12,11 +12,12 @@ const getRealm = async userId => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
   };
+  
   const configuration = {
     schema: [EnrollmentSchema,Enrollment_imagesSchema, UserSchema,User_memberOfSchema],
     sync: {
       user: app.currentUser,
-      partitionValue: app.currentUser ? app.currentUser.id : userId, //app.currentUser.id,
+      partitionValue: 'locality=17', //app.currentUser.id,
        //newRealmFileBehavior: OpenRealmBehaviorConfiguration,
     },
     error: (_session, error) => {
