@@ -14,6 +14,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		DA8ED1E62D3BB552157D51BB /* libPods-enrollmentApp-enrollmentAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E31F9978CD2D2001DCAD7F70 /* libPods-enrollmentApp-enrollmentAppTests.a */; };
 		EF6BD0D86B744370DEB3A48F /* libPods-enrollmentApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA16E199839E8B943EFED01D /* libPods-enrollmentApp.a */; };
+		3936F6EF007A45C4ACF6B787 /* ProximaNovaFont.otf in Resources */ = {isa = PBXBuildFile; fileRef = ECE21C1E8D87412A8026D493 /* ProximaNovaFont.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		DA16E199839E8B943EFED01D /* libPods-enrollmentApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-enrollmentApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E31F9978CD2D2001DCAD7F70 /* libPods-enrollmentApp-enrollmentAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-enrollmentApp-enrollmentAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		ECE21C1E8D87412A8026D493 /* ProximaNovaFont.otf */ = {isa = PBXFileReference; name = "ProximaNovaFont.otf"; path = "../src/assets/fonts/ProximaNovaFont.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				365D0CF91543E5BD06A9C1D1 /* Pods */,
+				609A1C5477C14DFD905DD99D /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -147,6 +150,15 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		609A1C5477C14DFD905DD99D /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				ECE21C1E8D87412A8026D493 /* ProximaNovaFont.otf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -244,6 +256,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				3936F6EF007A45C4ACF6B787 /* ProximaNovaFont.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

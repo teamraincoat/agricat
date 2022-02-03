@@ -21,17 +21,6 @@ const UsersProvider = ({children, projectPartition = {}}) => {
         if (result) {
           setUserId(result);
         }
-        // const configuration = {
-        //     schema: [EnrollmentSchema,Enrollment_imagesSchema],
-        //     sync: {
-        //       user: app.currentUser,
-        //       partitionValue: "location=GUERRERO"// app.currentUser ? app.currentUser.id : userId, //app.currentUser.id,
-        //        //newRealmFileBehavior: OpenRealmBehaviorConfiguration,
-        //     },
-        //   };
-        //   // open a realm for this particular project
-        //   //Realm.open(config).then((projectRealm) => {
-            //  Realm.open(configuration)
         getRealm(result)
           .then(projectRealm => {
             realmRef.current = projectRealm;

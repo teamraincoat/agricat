@@ -12,21 +12,31 @@ import { signIn} from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
+import BackgroundImage from '../atoms/BackgroundImage';
+import { colors , styles} from '../styles';
+import { hp } from '../styles/metrics';
 
+// import {useLocal} from '../contex';
+import { translations } from '../provider/LocalizeProvider';
 const LoginScreen = ({navigation}) => {
-  const [email, setEmail] = useState({value: 'tj1@yopmail.com', error: ''});
-  const [password, setPassword] = useState({value: '123456', error: ''});
+    // const {translations ,setAppLanguage} = useLocal();
+  const [email, setEmail] = useState({value: 'tushali024+realmapp007@gmail.com', error: ''});
+  const [password, setPassword] = useState({value: 'enrollmenttest007', error: ''});
   const [loading, setLoading] = useState(false)
   const onPressSignIn = async () => {
     try {
-      await signIn(email.value, password.value,data=null, navigation);
+      await signIn(email.value, password.value, null, navigation);
     } catch (error) {
       Alert.alert(`Failed to sign in: ${error.message}`);
     }
   };
   return (
-    <SafeAreaView style={styles.container}>
-      <EText style={styles.title}>Login</EText>
+      <BackgroundImage src={require('../assets/SplashBackground.png')}>
+      <View style={localStyles.loginTextContainer}>
+
+      <EText style={localStyles.title}>{translations['Login.title']}</EText>
+      <EText style={localStyles.subTitle}>{translations['Login.subTitle']}</EText>
+      </View>
       <View>
         <ETextInput
           email
@@ -34,7 +44,7 @@ const LoginScreen = ({navigation}) => {
           onChangeText={text => setEmail({value: text, error: ''})}
           error={!!email.error}
           errorText={email.error}
-          label={<Text>Email</Text>}
+          label={<EText>Email</EText>}
           autoCapitalize="none"
           placeholder="enter email"
           returnKeyType="next"
@@ -45,77 +55,59 @@ const LoginScreen = ({navigation}) => {
       <View>
         <ETextInput
           password
-          secure
+          secureTextEntry={true}
           defaultValue={password.value}
           error={!!email.error}
           errorText={email.error}
           onChangeText={text => setPassword({value: text, error: ''})}
           returnKeyType="done"
           placeholder="enter password"
-          label={<Text>Password</Text>}
+          label={<EText>Password</EText>}
           onSubmitEditing={() => console.warn('submit')}
           keyboardShouldPersistTaps
         />
       </View>
-      <View style={styles.linkContainer}>
-        <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
-          <EText style={styles.forgotText}>{'Forgot Password?'}</EText>
+      <Pressable style={localStyles.signupTextContainer} onPress={() => navigation.navigate('SignUp')}>
+          <EText style={localStyles.signupText}>{translations['Login.signUpText']}</EText>
         </Pressable>
-
-        <Pressable onPress={() => navigation.navigate('SignUp')}>
-          <EText style={styles.signupText}>{'Signup here'}</EText>
-        </Pressable>
-      </View>
       <EButton
-        style={styles.button}
+        style={localStyles.button}
         onClick={() => onPressSignIn()}
-        title="Sign In"
+        title="Log in"
         loading={loading}
-        textStyle={styles.buttonText}
+        textStyle={localStyles.buttonText}
       />
-    </SafeAreaView>
+    </BackgroundImage>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ECF0F3',
-  },
-  title: {
-    fontSize: 30,
-    textAlign: 'center',
-    margin: 10,
-  },
-  forgotText: {
-    textAlign: 'left',
-    fontSize: 16,
-  },
-  signupText: {
-    fontSize: 16,
-  },
-  linkContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    paddingHorizontal: 25,
-  },
-  button: {
-    position: 'absolute',
-    bottom: 40,
-    paddingVertical: 12,
-    height: 55,
-    borderRadius: 30,
-  },
-  buttonText: {
-    fontSize: 16,
-  },
 
-  inputStyle: {
-    borderColor: 'black',
-    padding: 10,
-    borderRadius: 2,
-  },
+const localStyles = StyleSheet.create({
+    container: {
+      ...styles.flex,
+      backgroundColor: colors.white,
+    },
+    loginTextContainer: {
+        ...styles.center,
+       marginTop:hp(15),
+    },
+    title:{
+        ...styles.h1,
+        color: colors.black,
+        ...styles.mv8,
+    },
+    subTitle:{
+        color: colors.black,
+        ...styles.h3,
+        ...styles.mv8,
+    },
+    signupTextContainer:{
+        ...styles.center,
+    },
+    signupText:{
+        color: colors.black,
+        ...styles.h3,
+        ...styles.mv8,
+    },
 });
 
 export default LoginScreen;

@@ -3,7 +3,9 @@ import flex from './flex'
 import margin from './margin'
 import padding from './padding'
 import general from './general'
-
+import font from './fonts';
+import text from './text';
+import borders from './borders';
 export * from './colors'
 
 export const styles = StyleSheet.create({
@@ -11,4 +13,7 @@ export const styles = StyleSheet.create({
   ...margin,
   ...padding,
   ...general,
+  ...font,
+  ...text,
+  ...borders,
 })

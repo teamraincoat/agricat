@@ -9,6 +9,7 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  TouchableWithoutFeedback
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import ScanIcon from '../assets/icons/ScanIcon';
@@ -26,12 +27,17 @@ import {signOut} from '../database/realmConfig';
 import BottomIndicator from '../assets/icons/BottomIndicator';
 import TopIndicator from '../assets/icons/TopIndicator';
 import PendingUserList from '../componets/PendingUserList';
-
+import SyncIcon from '../assets/icons/SyncIcon';
+import NoCompaign from '../componets/NoCompaign';
+import UploadIcon from '../assets/icons/UploadIcon';
+import {hp, normalize, wp} from '../styles/metrics';
+import UploadDataModal from './modals/UploadDataModal';
+import ScanModal from './ScanModal';
+import { translations } from '../provider/LocalizeProvider';
 const numColumns = 2;
 const dataList = [
-  {key: 'pending'},
-  {key: 'completed'},
-
+  {key: `${translations['Campaign.completed']}`, value: '11%'},
+  {key: `${translations['Campaign.rolledUp']}`, value: '15'},
 ];
 const Home = ({route, navigation}) => {
   //const {userInfo} = route.param;
@@ -39,7 +45,12 @@ const Home = ({route, navigation}) => {
   const [searchWord, setSearchWord] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showFullDetails, setShowFullDetails] = useState(false);
-  const {translations} = useLocal();
+  const [isCompaign, setIsCompaign] = useState(true);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [isMenuOpen,setIsMenuOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [qrInfo, setQrInfo] = React.useState('');
+
   const {users: enrollData, addUserInfo} = useUsers();
 
   let userInfoData;
@@ -53,9 +64,11 @@ const Home = ({route, navigation}) => {
   //   }
   // }, [searchWord]);
 
-
   const uploadUserInformation = userInfo => {
     addUserInfo(userInfo);
+  };
+  const onHandleScan = () => {
+    setModalVisible(true);
   };
   const onSearch = () => {
     const searchedData = enrollData.filter(
@@ -67,21 +80,23 @@ const Home = ({route, navigation}) => {
     setFilteredData(searchedData);
   };
 
+  const showUploadModal = () => {
+    setUploadModalVisible(true);
+  };
   let viewItemSeparator = () => {
     return <View style={localStyles.itemSeparator} />;
   };
 
-
   const _renderItem = ({item, index}) => {
-    let {itemStyle, itemText, itemInvisible} = localStyles;
+    let {itemStyle, itemText, itemInvisible, remainingPercentage} = localStyles;
     if (item.empty === true) {
       return <View style={[itemStyle, itemInvisible]} />;
     }
     return (
       <View style={itemStyle}>
-        <EText style={itemText}>{item.key}</EText>
-        <EText style={{color: '#343434', fontSize: 15, margin: 8}}>
-         24 entries
+        <EText style={remainingPercentage}>{item.value}</EText>
+        <EText numberOfLines={2} style={itemText}>
+          {item.key}
         </EText>
       </View>
     );
@@ -98,84 +113,161 @@ const Home = ({route, navigation}) => {
   };
 
   const _offlineRenderItem = ({item, index}) => {
-   return <PendingUserList item={item} index={index} />;
+    return <PendingUserList item={item} index={index} />;
   };
+  const checkMenuBar = () => {
+      if(isMenuOpen){
+          setIsMenuOpen(false)
+      }
+  }
 
   return (
-    <SafeAreaView style={styles.flex}>
+    <SafeAreaView style={localStyles.mainContainer}>
       <View style={[styles.flex, styles.p15]}>
+
         <View style={localStyles.headerContainer}>
-          <LottieView
+          {/* <LottieView
             source={require('../assets/icons/syncRefresher.json')}
             autoPlay={false}
             style={{width: 40, height: 40}}
-          />
-          <Pressable onPress={() => signOut(navigation)}>
+          /> */}
+          {isCompaign ? (
+            <Pressable onPress={showUploadModal}>
+              <UploadIcon />
+            </Pressable>
+          ) : (
+            <Pressable>
+              <SyncIcon />
+            </Pressable>
+          )}
+
+          <Pressable onPress={() => setIsMenuOpen(!isMenuOpen)}>
             <MenuBarIcon />
           </Pressable>
         </View>
-        <ETextInput
-          placeholder={translations['Home.search']}
-          value={searchWord}
-          onChangeText={word => setSearchWord(word.toLowerCase())}
-          maxLength={50}
-          style={[styles.p10, localStyles.searchInput]}
-        />
-        <View>
+        <TouchableWithoutFeedback  onPress={checkMenuBar}>
+        {isCompaign ? (
+          <View style={{flex: 1}}>
+            <View style={localStyles.compaignInfo}>
+              <EText style={localStyles.title}>{translations['Campaign.title']}</EText>
+              <EText style={localStyles.subTitle}>
+              {translations['Campaign.assign']}
+              </EText>
+            </View>
+            <View>
+              <FlatList
+                data={formatData(dataList, numColumns)}
+                style={localStyles.container}
+                renderItem={_renderItem}
+                keyExtractor={(item, index) => index.toString()}
+                numColumns={numColumns}
+              />
+            </View>
+            <EText style={[localStyles.title, {...styles.ml15}]}>
+            {translations['Campaign.locallyRolled']}
+            </EText>
 
-        <FlatList
-          data={formatData(dataList, numColumns)}
-          style={localStyles.container}
-          renderItem={_renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={numColumns}
-        />
-        </View>
-        <View style={{flex:1}}>
+            {enrollData && enrollData.length > 0 ? (
+              <View onStartShouldSetResponder={() => true} style={{flex: 1}}>
+                <FlatList
+                nestedScrollEnabled={true}
+                  data={enrollData && enrollData.length > 0 ? enrollData : []}
+                  renderItem={_offlineRenderItem}
+                  keyExtractor={(item, index) => item._id.toString()}
+                  showsVerticalScrollIndicator={false}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refresh}
+                      onRefresh={setEnrollDataInStore}
+                    />
+                  }
+                />
+              </View>
+            ) : (
+              <EText style={[localStyles.subTitle, {...styles.ml15}]}>
+                {translations['Campaign.nodata']}
+              </EText>
+            )}
 
-        <FlatList
-          data={enrollData && enrollData.length > 0 ? enrollData : []}
-          renderItem={_offlineRenderItem}
-          keyExtractor={(item, index) => item._id.toString()}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refresh}
-              onRefresh={setEnrollDataInStore}
-            />
-          }
-        />
-        </View>
-
+            <Pressable
+              style={[styles.absolute, styles.p10, localStyles.scanIconButton]}
+              //onPress={() => navigation.navigate('Register')}
+              onPress={onHandleScan}
+              >
+              <ScanIcon />
+            </Pressable>
+          </View>
+        ) : (
+          <NoCompaign />
+        )}
+        </TouchableWithoutFeedback>
       </View>
-      {/* <Pressable
-        style={[styles.p10]}
-        onPress={() => {
-          if (userInfoData) {
-            uploadUserInformation(userInfoData);
-          }
-        }}>
-        <ScanIcon />
-      </Pressable> */}
-      <Pressable
-        style={[styles.absolute, styles.p10, localStyles.scanIconButton]}
-        onPress={() => navigation.navigate('Register')}>
-        <ScanIcon />
-      </Pressable>
+
+      {isMenuOpen &&(
+      <View style={localStyles.menuItems}>
+        <Pressable  style={localStyles.menuItemContainer}>
+          <EText style={localStyles.menuTitle}>{translations['Menu.faq']}</EText>
+        </Pressable>
+        <Pressable onPress={() => signOut(navigation)} style={localStyles.menuItemContainer}>
+          <EText style={localStyles.menuTitle}>{translations['Menu.logout']}</EText>
+        </Pressable>
+        <Pressable style={[localStyles.menuItemContainer, {borderBottomWidth: 0}]}>
+          <EText style={localStyles.menuTitle}>{translations['Menu.settings']}</EText>
+        </Pressable>
+      </View>
+      )}
+      <UploadDataModal
+        visible={uploadModalVisible}
+        closeModal={setUploadModalVisible}
+      />
+      <ScanModal
+        visible={modalVisible}
+        closeModal={setModalVisible}
+        setQrInfo={setQrInfo}
+        route={navigation}
+      />
     </SafeAreaView>
   );
 };
 
 const localStyles = StyleSheet.create({
+  mainContainer: {
+    ...styles.flex,
+    backgroundColor: colors.lightGrey,
+  },
   headerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
+  compaignInfo: {
+    ...styles.itemsStart,
+    ...styles.mt30,
+    ...styles.ml15,
+  },
+  remainingPercentage: {
+    ...styles.h1,
+    color: colors.black,
+    fontSize: normalize(36),
+    lineHeight: 43,
+  },
+  title: {
+    ...styles.h1,
+    color: colors.black,
+    ...styles.mv8,
+    ...styles.left,
+  },
+  subTitle: {
+    color: colors.black,
+    ...styles.h3,
+    ...styles.mv8,
+    ...styles.left,
+  },
   scanIconButton: {
-    bottom: 30,
-    right: 30,
+    bottom: 0,
+    right: 0,
+    paddingRight: 0,
     backgroundColor: colors.green,
     borderRadius: 5,
   },
@@ -184,20 +276,9 @@ const localStyles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: colors.white,
     padding: 16,
-    borderRadius:10,
-  },
-  searchInput: {textAlignVertical: 'top'},
-  imageContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  imageStyle: {
-    height: 80,
-    width: 80,
-    marginLeft: 0,
-    marginRight: 10,
     borderRadius: 10,
   },
+
   container: {
     marginVertical: 10,
     backgroundColor: 'transparent',
@@ -206,65 +287,45 @@ const localStyles = StyleSheet.create({
   },
   itemStyle: {
     backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    margin: 20,
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal:4,
+    ...styles.flex,
+    ...styles.center,
+    ...styles.mh15,
+    ...styles.mv10,
+    ...styles.radius5,
+    ...styles.ph15,
+    height: hp(18),
+    color: colors.black,
   },
   itemText: {
-    fontSize: 22,
     color: '#393939',
+    ...styles.h4,
+    ...styles.mt10,
   },
   itemInvisible: {
     backgroundColor: 'transparent',
   },
-
-
-  movieContainer: {
-    width: '90%',
-    alignSelf: 'center',
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 12 * 0.5,
-    paddingVertical: 5,
-    borderRadius: 10,
-
-    marginVertical: 6,
+  menuItems: {
+    ...styles.absolute,
+    width: wp(55),
+    top: hp(2),
+    right: wp(4),
+    ...styles.radius8,
+    backgroundColor: colors.white,
+    zIndex: 1,
   },
-  mainContainer: {
-    width: '100%',
-    alignSelf: 'center',
-    backgroundColor: "#ffffff",
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  menuItemContainer: {
+    borderBottomColor: 'rgba(0, 0, 0, 0.1);',
+    borderBottomWidth: 1,
+    height: hp(7),
+    ...styles.center,
+    ...styles.itemsStart,
+    ...styles.ph20,
   },
-  userDetail:{
-    flexDirection:'row',
-    alignItems:'center',
-  },
-  movieImageContainer: {},
-  movieImage: {
-    height: 80,
-    width: 80,
-    margin:5,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  movieDetailContainer: {
-    flexDirection:'column',
-  },
-  movieTitle: {
-    color: colors.darkBlack,
-    fontSize: 20,
-    textAlign: 'left',
-    fontWeight: 'bold',
-  },
-  movieGenre: {
-    color: colors.darkBlack,
-    fontSize: 18,
+  menuTitle: {
+    ...styles.h3,
+    lineHeight: 20,
+    fontSize: normalize(18),
+    color: colors.black,
   },
 });
 

@@ -52,8 +52,20 @@ export default StyleSheet.create({
   ph5: {
     paddingHorizontal: 5,
   },
+  pl8:{
+    paddingLeft: 8,
+  },
+  pl20:{
+    paddingLeft: 20,
+  },
   pl25: {
     paddingLeft: 25,
+  },
+  pr10:{
+    paddingRight:10,
+  },
+  pt5:{
+    paddingTop: 5,
   },
   pt10: {
     paddingTop: 10,

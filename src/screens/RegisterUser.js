@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Platform,
+  Pressable,
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -25,6 +26,10 @@ import ImagesContainer from '../atoms/ImagesContainer';
 import {useUsers} from '../provider/UsersProvider';
 import uuid from 'react-native-uuid';
 import ImgToBase64 from 'react-native-image-base64';
+import {hp, normalize, wp} from '../styles/metrics';
+import CameraIcon from '../assets/icons/CameraIcon';
+import CheckBox from '@react-native-community/checkbox';
+import CloseIcon from '../assets/icons/CloseIcon';
 const gender = [
   {label: 'Male', value: 'male'},
   {label: 'Female', value: 'female'},
@@ -34,6 +39,7 @@ const gender = [
 const RegisterUser = ({navigation, enrollData}) => {
   const [dateState, setDateState] = useState(true);
   const [openDropDown, setOpenDropDown] = useState(false);
+  const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const {translations} = useLocal();
   const sheetRef = useRef();
@@ -65,6 +71,7 @@ const RegisterUser = ({navigation, enrollData}) => {
       payoutMethodId: '',
       adminArea: '',
       subLocality: 'Sudama Chowk',
+      notes: '',
     },
   });
   const [modalVisible, setModalVisible] = useState(false);
@@ -276,23 +283,18 @@ const RegisterUser = ({navigation, enrollData}) => {
 
   return (
     <SafeAreaView style={styles.flex}>
-      <ActionSheetBox
-        ActionRef={sheetRef}
-        captureFromCamera={onCameraPress}
-        onImageLibraryPress={onImageLibraryPress}
-      />
-      <View style={[localStyles.mainContainer, styles.flex, styles.p15]}>
-        <View style={[localStyles.headerContainer, styles.mb20]}>
-          <EButton
-            style={localStyles.headerButton}
-            title={translations['Back']}
-            onClick={() => navigation.goBack(null)}
-          />
-          <EButton
-            style={localStyles.headerButton}
-            title={translations['Scan']}
-            onClick={onHandleScan}
-          />
+      <View style={[localStyles.mainContainer, styles.flex]}>
+        <View style={localStyles.enrollTextContainer}>
+          <View style={localStyles.headerContent}>
+            <Pressable onPress={() => navigation.goBack()}>
+              <CloseIcon />
+            </Pressable>
+            <EText style={localStyles.title}>Enrolar</EText>
+            <View></View>
+          </View>
+          <EText style={localStyles.subTitle}>
+            Complete y verifique la informacion del agricultor.
+          </EText>
         </View>
         <View style={styles.flex}>
           <KeyboardAvoidingView
@@ -311,6 +313,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     placeholder={translations['Placeholder.firstName']}
                     style={styles.p10}
                     onBlur={onBlur}
+                    label={<EText>First Name</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                   />
@@ -330,6 +333,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     placeholder={translations['Placeholder.lastName']}
                     style={styles.p10}
                     onBlur={onBlur}
+                    label={<EText>Last Name</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                   />
@@ -349,6 +353,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     placeholder={translations['Placeholder.surName']}
                     style={styles.p10}
                     onBlur={onBlur}
+                    label={<EText>Sur Name</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                   />
@@ -358,7 +363,7 @@ const RegisterUser = ({navigation, enrollData}) => {
               {errors.surName && (
                 <EText>{translations['Field.required']}</EText>
               )}
-
+              <EText style={localStyles.labelStyle}>Gender</EText>
               <Controller
                 control={control}
                 rules={{
@@ -378,18 +383,21 @@ const RegisterUser = ({navigation, enrollData}) => {
                       }}
                       style={[
                         localStyles.dropDownStyle,
-                        styles.mt10,
-                        {borderColor: errors.gender ? 'red' : colors.darkBlack},
+                        {...styles.mt10},
+                        {
+                          borderColor: errors.gender
+                            ? colors.error
+                            : colors.transparent,
+                        },
                       ]}
                       disableBorderRadius={true}
                       textStyle={{
                         color: !value ? colors.grey : colors.black,
+                        ...styles.h3,
                       }}
-                      dropDownContainerStyle={{
-                        width: '90%',
-                        alignSelf: 'center',
-                        borderRadius: 10,
-                      }}
+                      dropDownContainerStyle={
+                        localStyles.dropDownContainerStyle
+                      }
                       listMode="SCROLLVIEW"
                     />
                   );
@@ -409,6 +417,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     style={styles.p10}
                     onBlur={onBlur}
                     keyboardType="numeric"
+                    label={<EText>Contact Number</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     maxLength={10}
@@ -419,7 +428,7 @@ const RegisterUser = ({navigation, enrollData}) => {
               {errors.mobilePhone && (
                 <EText>{translations['Field.required']}</EText>
               )}
-
+              <EText style={localStyles.labelStyle}>Date of Birth</EText>
               <Controller
                 control={control}
                 rules={{
@@ -441,6 +450,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                       styles.selfStart,
                       {
                         color: !value ? colors.grey : '#121212',
+                        ...styles.h3,
                       },
                     ]}
                   />
@@ -461,9 +471,10 @@ const RegisterUser = ({navigation, enrollData}) => {
                     onBlur={onBlur}
                     multiline={true}
                     numberOfLines={5}
+                    label={<EText>Address</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
-                    style={[{textAlignVertical: 'top'}, styles.p10]}
+                    // style={[{textAlignVertical: 'top'}, styles.p10]}
                   />
                 )}
                 name="addressLine"
@@ -481,6 +492,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.locality']}
                     onBlur={onBlur}
+                    label={<EText>Locality</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -499,6 +511,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.sublocality']}
                     onBlur={onBlur}
+                    label={<EText>Sub Locality</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -517,6 +530,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.geojson']}
                     onBlur={onBlur}
+                    label={<EText>Geo Json</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -534,6 +548,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCropArea']}
                     onBlur={onBlur}
+                    label={<EText>Covered Crop Area</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -555,6 +570,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.payoutMethod']}
                     onBlur={onBlur}
+                    label={<EText>Payout Method</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -575,6 +591,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCrop']}
                     onBlur={onBlur}
+                    label={<EText>Covered Crop</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -593,6 +610,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.cropType']}
                     onBlur={onBlur}
+                    label={<EText>Crop Type</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -613,6 +631,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                   <ETextInput
                     placeholder={translations['Placeholder.enrollCoveredCrop']}
                     onBlur={onBlur}
+                    label={<EText>Enroll Covered Crop</EText>}
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -623,7 +642,7 @@ const RegisterUser = ({navigation, enrollData}) => {
               {errors.cropCycle && (
                 <EText>{translations['Field.required']}</EText>
               )}
-
+              <EText style={localStyles.labelStyle}>application Date</EText>
               <Controller
                 control={control}
                 rules={{
@@ -645,6 +664,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                       styles.selfStart,
                       {
                         color: !value ? colors.grey : '#121212',
+                        ...styles.h3,
                       },
                     ]}
                   />
@@ -654,30 +674,77 @@ const RegisterUser = ({navigation, enrollData}) => {
               {errors.applicationTime && (
                 <EText>{translations['Field.required']}</EText>
               )}
-
-              <ImagesContainer
-                selectedFileImages={selectedFiles}
-                setSelectedImages={setSelectedFiles}
-              />
               <Controller
                 control={control}
                 rules={{
                   required: false,
                 }}
                 render={({field: {onChange, onBlur, value}}) => (
-                  <EButton
-                    title={translations['AddImage']}
-                    onClick={() => showActionSheet()}
-                    style={localStyles.addImageButton}
+                  <ETextInput
+                    placeholder={translations['Placeholder.cropType']}
+                    onBlur={onBlur}
+                    label={<EText>Addition Notes (optional)</EText>}
+                    onChangeText={value => onChange(value)}
+                    value={value}
+                    maxLength={225}
+                    multiline={true}
+                    numberOfLines={5}
+                    style={[
+                      styles.p10,
+                      {textAlignVertical: 'top', height: hp(12)},
+                    ]}
                   />
                 )}
-                name="images"
+                name="notes"
               />
+              <EText style={localStyles.labelStyle}>add photo</EText>
+              {console.log('selected fiel==>', selectedFiles)}
+
+              {selectedFiles && selectedFiles.length > 0 ? (
+                <ImagesContainer
+                  selectedFileImages={selectedFiles}
+                  setSelectedImages={setSelectedFiles}
+                />
+              ) : (
+                <Controller
+                  control={control}
+                  rules={{
+                    required: false,
+                  }}
+                  render={({field: {onChange, onBlur, value}}) => (
+                    <EButton
+                      title={translations['AddImage']}
+                      onClick={() => onCameraPress()}
+                      style={localStyles.addImageButton}>
+                      <Pressable>
+                        <CameraIcon />
+                      </Pressable>
+                    </EButton>
+                  )}
+                  name="images"
+                />
+              )}
               {/* {errors.images && <EText>{translations['Field.required']}</EText>} */}
 
+              <View style={localStyles.acceptPermission}>
+                <EText
+                  maxLength={10}
+                  multiline={true}
+                  numberOfLines={2}
+                  style={localStyles.permissionText}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod.
+                </EText>
+                <CheckBox
+                  value={isSelected}
+                  onValueChange={setSelection}
+                  tintColors={{true: colors.black, false: colors.black}}
+                />
+              </View>
               <EButton
                 title={translations['Submit']}
                 onClick={handleSubmit(register_user)}
+                style={localStyles.submitButton}
               />
               {/* <EButton
                 title={translations['Submit']}
@@ -705,47 +772,88 @@ const RegisterUser = ({navigation, enrollData}) => {
 
 const localStyles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.lightGrey,
+  },
+  title: {
+    ...styles.h1,
+    color: colors.black,
+    ...styles.mv8,
+  },
+  subTitle: {
+    color: colors.black,
+    ...styles.h3,
+    ...styles.mv8,
+  },
+  enrollTextContainer: {
+    ...styles.center,
+    ...styles.mt15
+  },
+  headerContent: {
+    ...styles.rowSpaceBetween,
+    width: wp(85),
+    // ...styles.alignStart,
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    ...styles.rowSpaceBetween,
+    ...styles.ph10,
   },
   headerButton: {
     width: '40%',
     marginHorizontal: 10,
   },
   dropDownStyle: {
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    borderWidth: 2,
-    marginHorizontal: 10,
-    marginVertical: 10,
-    alignSelf: 'center',
-    width: '90%',
+    ...styles.radius5,
+    ...styles.mv10,
+    ...styles.mh10,
+    ...styles.selfCenter,
+    ...styles.borderLight,
+    width: wp(90),
+  },
+  labelStyle: {
+    color: colors.black,
+    ...styles.h2,
+    ...styles.mh25,
+    fontSize: normalize(12),
   },
   datePicker: {
+    ...styles.mb10,
+    ...styles.mh10,
+    ...styles.mv8,
+    ...styles.mh10,
+    ...styles.borderLight,
+    height: hp(7),
+    shadowColor: colors.transparent,
     backgroundColor: colors.white,
-    fontWeight: '500',
-    color: '#121212',
-    marginHorizontal: 20,
-    borderRadius: 10,
-    borderColor: '#000000',
-    borderWidth: 2,
-    marginVertical: 5,
-    height: 50,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    fontSize: 16,
   },
-  dropDownContainer: {
-    backgroundColor: colors.white,
-    width: '90%',
-    alignSelf: 'center',
+  dropDownContainerStyle: {
+    ...styles.radius5,
+    ...styles.selfCenter,
+    ...styles.borderLight,
+    width: wp(90),
   },
   addImageButton: {
-    backgroundColor: 'green',
+    ...styles.mh20,
+    ...styles.ph15,
+    ...styles.selfStart,
+    ...styles.rowSpaceBetween,
+    width: wp(50),
+  },
+  acceptPermission: {
+    width: wp(90),
+    ...styles.rowSpaceBetween,
+    ...styles.ph20,
+    ...styles.mt10,
+  },
+  permissionText: {
+    ...styles.h3,
+    width: wp(80),
+    color: colors.black,
+  },
+  disabledtext: {
+    color: colors.greyDark,
+  },
+  submitButton: {
+    ...styles.mv15,
   },
 });
 

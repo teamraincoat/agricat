@@ -14,6 +14,8 @@ import {getStorageData} from './src/utils/localStorage';
 import Constants from './src/constants/Constants';
 import SignupScreen from './src/screens/SignupScreen';
 import ForgotPassword from './src/screens/ForgotPassword';
+import ConsentScreen from './src/screens/ConsentScreen';
+import { LocalizeProvider } from './src/provider/LocalizeProvider';
 
 const reduxStore = createStore(appReducer, {}, applyMiddleware(ReduxThunk));
 
@@ -39,6 +41,7 @@ function App() {
       <MainStack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Home" component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
+        <MainStack.Screen name="Consent" component={ConsentScreen} />
       </MainStack.Navigator>
     </UsersProvider>
   );
@@ -52,8 +55,11 @@ function App() {
     </Stack.Navigator>
   );
 
+
+
   return (
     <RootProvider>
+        <LocalizeProvider>
       <Provider store={reduxStore}>
         <NavigationContainer>
           <Stack.Navigator
@@ -64,6 +70,7 @@ function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
+      </LocalizeProvider>
     </RootProvider>
   );
 }

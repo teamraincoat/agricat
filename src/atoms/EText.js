@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, StyleSheet} from 'react-native';
 
 const EText = props => {
-  return <Text style={[localStyles.text, props.style]}>{props.children}</Text>;
+  return <Text style={[localStyles.text, props.style]} {...props}>{props.children}</Text>;
 };
 
 const localStyles = StyleSheet.create({
