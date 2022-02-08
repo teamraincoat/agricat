@@ -34,11 +34,7 @@ import {hp, normalize, wp} from '../styles/metrics';
 import UploadDataModal from './modals/UploadDataModal';
 import ScanModal from './ScanModal';
 import { translations } from '../provider/LocalizeProvider';
-const numColumns = 2;
-const dataList = [
-  {key: `${translations['Campaign.completed']}`, value: '11%'},
-  {key: `${translations['Campaign.rolledUp']}`, value: '15'},
-];
+
 const Home = ({route, navigation}) => {
   //const {userInfo} = route.param;
   const [refresh, setRefresh] = useState(false);
@@ -51,22 +47,15 @@ const Home = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
 
-  const {users: enrollData, addUserInfo} = useUsers();
+  const {users: enrollData} = useUsers();
 
   let userInfoData;
   if (route && route.params) {
     userInfoData = route.params.userInfo;
   }
 
-  // useEffect(() => {
-  //   if (enrollData && enrollData.length > 0) {
-  //     onSearch();
-  //   }
-  // }, [searchWord]);
 
-  const uploadUserInformation = userInfo => {
-    addUserInfo(userInfo);
-  };
+
   const onHandleScan = () => {
     setModalVisible(true);
   };
@@ -87,29 +76,16 @@ const Home = ({route, navigation}) => {
     return <View style={localStyles.itemSeparator} />;
   };
 
-  const _renderItem = ({item, index}) => {
+  const FarmerDataBlock = ({title, value}) => {
     let {itemStyle, itemText, itemInvisible, remainingPercentage} = localStyles;
-    if (item.empty === true) {
-      return <View style={[itemStyle, itemInvisible]} />;
-    }
     return (
       <View style={itemStyle}>
-        <EText style={remainingPercentage}>{item.value}</EText>
+        <EText style={remainingPercentage}>{value}</EText>
         <EText numberOfLines={2} style={itemText}>
-          {item.key}
+          {title}
         </EText>
       </View>
     );
-  };
-  const formatData = (dataList, numColumns) => {
-    const totalRows = Math.floor(dataList.length / numColumns);
-    let totalLastRow = dataList.length - totalRows * numColumns;
-
-    while (totalLastRow !== 0 && totalLastRow !== numColumns) {
-      dataList.push({key: `blank-${totalLastRow}`, empty: true});
-      totalLastRow++;
-    }
-    return dataList;
   };
 
   const _offlineRenderItem = ({item, index}) => {
@@ -154,14 +130,9 @@ const Home = ({route, navigation}) => {
               {translations['Campaign.assign']}
               </EText>
             </View>
-            <View>
-              <FlatList
-                data={formatData(dataList, numColumns)}
-                style={localStyles.container}
-                renderItem={_renderItem}
-                keyExtractor={(item, index) => index.toString()}
-                numColumns={numColumns}
-              />
+            <View  style={localStyles.container}>
+              <FarmerDataBlock title={`${translations['Campaign.completed']}`} value={`11%`} />
+              <FarmerDataBlock title={`${translations['Campaign.rolledUp']}`} value={enrollData.length > 0 ? enrollData.length : 0 } />
             </View>
             <EText style={[localStyles.title, {...styles.ml15}]}>
             {translations['Campaign.locallyRolled']}
@@ -284,15 +255,17 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderRadius: 10,
     padding: 0,
+    ...styles.rowSpaceAround
   },
   itemStyle: {
     backgroundColor: '#FFFFFF',
-    ...styles.flex,
+    //...styles.flex,
     ...styles.center,
     ...styles.mh15,
     ...styles.mv10,
     ...styles.radius5,
     ...styles.ph15,
+    width: wp(38),
     height: hp(18),
     color: colors.black,
   },

@@ -1,8 +1,7 @@
 import moment from 'moment';
 import React from 'react';
 import {View, Text, Pressable, Image, StyleSheet, ScrollView} from 'react-native';
-import BottomIndicator from '../assets/icons/BottomIndicator';
-import TopIndicator from '../assets/icons/TopIndicator';
+
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EText from '../atoms/EText';
 import { translations } from '../provider/LocalizeProvider';
@@ -59,17 +58,6 @@ export default function PendingUserList({item, index}) {
     <View style={localStyles.movieContainer}>
       <View style={localStyles.mainContainer}>
         <View style={localStyles.userDetail}>
-          <Pressable>
-            {
-              item.images && item.images.length > 0 && (
-                <Image
-                  key={item.images[0].name}
-                  source={{uri: `data:image/png;base64,${item.images[0].uri}`}}
-                  style={localStyles.image}
-                />
-              )
-            }
-          </Pressable>
           <Pressable style={localStyles.enrolledDetailContainer}>
             <EText
               ellipsizeMode={'tail'}

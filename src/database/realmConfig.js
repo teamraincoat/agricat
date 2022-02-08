@@ -8,17 +8,19 @@ import Constants from '../constants/Constants';
 import {removeStorageData, saveStorageData} from '../utils/localStorage';
 
 export const app = new Realm.App({id: 'enrollmentappvi-dyzez', timeout: 10000});
-const getRealm = async userId => {
+const getRealm = async () => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
   };
-
+  const ID = "61f75159e8f1ed359e2bc224";
+  console.log('currentUser id in config==>',app.currentUser && app.currentUser.id)
   const configuration = {
     schema: [EnrollmentSchema,Enrollment_imagesSchema, UserSchema,User_memberOfSchema],
     sync: {
       user: app.currentUser,
-      partitionValue: 'locality=17', //app.currentUser.id,
-       //newRealmFileBehavior: OpenRealmBehaviorConfiguration,
+      partitionValue: `campaign=${ID}`, //app.currentUser.id,
+        newRealmFileBehavior: OpenRealmBehaviorConfiguration,
+        existingRealmFileBehavior: OpenRealmBehaviorConfiguration,
     },
     error: (_session, error) => {
         (error) => {
@@ -28,7 +30,9 @@ const getRealm = async userId => {
   };
 
 const realmConfiguration = await Realm.open(configuration);
-realmConfiguration.syncSession.addProgressNotification(
+const syncSession = realmConfiguration.syncSession;
+// syncSession.pause();
+syncSession.addProgressNotification(
   "upload",
   "reportIndefinitely",
   (transferred, transferable) => {
@@ -36,6 +40,12 @@ realmConfiguration.syncSession.addProgressNotification(
     console.log(
       `There are ${transferable} total transferable bytes, including the ones that have already been transferred`
     );
+    let progressPercentage = 100.0 * transferred / transferable;
+    console.log(`Progress: ${progressPercentage}%`);
+    if(progressPercentage === 100){
+        console.log('Transfer completed');
+        saveStorageData(Constants.STORAGE.USER_DATA, null);
+    }
     if(transferred < transferable ){
       console.log('size less + show loader');
     }

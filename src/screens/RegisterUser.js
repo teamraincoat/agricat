@@ -61,7 +61,7 @@ const RegisterUser = ({navigation, enrollData}) => {
       addressLine: 'Surat',
       locality: 'Mota Varachha',
       applicationTime: '',
-      geoJson: '',
+      geoJson: '{"type": "Point", "coordinates": [-66.0606, 18.3866]}',
       coveredAreaHa: 'Varachha',
       crop: '',
       cropType: 'Insurer',
@@ -174,7 +174,7 @@ const RegisterUser = ({navigation, enrollData}) => {
       localityId: '1',
       cropId: '1',
       payoutMethodId: '2',
-    });
+    },navigation);
 
     // Alert.alert(
     //   translations['Success'],
@@ -698,7 +698,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                 name="notes"
               />
               <EText style={localStyles.labelStyle}>add photo</EText>
-              {console.log('selected fiel==>', selectedFiles)}
+
 
               {selectedFiles && selectedFiles.length > 0 ? (
                 <ImagesContainer

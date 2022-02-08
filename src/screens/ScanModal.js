@@ -94,7 +94,6 @@ const localStyles = StyleSheet.create({
     // borderWidth: 4,
     // width: wp(100),//
     height: hp(100),
-    backgroundColor: 'red',
   },
   centerText: {
     fontSize: 18,

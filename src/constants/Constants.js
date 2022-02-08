@@ -4,7 +4,7 @@ const Constants = {
     USER_ID: 'userId',
     USER_DATA: 'userData',
   },
-  DEFAULT_LANGUAGE: 'sp',
+  DEFAULT_LANGUAGE: "sp",
 };
 
 export default Constants;

@@ -15,7 +15,7 @@ import Constants from './src/constants/Constants';
 import SignupScreen from './src/screens/SignupScreen';
 import ForgotPassword from './src/screens/ForgotPassword';
 import ConsentScreen from './src/screens/ConsentScreen';
-import { LocalizeProvider } from './src/provider/LocalizeProvider';
+
 
 const reduxStore = createStore(appReducer, {}, applyMiddleware(ReduxThunk));
 
@@ -35,13 +35,15 @@ function App() {
       .catch(e => {
         console.log('error localStorage', e);
       });
-  }, []);
+  }, [userId]);
+  console.log('userID==>',userId)
   const MainStackNavigator = () => (
     <UsersProvider>
       <MainStack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Home" component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
         <MainStack.Screen name="Consent" component={ConsentScreen} />
+        <MainStack.Screen name="Auth" component={AuthStackNavigator} />
       </MainStack.Navigator>
     </UsersProvider>
   );
@@ -52,25 +54,18 @@ function App() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="SignUp" component={SignupScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+      <Stack.Screen name="Main" component={MainStackNavigator} />
     </Stack.Navigator>
   );
 
 
-
   return (
     <RootProvider>
-        <LocalizeProvider>
       <Provider store={reduxStore}>
         <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName={userId ? 'Main' : 'Auth'}
-            screenOptions={{headerShown: false}}>
-            <Stack.Screen name="Auth" component={AuthStackNavigator} />
-            <Stack.Screen name="Main" component={MainStackNavigator} />
-          </Stack.Navigator>
+            {userId ? <MainStackNavigator /> : <AuthStackNavigator />}
         </NavigationContainer>
       </Provider>
-      </LocalizeProvider>
     </RootProvider>
   );
 }

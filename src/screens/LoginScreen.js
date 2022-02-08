@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -15,16 +15,17 @@ import EButton from '../atoms/EButton';
 import BackgroundImage from '../atoms/BackgroundImage';
 import { colors , styles} from '../styles';
 import { hp } from '../styles/metrics';
+import { LocalizeContext, LocalizeProvider } from '../provider/LocalizeProvider';
 
-// import {useLocal} from '../contex';
-import { translations } from '../provider/LocalizeProvider';
 const LoginScreen = ({navigation}) => {
-    // const {translations ,setAppLanguage} = useLocal();
+const {translations, initializeAppLanguage} = useContext(LocalizeContext);
+    initializeAppLanguage();
   const [email, setEmail] = useState({value: 'tushali024+realmapp007@gmail.com', error: ''});
   const [password, setPassword] = useState({value: 'enrollmenttest007', error: ''});
   const [loading, setLoading] = useState(false)
   const onPressSignIn = async () => {
     try {
+        setLoading(true);
       await signIn(email.value, password.value, null, navigation);
     } catch (error) {
       Alert.alert(`Failed to sign in: ${error.message}`);

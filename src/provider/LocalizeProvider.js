@@ -16,7 +16,7 @@ export const LocalizeContext = React.createContext({
     initializeAppLanguage: () => {},
   }); //to prevent lint error
 export const LocalizeProvider = ({children}) => {
-  const [appLanguage, setAppLanguage] = useState('sp');
+  const [appLanguage, setAppLanguage] = useState("sp");
 
   const setLanguage = language => {
     translations.setLanguage(language);
@@ -51,7 +51,6 @@ export const LocalizeProvider = ({children}) => {
   };
 
   return (
-    <SafeAreaProvider>
       <LocalizeContext.Provider
         value={{
           translations,
@@ -61,6 +60,5 @@ export const LocalizeProvider = ({children}) => {
         }}>
         {children}
       </LocalizeContext.Provider>
-    </SafeAreaProvider>
   );
 };

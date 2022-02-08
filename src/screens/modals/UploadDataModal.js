@@ -1,30 +1,49 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
 import Modal from 'react-native-modal';
-import {SafeAreaView} from 'react-native-safe-area-context';
+
 import CloseIcon from '../../assets/icons/CloseIcon';
-import UploadIcon from '../../assets/icons/UploadIcon';
+
 import UploadLargeIcon from '../../assets/icons/UploadLargeIcon';
 import EButton from '../../atoms/EButton';
 import EText from '../../atoms/EText';
 import {colors, styles} from '../../styles';
 import {hp, wp} from '../../styles/metrics';
-import { translations } from '../../provider/LocalizeProvider';
+import {translations} from '../../provider/LocalizeProvider';
+import {getStorageData} from '../../utils/localStorage';
+import Constants from '../../constants/Constants';
+import getRealm from '../../database/realmConfig';
 const UploadDataModal = props => {
   const {visible, closeModal} = props;
+  const [startSync, setStartSync] = useState(false);
+  const [remainFarmer, setRemainFarmer] = useState(null);
   const onCloseModal = () => {
+    //setStartSync(false);
     closeModal(false);
   };
+  useEffect(() => {
+    getStorageData(Constants.STORAGE.USER_DATA)
+      .then(result => {
+        if (result) {
+          setRemainFarmer(result.length);
+        } else {
+          setRemainFarmer(0);
+        }
+      })
+      .catch(e => {
+        console.log('error localStorage', e);
+      });
+      getRealm().then(result => {
+        const syncSession = result.syncSession;
+        startSync && syncSession.resume();
+        });
+  }, [visible,startSync]);
   return (
-    //  <View style={localStyles.container}>
-
     <Modal
       isVisible={visible}
-      //presentationStyle="pageSheet"
       transparent={false}
       onBackButtonPress={onCloseModal}
-     backdropColor={colors.lightGrey}
-    >
+      backdropColor={colors.lightGrey}>
       <View style={localStyles.mainContainer}>
         <Pressable style={localStyles.iconContainer} onPress={onCloseModal}>
           <CloseIcon />
@@ -34,11 +53,11 @@ const UploadDataModal = props => {
 
           <EText style={localStyles.title}>{translations['Sync.title']}</EText>
           <EText style={localStyles.subTitle}>
-          {translations['Sync.subTitle']}
+            {`You are going to synchronize ${remainFarmer} farmers.`}
           </EText>
           <EButton
             title={translations['Sync.confirm']}
-            onClick={() => console.log('sync')}
+            onClick={() => setStartSync(true)}
             style={localStyles.syncButton}
           />
         </View>
