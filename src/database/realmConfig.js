@@ -13,14 +13,14 @@ const getRealm = async () => {
     type: 'openImmediately',
   };
   const ID = "61f75159e8f1ed359e2bc224";
-  console.log('currentUser id in config==>',app.currentUser && app.currentUser.id)
+  // console.log('currentUser id in config==>',app.currentUser && app.currentUser.id);
   const configuration = {
     schema: [EnrollmentSchema,Enrollment_imagesSchema, UserSchema,User_memberOfSchema],
     sync: {
       user: app.currentUser,
       partitionValue: `campaign=${ID}`, //app.currentUser.id,
-        newRealmFileBehavior: OpenRealmBehaviorConfiguration,
-        existingRealmFileBehavior: OpenRealmBehaviorConfiguration,
+      newRealmFileBehavior: OpenRealmBehaviorConfiguration,
+      existingRealmFileBehavior: OpenRealmBehaviorConfiguration,
     },
     error: (_session, error) => {
         (error) => {
