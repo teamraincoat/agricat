@@ -30,6 +30,7 @@ import {hp, normalize, wp} from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CheckBox from '@react-native-community/checkbox';
 import CloseIcon from '../assets/icons/CloseIcon';
+import { ObjectId } from 'bson';
 const gender = [
   {label: 'Male', value: 'male'},
   {label: 'Female', value: 'female'},
@@ -41,6 +42,10 @@ const RegisterUser = ({navigation, enrollData}) => {
   const [openDropDown, setOpenDropDown] = useState(false);
   const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [qrInfo, setQrInfo] = React.useState('');
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const {submitAddUser,enrollDataById} = useUsers();
   const {translations} = useLocal();
   const sheetRef = useRef();
 
@@ -52,32 +57,29 @@ const RegisterUser = ({navigation, enrollData}) => {
     reset,
   } = useForm({
     defaultValues: {
-      firstName: 'Tushali',
-      lastName: 'G',
-      surName: 'Jasoliya',
+      firstName: '',
+      lastName: '',
+      surName: '',
       dob: '',
       gender: '',
-      mobilePhone: '9876543210',
-      addressLine: 'Surat',
-      locality: 'Mota Varachha',
+      mobilePhone: '',
+      addressLine: '',
+      locality: '',
       applicationTime: '',
-      geoJson: '{"type": "Point", "coordinates": [-66.0606, 18.3866]}',
-      coveredAreaHa: 'Varachha',
+      geoJson: '',
+      coveredArea: '',
       crop: '',
-      cropType: 'Insurer',
-      cropCycle: 'Weekly',
+      cropType: '',
+      cropCycle: '',
       images: [],
-      payoutMethod: 'Cash',
+      payoutMethod: '',
       payoutMethodId: '',
       adminArea: '',
-      subLocality: 'Sudama Chowk',
+      subLocality: '',
       notes: '',
     },
   });
-  const [modalVisible, setModalVisible] = useState(false);
-  const [qrInfo, setQrInfo] = React.useState('');
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const {submitAddUser} = useUsers();
+
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -86,7 +88,6 @@ const RegisterUser = ({navigation, enrollData}) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-
   const handleConfirm = date => {
     const values = getValues();
     if (dateState) {
@@ -102,7 +103,8 @@ const RegisterUser = ({navigation, enrollData}) => {
   };
 
   useEffect(() => {
-    if (qrInfo) {
+    if (enrollDataById) {
+        console.log('enrollDataById***********',enrollDataById);
       const {
         firstName,
         lastName,
@@ -112,7 +114,8 @@ const RegisterUser = ({navigation, enrollData}) => {
         gender,
         mobilePhone,
         locality,
-        sublocality,
+        subLocality,
+        addressLine,
         applicationTime,
         geoJson,
         coveredArea,
@@ -121,21 +124,21 @@ const RegisterUser = ({navigation, enrollData}) => {
         cropCycle,
         policyPublicId,
         policyActiveId,
-      } = qrInfo;
+        payoutMethod,
+      } = enrollDataById;
+      //moment(new Date(date)).format('MM/DD/YYYY')
       reset({
         firstName: firstName ? firstName : '',
         lastName: lastName ? lastName : '',
         surName: surName ? surName : '',
-        dob: dob ? moment(dob).format('DD/MM/YYYY') : '',
+        dob: dob ? moment(new Date(dob)).format('DD/MM/YYYY') : '',
         gender: gender ? gender : '',
         mobilePhone: mobilePhone ? mobilePhone : '',
-        addressLine: `${locality ? locality : ''}${
-          sublocality ? sublocality : ''
-        }`,
+        addressLine: addressLine ? addressLine :'',
         locality: locality ? locality : '',
-        municipality: sublocality ? sublocality : '',
+        subLocality: subLocality ? subLocality : '',
         applicationTime: applicationTime
-          ? moment(applicationTime).format('DD/MM/YYYY')
+          ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
         policyPublicId: policyPublicId ? policyPublicId : '',
         policyActiveId: policyActiveId ? policyActiveId : '',
@@ -144,11 +147,18 @@ const RegisterUser = ({navigation, enrollData}) => {
         crop: crop ? crop : '',
         cropType: cropType ? cropType : '',
         cropCycle: cropCycle ? cropCycle : '',
+        payoutMethod: payoutMethod ? payoutMethod : '',
+
       });
     }
-  }, [qrInfo]);
+  }, [enrollDataById]);
 
   let register_user = data => {
+
+    let isModify = false;
+    if(enrollDataById && enrollDataById._id){
+        isModify = true;
+    }
     submitAddUser({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -165,16 +175,16 @@ const RegisterUser = ({navigation, enrollData}) => {
       cropCycle: data.cropCycle,
       applicationTime: data.applicationTime,
       images: data.images,
-      _id: uuid.v4(),
+      subLocality: data.subLocality,
+      _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
       //static value for test purpose
-      adminArea: 'Athvaline',
-      adminAreaId: '123',
-      subLocality: 'test',
-      subLocalityId: '1',
-      localityId: '1',
-      cropId: '1',
-      payoutMethodId: '2',
-    },navigation);
+      adminArea: '',
+      adminAreaId: '',
+      subLocalityId: '',
+      localityId: '',
+      cropId: '',
+      payoutMethodId: '',
+    },navigation,isModify);
 
     // Alert.alert(
     //   translations['Success'],
@@ -496,7 +506,6 @@ const RegisterUser = ({navigation, enrollData}) => {
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
-                    editable={false}
                   />
                 )}
                 name="locality"
@@ -515,7 +524,6 @@ const RegisterUser = ({navigation, enrollData}) => {
                     onChangeText={value => onChange(value)}
                     value={value}
                     style={styles.p10}
-                    editable={false}
                   />
                 )}
                 name="subLocality"
@@ -555,7 +563,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     keyboardType="numeric"
                   />
                 )}
-                name="coveredAreaHa"
+                name="coveredArea"
               />
               {errors.coveredAreaHa && (
                 <EText>{translations['Field.required']}</EText>
@@ -622,26 +630,6 @@ const RegisterUser = ({navigation, enrollData}) => {
                 <EText>{translations['Field.required']}</EText>
               )}
 
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.enrollCoveredCrop']}
-                    onBlur={onBlur}
-                    label={<EText>Enroll Covered Crop</EText>}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="cropCycle"
-              />
-              {errors.cropCycle && (
-                <EText>{translations['Field.required']}</EText>
-              )}
               <EText style={localStyles.labelStyle}>application Date</EText>
               <Controller
                 control={control}

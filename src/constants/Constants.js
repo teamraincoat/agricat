@@ -3,6 +3,7 @@ const Constants = {
     APP_LANGUAGE: 'appLanguage',
     USER_ID: 'userId',
     USER_DATA: 'userData',
+    USER_DATA_SYNCED: 'userDataSynced',
   },
   DEFAULT_LANGUAGE: "sp",
 };

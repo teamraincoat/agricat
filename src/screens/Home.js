@@ -9,7 +9,7 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from 'react-native';
 import ETextInput from '../atoms/ETextInput';
 import ScanIcon from '../assets/icons/ScanIcon';
@@ -33,7 +33,9 @@ import UploadIcon from '../assets/icons/UploadIcon';
 import {hp, normalize, wp} from '../styles/metrics';
 import UploadDataModal from './modals/UploadDataModal';
 import ScanModal from './ScanModal';
-import { translations } from '../provider/LocalizeProvider';
+import {translations} from '../provider/LocalizeProvider';
+import {getStorageData} from '../utils/localStorage';
+import Constants from '../constants/Constants';
 
 const Home = ({route, navigation}) => {
   //const {userInfo} = route.param;
@@ -43,10 +45,10 @@ const Home = ({route, navigation}) => {
   const [showFullDetails, setShowFullDetails] = useState(false);
   const [isCompaign, setIsCompaign] = useState(true);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
-  const [isMenuOpen,setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
-
+  const [isSynced, setIsSynced] = useState(false);
   const {users: enrollData} = useUsers();
 
   let userInfoData;
@@ -54,7 +56,15 @@ const Home = ({route, navigation}) => {
     userInfoData = route.params.userInfo;
   }
 
-
+//   useEffect(() => {
+//     getStorageData(Constants.STORAGE.USER_DATA_SYNCED).then(data => {
+//       if (data && data === 'synced') {
+//         setIsSynced(true);
+//       } else {
+//         setIsSynced(false);
+//       }
+//     });
+//   }, [isSynced]);
 
   const onHandleScan = () => {
     setModalVisible(true);
@@ -92,15 +102,14 @@ const Home = ({route, navigation}) => {
     return <PendingUserList item={item} index={index} />;
   };
   const checkMenuBar = () => {
-      if(isMenuOpen){
-          setIsMenuOpen(false)
-      }
-  }
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
 
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <View style={[styles.flex, styles.p15]}>
-
         <View style={localStyles.headerContainer}>
           {/* <LottieView
             source={require('../assets/icons/syncRefresher.json')}
@@ -121,71 +130,97 @@ const Home = ({route, navigation}) => {
             <MenuBarIcon />
           </Pressable>
         </View>
-        <TouchableWithoutFeedback  onPress={checkMenuBar}>
-        {isCompaign ? (
-          <View style={{flex: 1}}>
-            <View style={localStyles.compaignInfo}>
-              <EText style={localStyles.title}>{translations['Campaign.title']}</EText>
-              <EText style={localStyles.subTitle}>
-              {translations['Campaign.assign']}
-              </EText>
-            </View>
-            <View  style={localStyles.container}>
-              <FarmerDataBlock title={`${translations['Campaign.completed']}`} value={`11%`} />
-              <FarmerDataBlock title={`${translations['Campaign.rolledUp']}`} value={enrollData.length > 0 ? enrollData.length : 0 } />
-            </View>
-            <EText style={[localStyles.title, {...styles.ml15}]}>
-            {translations['Campaign.locallyRolled']}
-            </EText>
-
-            {enrollData && enrollData.length > 0 ? (
-              <View onStartShouldSetResponder={() => true} style={{flex: 1}}>
-                <FlatList
-                nestedScrollEnabled={true}
-                  data={enrollData && enrollData.length > 0 ? enrollData : []}
-                  renderItem={_offlineRenderItem}
-                  keyExtractor={(item, index) => item._id.toString()}
-                  showsVerticalScrollIndicator={false}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refresh}
-                      onRefresh={setEnrollDataInStore}
-                    />
-                  }
+        <TouchableWithoutFeedback onPress={checkMenuBar}>
+          {isCompaign ? (
+            <View style={{flex: 1}}>
+              <View style={localStyles.compaignInfo}>
+                <EText style={localStyles.title}>
+                  {translations['Campaign.title']}
+                </EText>
+                <EText style={localStyles.subTitle}>
+                  {translations['Campaign.assign']}
+                </EText>
+              </View>
+              <View style={localStyles.container}>
+                <FarmerDataBlock
+                  title={`${translations['Campaign.completed']}`}
+                  value={`11%`}
+                />
+                <FarmerDataBlock
+                  title={`${translations['Campaign.rolledUp']}`}
+                  value={enrollData.length > 0 ? enrollData.length : 0}
                 />
               </View>
-            ) : (
-              <EText style={[localStyles.subTitle, {...styles.ml15}]}>
-                {translations['Campaign.nodata']}
+              <EText style={[localStyles.title, {...styles.ml15}]}>
+                {translations['Campaign.locallyRolled']}
               </EText>
-            )}
 
-            <Pressable
-              style={[styles.absolute, styles.p10, localStyles.scanIconButton]}
-              //onPress={() => navigation.navigate('Register')}
-              onPress={onHandleScan}
-              >
-              <ScanIcon />
-            </Pressable>
-          </View>
-        ) : (
-          <NoCompaign />
-        )}
+              {/* {isSynced ? (
+                <EText style={[localStyles.subTitle, {...styles.ml15}]}>
+                  Data Synced
+                </EText>
+              ) : isSynced !== true && */}
+
+              {enrollData && enrollData.length > 0 ? (
+                <View onStartShouldSetResponder={() => true} style={{flex: 1}}>
+                  <FlatList
+                    nestedScrollEnabled={true}
+                    data={enrollData && enrollData.length > 0 ? enrollData : []}
+                    renderItem={_offlineRenderItem}
+                    keyExtractor={(item, index) => item._id.toString()}
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refresh}
+                        onRefresh={setEnrollDataInStore}
+                      />
+                    }
+                  />
+                </View>
+              ) : (
+                <EText style={[localStyles.subTitle, {...styles.ml15}]}>
+                  {translations['Campaign.nodata']}
+                </EText>
+              )}
+
+              <Pressable
+                style={[
+                  styles.absolute,
+                  styles.p10,
+                  localStyles.scanIconButton,
+                ]}
+                //onPress={() => navigation.navigate('Register')}
+                onPress={onHandleScan}>
+                <ScanIcon />
+              </Pressable>
+            </View>
+          ) : (
+            <NoCompaign />
+          )}
         </TouchableWithoutFeedback>
       </View>
 
-      {isMenuOpen &&(
-      <View style={localStyles.menuItems}>
-        <Pressable  style={localStyles.menuItemContainer}>
-          <EText style={localStyles.menuTitle}>{translations['Menu.faq']}</EText>
-        </Pressable>
-        <Pressable onPress={() => signOut(navigation)} style={localStyles.menuItemContainer}>
-          <EText style={localStyles.menuTitle}>{translations['Menu.logout']}</EText>
-        </Pressable>
-        <Pressable style={[localStyles.menuItemContainer, {borderBottomWidth: 0}]}>
-          <EText style={localStyles.menuTitle}>{translations['Menu.settings']}</EText>
-        </Pressable>
-      </View>
+      {isMenuOpen && (
+        <View style={localStyles.menuItems}>
+          <Pressable style={localStyles.menuItemContainer}>
+            <EText style={localStyles.menuTitle}>
+              {translations['Menu.faq']}
+            </EText>
+          </Pressable>
+          <Pressable
+            onPress={() => signOut(navigation)}
+            style={localStyles.menuItemContainer}>
+            <EText style={localStyles.menuTitle}>
+              {translations['Menu.logout']}
+            </EText>
+          </Pressable>
+          <Pressable
+            style={[localStyles.menuItemContainer, {borderBottomWidth: 0}]}>
+            <EText style={localStyles.menuTitle}>
+              {translations['Menu.settings']}
+            </EText>
+          </Pressable>
+        </View>
       )}
       <UploadDataModal
         visible={uploadModalVisible}
@@ -255,7 +290,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderRadius: 10,
     padding: 0,
-    ...styles.rowSpaceAround
+    ...styles.rowSpaceAround,
   },
   itemStyle: {
     backgroundColor: '#FFFFFF',

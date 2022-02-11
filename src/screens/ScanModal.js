@@ -11,9 +11,11 @@ import EText from '../atoms/EText';
 import EButton from '../atoms/EButton';
 import ETextInput from '../atoms/ETextInput';
 import BackIcon from '../assets/icons/BackIcon';
-import { translations } from '../provider/LocalizeProvider';
+import {translations} from '../provider/LocalizeProvider';
+import {useUsers} from '../provider/UsersProvider';
 const ScanModal = props => {
   const {visible, closeModal, setQrInfo, route} = props;
+  const {setEnrollData} = useUsers();
   const [id, setId] = useState('');
   const {translations} = useLocal();
   const onSuccessScan = e => {
@@ -52,13 +54,12 @@ const ScanModal = props => {
               styles.h3,
             ]}>
             {translations['ScanQr.title']}
-
           </EText>
           <View />
         </View>
         <ETextInput
           defaultValue={id}
-          onChangeText={text => setId({value: text, error: ''})}
+          onChangeText={text => setId(text)}
           //label={<Text>ID</Text>}
           autoCapitalize="none"
           placeholder="enter id"
@@ -74,6 +75,7 @@ const ScanModal = props => {
           title={translations['ScanQr.enterManually']}
           onClick={() => {
             closeModal(false);
+            setEnrollData(id)
             route.navigate('Consent');
           }}
           style={localStyles.scanButton}

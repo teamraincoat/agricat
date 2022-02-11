@@ -32,28 +32,37 @@ const getRealm = async () => {
 const realmConfiguration = await Realm.open(configuration);
 const syncSession = realmConfiguration.syncSession;
 // syncSession.pause();
+
 syncSession.addProgressNotification(
   "upload",
   "reportIndefinitely",
   (transferred, transferable) => {
-    console.log(`${transferred} bytes has been transferred`);
-    console.log(
-      `There are ${transferable} total transferable bytes, including the ones that have already been transferred`
-    );
+
     let progressPercentage = 100.0 * transferred / transferable;
-    console.log(`Progress: ${progressPercentage}%`);
+    console.log(`Total Uploaded ,(${transferred})Byte / \(${transferable})Byte  ${progressPercentage}%`)
     if(progressPercentage === 100){
-        console.log('Transfer completed');
+        console.log('Transfer completed' , progressPercentage);
         saveStorageData(Constants.STORAGE.USER_DATA, null);
+       // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'synced');
     }
     if(transferred < transferable ){
-      console.log('size less + show loader');
+      //console.log('size less + show loader');
+      //saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
     }
     else{
       console.log('same size or greater')
     }
   }
 );
+
+syncSession.addProgressNotification(
+    'download',
+    'reportIndefinitely',
+    (transferred, transferable) => {
+        let progressPercentage = 100.0 * transferred / transferable;
+        console.log(`Total Download ,(${transferred})Byte / \(${transferable})Byte  ${progressPercentage}%`)
+      }
+  )
 
   return realmConfiguration;
 };

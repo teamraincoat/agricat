@@ -10,6 +10,7 @@ const UsersContext = React.createContext(null);
 const UsersProvider = ({children, projectPartition = {}}) => {
   const [users, setUsers] = useState([]);
   const [storedUserData, setStoredUserData] = useState(null);
+  const [enrollDataById, setEnrollDataById] = useState(null);
   const realmRef = useRef(null);
 
   useEffect(() => {
@@ -37,13 +38,12 @@ const UsersProvider = ({children, projectPartition = {}}) => {
     };
   }, []);
 
-  const submitAddUser = async (UserInfo, navigation) => {
+  const submitAddUser = async (UserInfo, navigation, isModify) => {
     if (UserInfo.firstName) {
       try {
-          const ID = "61f75159e8f1ed359e2bc224";
+        const ID = '61f75159e8f1ed359e2bc224';
         const newUser = {
           ...UserInfo,
-          _id: new ObjectId(),
           _partition: `campaign=${ID}`, //userId ? userId : app.currentUser.id,
           status: 'Active',
         };
@@ -60,12 +60,18 @@ const UsersProvider = ({children, projectPartition = {}}) => {
         getRealm()
           .then(projectRealm => {
             projectRealm.write(() => {
-              projectRealm.create('Enrollment', newUser);
+              if (isModify) {
+                projectRealm.create('Enrollment', newUser, 'modified');
+              } else {
+                projectRealm.create('Enrollment', newUser);
+              }
             });
             const userListUpdated = projectRealm.objects('Enrollment');
             let sortedUsers = userListUpdated.sorted('firstName');
+            saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
             setUsers([...sortedUsers]);
             navigation.navigate('Home');
+            setEnrollData(null);
           })
           .catch(error => {
             console.log('error--->>', error);
@@ -76,9 +82,20 @@ const UsersProvider = ({children, projectPartition = {}}) => {
     }
   };
 
+  const setEnrollData = id => {
+    if (users && users.length > 0) {
+      users.filter(item => {
+        if (item._id == id) {
+          setEnrollDataById(item);
+        }
+      });
+    }
+  };
   let userData = {
     submitAddUser,
     users,
+    enrollDataById,
+    setEnrollData,
   };
 
   return (
