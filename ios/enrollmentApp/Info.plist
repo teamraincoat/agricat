@@ -58,6 +58,11 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>ProximaNovaFont.otf</string>
+		<string>Proxima Nova Black.otf</string>
+		<string>Proxima Nova Bold.otf</string>
+		<string>ProximaNova-Regular.otf</string>
+		<string>ProximaNova-Black.otf</string>
+		<string>ProximaNova-Bold.otf</string>
 	</array>
 </dict>
 </plist>

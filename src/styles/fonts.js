@@ -1,7 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet , Platform} from 'react-native';
 
 export const Fonts = {
-  REGULAR: 'ProximaNovaFont',
+  REGULAR: 'Proxima Nova',
 };
 
 export default (StyleSheet.create({

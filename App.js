@@ -23,20 +23,25 @@ const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
 function App() {
   const [userId, setUserId] = useState(null);
+  const [initializing, setInitializing] = useState(true);
+  function onAuthStateChanged(user) {
+    setUserId(user);
+     if (initializing) setInitializing(false);
+  }
   useEffect(() => {
     getStorageData(Constants.STORAGE.USER_ID)
       .then(result => {
         if (result) {
-          setUserId(result);
+            onAuthStateChanged(result);
         } else {
           console.log('No Result found');
+          setInitializing(false);
         }
       })
       .catch(e => {
         console.log('error localStorage', e);
       });
-  }, [userId]);
-  console.log('userID==>',userId)
+  }, []);
   const MainStackNavigator = () => (
     <UsersProvider>
       <MainStack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
@@ -58,7 +63,7 @@ function App() {
     </Stack.Navigator>
   );
 
-
+  if (initializing) return null;
   return (
     <RootProvider>
       <Provider store={reduxStore}>
