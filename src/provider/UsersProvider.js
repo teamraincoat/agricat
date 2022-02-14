@@ -1,8 +1,10 @@
 import React, {useContext, useState, useEffect, useRef} from 'react';
+import {Buffer} from 'buffer';
 
 import getRealm, {app} from '../database/realmConfig';
 import {ObjectId} from 'bson';
 import {saveStorageData} from '../utils/localStorage';
+import {decrypt} from '../utils/crypto';
 import Constants from '../constants/Constants';
 
 const UsersContext = React.createContext(null);
@@ -82,15 +84,47 @@ const UsersProvider = ({children, projectPartition = {}}) => {
     }
   };
 
-  const setEnrollData = id => {
+  /**
+   * Decrypt a series of fields in a document
+   * @param {String[]} fields The fields we want to decrypt from the document
+   * @param {*} document The document with encrypted fields
+   * @param {String} key The encryption key
+   * @returns The document with all decrypted fields
+   */
+  const decryptFields = async (fields, document, key) => {
+    const clonedDocument = JSON.parse(JSON.stringify(document));
+
+    // This is a way to ensure a series of Promises are resolved in serial order
+    await fields.reduce(async (previousPromise, field) => {
+      await previousPromise;
+      const decryptedField =
+        await decrypt(document[field].split('|')[1], key, document[field].split('|')[0]);
+      clonedDocument[field] = decryptedField;
+    }, Promise.resolve());
+
+    return clonedDocument;
+  };
+
+  const decipherEnrollmentData = (enrollment, key) => {
+    decryptFields(['firstName', 'lastName', 'surName'], enrollment, key)
+      .then(decipheredEnrollment => {
+        setEnrollDataById(decipheredEnrollment);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  };
+
+  const setEnrollData = (id, key) => {
     if (users && users.length > 0) {
       users.filter(item => {
         if (item._id == id) {
-          setEnrollDataById(item);
+          decipherEnrollmentData(item, key);
         }
       });
     }
   };
+
   let userData = {
     submitAddUser,
     users,

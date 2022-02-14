@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal';
+import {Buffer} from 'buffer';
+
 import CloseIcon from '../assets/icons/CloseIcon';
 import {colors, styles} from '../styles';
 import {useLocal} from '../contex/index';
@@ -20,7 +21,13 @@ const ScanModal = props => {
   const {translations} = useLocal();
   const onSuccessScan = e => {
     try {
-      setQrInfo(JSON.parse(e.data));
+      // setQrInfo(JSON.parse(e.data));
+      const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
+      const enrollmentId = qrData[1];
+      const campaignKey = qrData[0];
+      setQrInfo(qrData);
+      setEnrollData(enrollmentId, campaignKey);
+      route.navigate('Consent');
       closeModal(false);
     } catch (err) {
       console.error('An error occurred', err);

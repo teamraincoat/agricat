@@ -44,7 +44,7 @@ function App() {
   }, []);
   const MainStackNavigator = () => (
     <UsersProvider>
-      <MainStack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
+      <MainStack.Navigator initialRouteName='Auth' screenOptions={{headerShown: false}}>
         <MainStack.Screen name="Home" component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
         <MainStack.Screen name="Consent" component={ConsentScreen} />
