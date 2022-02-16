@@ -1,6 +1,7 @@
 import React from 'react';
-import {StyleSheet, ImageBackground} from 'react-native';
-import {wp, hp} from '../styles/metrics'
+import { StyleSheet, ImageBackground } from 'react-native';
+import { wp, hp } from '../styles/metrics';
+
 export default function BackgroundImage({
   src,
   backgroundStyle,

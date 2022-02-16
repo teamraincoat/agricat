@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, { useState } from 'react';
 import {
   FlatList,
   View,
@@ -6,88 +7,58 @@ import {
   RefreshControl,
   Pressable,
   StyleSheet,
-  Image,
-  ScrollView,
-  Dimensions,
   TouchableWithoutFeedback,
 } from 'react-native';
-import ETextInput from '../atoms/ETextInput';
-import ScanIcon from '../assets/icons/ScanIcon';
-import {colors, styles} from '../styles';
-import {setEnrollDataInStore} from '../redux/action/EnrollActions';
-import {useLocal} from '../contex/index';
-import EText from '../atoms/EText';
-import {useUsers} from '../provider/UsersProvider';
-import moment from 'moment';
 
-import LottieView from 'lottie-react-native';
-import LogoutIcon from '../assets/icons/LogoutIcon';
+import ScanIcon from '../assets/icons/ScanIcon';
+import { colors, styles } from '../styles';
+import { setEnrollDataInStore } from '../redux/action/EnrollActions';
+
+import EText from '../atoms/EText';
+import { useUsers } from '../provider/UsersProvider';
+
 import MenuBarIcon from '../assets/icons/MenuBarIcon';
-import {signOut} from '../database/realmConfig';
-import BottomIndicator from '../assets/icons/BottomIndicator';
-import TopIndicator from '../assets/icons/TopIndicator';
+import { signOut } from '../database/realmConfig';
+
 import PendingUserList from '../componets/PendingUserList';
 import SyncIcon from '../assets/icons/SyncIcon';
 import NoCompaign from '../componets/NoCompaign';
 import UploadIcon from '../assets/icons/UploadIcon';
-import {hp, normalize, wp} from '../styles/metrics';
+import { hp, normalize, wp } from '../styles/metrics';
 import UploadDataModal from './modals/UploadDataModal';
 import ScanModal from './ScanModal';
-import {translations} from '../provider/LocalizeProvider';
-import {getStorageData} from '../utils/localStorage';
-import Constants from '../constants/Constants';
+import { translations } from '../provider/LocalizeProvider';
 
-const Home = ({route, navigation}) => {
-  //const {userInfo} = route.param;
+const Home = ({ navigation }) => {
+  // const {userInfo} = route.param;
   const [refresh, setRefresh] = useState(false);
   const [searchWord, setSearchWord] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  const [showFullDetails, setShowFullDetails] = useState(false);
   const [isCompaign, setIsCompaign] = useState(true);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
-  const [isSynced, setIsSynced] = useState(false);
-  const {users: enrollData} = useUsers();
+  //   const [isSynced, setIsSynced] = useState(false);
+  const { users: enrollData } = useUsers();
 
-  let userInfoData;
-  if (route && route.params) {
-    userInfoData = route.params.userInfo;
-  }
 
-//   useEffect(() => {
-//     getStorageData(Constants.STORAGE.USER_DATA_SYNCED).then(data => {
-//       if (data && data === 'synced') {
-//         setIsSynced(true);
-//       } else {
-//         setIsSynced(false);
-//       }
-//     });
-//   }, [isSynced]);
+
+
 
   const onHandleScan = () => {
     setModalVisible(true);
   };
-  const onSearch = () => {
-    const searchedData = enrollData.filter(
-      item =>
-        item?._id?.toLowerCase().includes(searchWord) ||
-        item?.firstName?.toLowerCase().includes(searchWord) ||
-        item?.lastName?.toLowerCase().includes(searchWord),
-    );
-    setFilteredData(searchedData);
-  };
+  // eslint-disable-next-line no-unused-vars
 
   const showUploadModal = () => {
     setUploadModalVisible(true);
   };
-  let viewItemSeparator = () => {
-    return <View style={localStyles.itemSeparator} />;
-  };
 
-  const FarmerDataBlock = ({title, value}) => {
-    let {itemStyle, itemText, itemInvisible, remainingPercentage} = localStyles;
+  const FarmerDataBlock = ({ title, value }) => {
+    const {
+      itemStyle, itemText, remainingPercentage,
+    } = localStyles;
     return (
       <View style={itemStyle}>
         <EText style={remainingPercentage}>{value}</EText>
@@ -98,9 +69,8 @@ const Home = ({route, navigation}) => {
     );
   };
 
-  const _offlineRenderItem = ({item, index}) => {
-    return <PendingUserList item={item} index={index} />;
-  };
+  // eslint-disable-next-line no-underscore-dangle
+  const _offlineRenderItem = ({ item, index }) => <PendingUserList item={item} index={index} />;
   const checkMenuBar = () => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
@@ -111,11 +81,6 @@ const Home = ({route, navigation}) => {
     <SafeAreaView style={localStyles.mainContainer}>
       <View style={[styles.flex, styles.p15]}>
         <View style={localStyles.headerContainer}>
-          {/* <LottieView
-            source={require('../assets/icons/syncRefresher.json')}
-            autoPlay={false}
-            style={{width: 40, height: 40}}
-          /> */}
           {isCompaign ? (
             <Pressable onPress={showUploadModal}>
               <UploadIcon />
@@ -132,7 +97,7 @@ const Home = ({route, navigation}) => {
         </View>
         <TouchableWithoutFeedback onPress={checkMenuBar}>
           {isCompaign ? (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <View style={localStyles.compaignInfo}>
                 <EText style={localStyles.title}>
                   {translations['Campaign.title']}
@@ -144,14 +109,14 @@ const Home = ({route, navigation}) => {
               <View style={localStyles.container}>
                 <FarmerDataBlock
                   title={`${translations['Campaign.completed']}`}
-                  value={`11%`}
+                  value={'11%'}
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
                   value={enrollData.length > 0 ? enrollData.length : 0}
                 />
               </View>
-              <EText style={[localStyles.title, {...styles.ml15}]}>
+              <EText style={[localStyles.title, { ...styles.ml15 }]}>
                 {translations['Campaign.locallyRolled']}
               </EText>
 
@@ -162,12 +127,12 @@ const Home = ({route, navigation}) => {
               ) : isSynced !== true && */}
 
               {enrollData && enrollData.length > 0 ? (
-                <View onStartShouldSetResponder={() => true} style={{flex: 1}}>
+                <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>
                   <FlatList
                     nestedScrollEnabled={true}
                     data={enrollData && enrollData.length > 0 ? enrollData : []}
                     renderItem={_offlineRenderItem}
-                    keyExtractor={(item, index) => item._id.toString()}
+                    keyExtractor={(item) => item._id.toString()}
                     showsVerticalScrollIndicator={false}
                     refreshControl={
                       <RefreshControl
@@ -178,7 +143,7 @@ const Home = ({route, navigation}) => {
                   />
                 </View>
               ) : (
-                <EText style={[localStyles.subTitle, {...styles.ml15}]}>
+                <EText style={[localStyles.subTitle, { ...styles.ml15 }]}>
                   {translations['Campaign.nodata']}
                 </EText>
               )}
@@ -189,7 +154,6 @@ const Home = ({route, navigation}) => {
                   styles.p10,
                   localStyles.scanIconButton,
                 ]}
-                //onPress={() => navigation.navigate('Register')}
                 onPress={onHandleScan}>
                 <ScanIcon />
               </Pressable>
@@ -215,7 +179,7 @@ const Home = ({route, navigation}) => {
             </EText>
           </Pressable>
           <Pressable
-            style={[localStyles.menuItemContainer, {borderBottomWidth: 0}]}>
+            style={[localStyles.menuItemContainer, { borderBottomWidth: 0 }]}>
             <EText style={localStyles.menuTitle}>
               {translations['Menu.settings']}
             </EText>
@@ -277,7 +241,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: colors.green,
     borderRadius: 5,
   },
-  itemSeparator: {height: 20},
+  itemSeparator: { height: 20 },
   item: {
     marginTop: 10,
     backgroundColor: colors.white,
@@ -294,7 +258,6 @@ const localStyles = StyleSheet.create({
   },
   itemStyle: {
     backgroundColor: '#FFFFFF',
-    //...styles.flex,
     ...styles.center,
     ...styles.mh15,
     ...styles.mv10,
@@ -308,9 +271,6 @@ const localStyles = StyleSheet.create({
     color: '#393939',
     ...styles.h4,
     ...styles.mt10,
-  },
-  itemInvisible: {
-    backgroundColor: 'transparent',
   },
   menuItems: {
     ...styles.absolute,

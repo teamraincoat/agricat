@@ -1,4 +1,4 @@
-import { StyleSheet , Platform} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const Fonts = {
   REGULAR: 'Proxima Nova',
@@ -17,7 +17,7 @@ export default (StyleSheet.create({
   f700: {
     fontWeight: '700',
   },
-    f800: {
+  f800: {
     fontWeight: '800',
-    },
+  },
 }));

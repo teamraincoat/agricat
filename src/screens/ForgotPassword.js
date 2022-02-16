@@ -1,17 +1,20 @@
-import React, {useState} from 'react';
-import {View, SafeAreaView, Pressable, StyleSheet, Alert} from 'react-native';
+import React, { useState } from 'react';
+import {
+  View, SafeAreaView, Pressable, StyleSheet, Alert,
+} from 'react-native';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import {app, forgotPassword} from '../database/realmConfig';
-const ForgotPassword = ({navigation}) => {
+import { forgotPassword } from '../database/realmConfig';
+
+const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
 
   const onPressReset = async () => {
     try {
       await forgotPassword(email);
     } catch (error) {
-        console.log('Forgot password error', error);
+      console.log('Forgot password error', error);
       Alert.alert(`Failed to reset password: ${error.message}`);
     }
   };

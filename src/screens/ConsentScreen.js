@@ -1,16 +1,21 @@
 import CheckBox from '@react-native-community/checkbox';
-import React, {useState} from 'react';
-import {View, StyleSheet,ScrollView,Pressable} from 'react-native';
+import React, { useState } from 'react';
+import {
+  View, StyleSheet, ScrollView, Pressable,
+} from 'react-native';
 import BackIcon from '../assets/icons/BackIcon';
 import BackgroundImage from '../atoms/BackgroundImage';
 import EButton from '../atoms/EButton';
 import EText from '../atoms/EText';
-import {colors, styles} from '../styles';
-import {hp, normalize, wp} from '../styles/metrics';
+import { colors, styles } from '../styles';
+import { hp, normalize, wp } from '../styles/metrics';
 import { translations } from '../provider/LocalizeProvider';
-const ConsentScreen = ({navigation}) => {
+
+// eslint-disable-next-line react/prop-types
+const ConsentScreen = ({ navigation }) => {
   const [isSelected, setSelection] = useState(false);
   return (
+    // eslint-disable-next-line global-require
     <BackgroundImage src={require('../assets/Consent.png')}>
         <Pressable style={localStyles.backButtonContainer} onPress={() => navigation.goBack(null)} >
             <BackIcon />
@@ -40,7 +45,7 @@ const ConsentScreen = ({navigation}) => {
             <CheckBox
               value={isSelected}
               onValueChange={setSelection}
-              tintColors={{true: colors.black, false: colors.black}}
+              tintColors={{ true: colors.black, false: colors.black }}
             />
           </View>
           <EButton
@@ -62,7 +67,7 @@ const localStyles = StyleSheet.create({
     width: wp(90),
     ...styles.selfCenter,
   },
-  backButtonContainer:{
+  backButtonContainer: {
     ...styles.pl20,
     ...styles.mt15,
   },
@@ -70,7 +75,7 @@ const localStyles = StyleSheet.create({
     ...styles.h1,
     color: colors.black,
     ...styles.mv8,
-    ...styles.textCenter
+    ...styles.textCenter,
   },
   description: {
     color: colors.black,

@@ -1,4 +1,3 @@
-
 import { Dimensions, Platform } from 'react-native';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 
@@ -18,7 +17,7 @@ export function hp(percentage) {
   const value = (percentage * viewportHeight) / 100;
   return Math.round(value);
 }
-export function normalize(size){
+export function normalize(size) {
   const newSize = size * scale;
   if (Platform.OS === 'ios') {
     if (isiPAD) {

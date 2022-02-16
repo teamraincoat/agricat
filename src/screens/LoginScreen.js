@@ -1,21 +1,19 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Pressable,
   Alert,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {signIn} from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
 import BackgroundImage from '../atoms/BackgroundImage';
-import { colors , styles} from '../styles';
+import { colors, styles } from '../styles';
 import { hp } from '../styles/metrics';
-import { LocalizeContext, LocalizeProvider } from '../provider/LocalizeProvider';
+import { LocalizeContext } from '../provider/LocalizeProvider';
 
 const LoginScreen = ({navigation}) => {
   const {translations, initializeAppLanguage} = useContext(LocalizeContext);
@@ -32,6 +30,7 @@ const LoginScreen = ({navigation}) => {
     }
   };
   return (
+      // eslint-disable-next-line global-require
       <BackgroundImage src={require('../assets/SplashBackground.png')}>
       <View style={localStyles.loginTextContainer}>
 
@@ -42,7 +41,7 @@ const LoginScreen = ({navigation}) => {
         <ETextInput
           email
           defaultValue={email.value}
-          onChangeText={text => setEmail({value: text, error: ''})}
+          onChangeText={(text) => setEmail({ value: text, error: '' })}
           error={!!email.error}
           errorText={email.error}
           label={<EText>Email</EText>}
@@ -60,7 +59,7 @@ const LoginScreen = ({navigation}) => {
           defaultValue={password.value}
           error={!!email.error}
           errorText={email.error}
-          onChangeText={text => setPassword({value: text, error: ''})}
+          onChangeText={(text) => setPassword({ value: text, error: '' })}
           returnKeyType="done"
           placeholder="enter password"
           label={<EText>Password</EText>}
@@ -83,32 +82,32 @@ const LoginScreen = ({navigation}) => {
 };
 
 const localStyles = StyleSheet.create({
-    container: {
-      ...styles.flex,
-      backgroundColor: colors.white,
-    },
-    loginTextContainer: {
-        ...styles.center,
-       marginTop:hp(15),
-    },
-    title:{
-        ...styles.h1,
-        color: colors.black,
-        ...styles.mv8,
-    },
-    subTitle:{
-        color: colors.black,
-        ...styles.h3,
-        ...styles.mv8,
-    },
-    signupTextContainer:{
-        ...styles.center,
-    },
-    signupText:{
-        color: colors.black,
-        ...styles.h3,
-        ...styles.mv8,
-    },
+  container: {
+    ...styles.flex,
+    backgroundColor: colors.white,
+  },
+  loginTextContainer: {
+    ...styles.center,
+    marginTop: hp(15),
+  },
+  title: {
+    ...styles.h1,
+    color: colors.black,
+    ...styles.mv8,
+  },
+  subTitle: {
+    color: colors.black,
+    ...styles.h3,
+    ...styles.mv8,
+  },
+  signupTextContainer: {
+    ...styles.center,
+  },
+  signupText: {
+    color: colors.black,
+    ...styles.h3,
+    ...styles.mv8,
+  },
 });
 
 export default LoginScreen;

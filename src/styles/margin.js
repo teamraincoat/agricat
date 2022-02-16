@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native'
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   m0: {
@@ -148,4 +148,4 @@ export default StyleSheet.create({
   mv5: {
     marginVertical: 5,
   },
-})
+});

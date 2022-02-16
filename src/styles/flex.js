@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native'
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   alignStart: {
@@ -102,4 +102,4 @@ export default StyleSheet.create({
   wrap: {
     flexWrap: 'wrap',
   },
-})
+});

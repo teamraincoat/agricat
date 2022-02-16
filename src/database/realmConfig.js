@@ -1,20 +1,29 @@
+/* eslint-disable camelcase */
 import Realm from 'realm';
 import {
-    UserSchema,
-    User_memberOfSchema,
-    EnrollmentSchema,
-    Enrollment_imagesSchema} from '../../schemas';
+  UserSchema,
+  User_memberOfSchema,
+  EnrollmentSchema,
+  Enrollment_imagesSchema,
+} from '../../schemas';
 import Constants from '../constants/Constants';
 import {removeStorageData, saveStorageData, getStorageData} from '../utils/localStorage';
 
-export const app = new Realm.App({id: 'enrollmentappvi-dyzez', timeout: 10000});
+export const app = new Realm.App({ id: 'enrollmentappvi-dyzez', timeout: 10000 });
 const getRealm = async () => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
   };
   const userData = await getStorageData(Constants.STORAGE.USER_DATA);
+  console.log('userData--->', userData);
   const configuration = {
-    schema: [EnrollmentSchema,Enrollment_imagesSchema, UserSchema,User_memberOfSchema],
+    schema: [
+      EnrollmentSchema,
+      Enrollment_imagesSchema,
+      UserSchema,
+      User_memberOfSchema,
+    ],
+
     sync: {
       user: app.currentUser,
       // User memberOf is an array but only allows one campaign partition at a time
@@ -29,40 +38,42 @@ const getRealm = async () => {
     },
   };
 
-const realmConfiguration = await Realm.open(configuration);
-const syncSession = realmConfiguration.syncSession;
-// syncSession.pause();
+  const realmConfiguration = await Realm.open(configuration);
+  const { syncSession } = realmConfiguration;
+  // syncSession.pause();
 
-syncSession.addProgressNotification(
-  "upload",
-  "reportIndefinitely",
-  (transferred, transferable) => {
+  syncSession.addProgressNotification(
+    'upload',
+    'reportIndefinitely',
+    (transferred, transferable) => {
+      const progressPercentage = (100.0 * transferred) / transferable;
+      console.log(
+        `Total Uploaded ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
+      );
+      if (progressPercentage === 100) {
+        console.log('Transfer completed', progressPercentage);
+        // saveStorageData(Constants.STORAGE.USER_DATA, null);
+        // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'synced');
+      }
+      if (transferred < transferable) {
+        // console.log('size less + show loader');
+        // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
+      } else {
+        console.log('same size or greater');
+      }
+    },
+  );
 
-    let progressPercentage = 100.0 * transferred / transferable;
-    console.log(`Total Uploaded ,(${transferred})Byte / \(${transferable})Byte  ${progressPercentage}%`)
-    if(progressPercentage === 100){
-        console.log('Transfer completed' , progressPercentage);
-        saveStorageData(Constants.STORAGE.USER_DATA, null);
-       // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'synced');
-    }
-    if(transferred < transferable ){
-      //console.log('size less + show loader');
-      //saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
-    }
-    else{
-      console.log('same size or greater')
-    }
-  }
-);
-
-syncSession.addProgressNotification(
+  syncSession.addProgressNotification(
     'download',
     'reportIndefinitely',
     (transferred, transferable) => {
-        let progressPercentage = 100.0 * transferred / transferable;
-        console.log(`Total Download ,(${transferred})Byte / \(${transferable})Byte  ${progressPercentage}%`)
-      }
-  )
+      const progressPercentage = (100.0 * transferred) / transferable;
+      console.log(
+        `Total Download ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
+      );
+    },
+  );
 
   return realmConfiguration;
 };
@@ -91,7 +102,7 @@ export const signIn = async (email, password, data, navigation) => {
 };
 
 export const signUp = async (email, password) => {
-  await app.emailPasswordAuth.registerUser({email, password});
+  await app.emailPasswordAuth.registerUser({ email, password });
 };
 
 export const signOut = async (navigation) => {
@@ -100,8 +111,8 @@ export const signOut = async (navigation) => {
   removeStorageData(Constants.STORAGE.USER_DATA);
   navigation.navigate('Auth');
 };
-export const forgotPassword = async email => {
-  await app.emailPasswordAuth.sendResetPasswordEmail({email});
+export const forgotPassword = async (email) => {
+  await app.emailPasswordAuth.sendResetPasswordEmail({ email });
 };
 
 export default getRealm;

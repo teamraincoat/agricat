@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -9,38 +9,40 @@ import {
 } from 'react-native';
 import DeleteIcon from '../assets/icons/DeleteIcon';
 
-const ImagesContainer = props => {
-  const {selectedFileImages, setSelectedImages} = props;
+const ImagesContainer = (props) => {
+  const { selectedFileImages, setSelectedImages } = props;
 
   const removeImage = useCallback(
-    imageName => {
-      let newImages = selectedFileImages.filter(
-        item => item.name !== imageName,
+    (imageName) => {
+      const newImages = selectedFileImages.filter(
+        (item) => item.name !== imageName,
       );
       setSelectedImages(newImages);
     },
     [selectedFileImages],
   );
 
-  const ImagesViewContainer = React.memo(({item}) => {
-    return (
-      <View style={localStyles.imageInnerContainer}>
-          <Image source={{ uri: `data:image/png;base64,${item.uri}`}} style={localStyles.imageStyle}  />
-        <TouchableOpacity
-          style={localStyles.deleteIcon}
-          onPress={() => removeImage(item.name)}>
-          <DeleteIcon />
-        </TouchableOpacity>
-      </View>
-    );
-  });
+  // eslint-disable-next-line react/display-name
+  const ImagesViewContainer = React.memo(({ item }) => (
+    <View style={localStyles.imageInnerContainer}>
+      <Image
+        source={{ uri: `data:image/png;base64,${item.uri}` }}
+        style={localStyles.imageStyle}
+      />
+      <TouchableOpacity
+        style={localStyles.deleteIcon}
+        onPress={() => removeImage(item.name)}>
+        <DeleteIcon />
+      </TouchableOpacity>
+    </View>
+  ));
 
-  const renderImageView = ({item}) => <ImagesViewContainer item={item} />;
+  const renderImageView = ({ item }) => <ImagesViewContainer item={item} />;
   return (
     <View style={localStyles.imageContainer}>
       <FlatList
         data={selectedFileImages}
-        keyExtractor={(item, index) => item.name}
+        keyExtractor={(item) => item.name}
         extraData={selectedFileImages}
         renderItem={renderImageView}
         horizontal
@@ -66,7 +68,7 @@ const localStyles = StyleSheet.create({
   imageInnerContainer: {
     position: 'relative',
     margin: 5,
-    marginLeft:20
+    marginLeft: 20,
   },
   deleteIcon: {
     position: 'absolute',

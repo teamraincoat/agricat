@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 import { normalize } from './metrics';
 import fonts, { Fonts } from './fonts';
 
-
 export default (StyleSheet.create({
   textCenter: {
     textAlign: 'center',

@@ -1,24 +1,24 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import LocalizedStrings from 'react-native-localization';
 import * as RNLocalize from 'react-native-localize';
+
 import en from '../localization/en.json';
 import sp from '../localization/sp.json';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Constants from '../constants/Constants';
 
-export const translations = new LocalizedStrings({en, sp});
+export const translations = new LocalizedStrings({ en, sp });
 
 export const LocalizeContext = React.createContext({
-    translations,
-    setAppLanguage: () => {},
-    appLanguage: Constants.DEFAULT_LANGUAGE,
-    initializeAppLanguage: () => {},
-  }); //to prevent lint error
-export const LocalizeProvider = ({children}) => {
-  const [appLanguage, setAppLanguage] = useState("sp");
+  translations,
+  setAppLanguage: () => {},
+  appLanguage: Constants.DEFAULT_LANGUAGE,
+  initializeAppLanguage: () => {},
+}); // to prevent lint error
+export const LocalizeProvider = ({ children }) => {
+  const [appLanguage, setAppLanguage] = useState('sp');
 
-  const setLanguage = language => {
+  const setLanguage = (language) => {
     translations.setLanguage(language);
     setAppLanguage(language);
     AsyncStorage.setItem(Constants.STORAGE.APP_LANGUAGE, language);
@@ -37,10 +37,11 @@ export const LocalizeProvider = ({children}) => {
       const supportedLocaleCodes = translations.getAvailableLanguages();
       console.log('supportedLocaleCodes', supportedLocaleCodes);
       const phoneLocaleCodes = RNLocalize.getLocales().map(
-        locale => locale.languageCode,
+        (locale) => locale.languageCode,
       );
-      phoneLocaleCodes.some(code => {
-          console.log('code', code);
+      // eslint-disable-next-line array-callback-return
+      phoneLocaleCodes.some((code) => {
+        console.log('code', code);
         if (supportedLocaleCodes.includes(code)) {
           localeCode = code;
           return true;
