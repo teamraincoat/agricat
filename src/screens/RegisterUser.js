@@ -1,85 +1,85 @@
-import React, {useEffect, useRef, useState} from 'react';
+/* eslint-disable no-shadow */
+import React, { useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
   KeyboardAvoidingView,
-  Alert,
   SafeAreaView,
   StyleSheet,
   Platform,
   Pressable,
 } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { useForm, Controller } from 'react-hook-form';
+import moment from 'moment';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { connect } from 'react-redux';
+import ImagePicker from 'react-native-image-crop-picker';
+
+import ImgToBase64 from 'react-native-image-base64';
+import CheckBox from '@react-native-community/checkbox';
+import { ObjectId } from 'bson';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
 import ScanModal from './ScanModal';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {colors, styles} from '../styles';
-import {useForm, Controller} from 'react-hook-form';
-import moment from 'moment';
-import DropDownPicker from 'react-native-dropdown-picker';
-import {connect} from 'react-redux';
-import {useLocal} from '../contex/index';
+import { colors, styles } from '../styles';
+import { useLocal } from '../contex/index';
 import EText from '../atoms/EText';
-import ActionSheetBox from '../atoms/ActionSheet';
-import ImagePicker from 'react-native-image-crop-picker';
+
 import ImagesContainer from '../atoms/ImagesContainer';
-import {useUsers} from '../provider/UsersProvider';
-import uuid from 'react-native-uuid';
-import ImgToBase64 from 'react-native-image-base64';
-import {hp, normalize, wp} from '../styles/metrics';
+import { useUsers } from '../provider/UsersProvider';
+import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
-import CheckBox from '@react-native-community/checkbox';
 import CloseIcon from '../assets/icons/CloseIcon';
-import { ObjectId } from 'bson';
+
 const gender = [
-  {label: 'Male', value: 'male'},
-  {label: 'Female', value: 'female'},
-  {label: 'Other', value: 'other'},
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
+  { label: 'Other', value: 'other' },
 ];
 
-const RegisterUser = ({navigation, enrollData}) => {
+const RegisterUser = ({ navigation }) => {
   const [dateState, setDateState] = useState(true);
   const [openDropDown, setOpenDropDown] = useState(false);
   const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [qrInfo, setQrInfo] = React.useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const {submitAddUser,enrollDataById} = useUsers();
-  const {translations} = useLocal();
-  const sheetRef = useRef();
+  const { submitAddUser, enrollDataById } = useUsers();
+  const { translations } = useLocal();
 
   const {
     control,
     getValues,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     reset,
   } = useForm({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      surName: '',
-      dob: '',
-      gender: '',
-      mobilePhone: '',
-      addressLine: '',
-      locality: '',
-      applicationTime: '',
-      geoJson: '',
-      coveredArea: '',
-      crop: '',
-      cropType: '',
-      cropCycle: '',
-      images: [],
-      payoutMethod: '',
-      payoutMethodId: '',
-      adminArea: '',
-      subLocality: '',
-      notes: '',
-    },
+        firstName: '',
+        lastName: '',
+        surName: '',
+        dob: '',
+        gender: '',
+        mobilePhone: '',
+        addressLine: '',
+        locality: '',
+        applicationTime: '',
+        geoJson: '',
+        coveredArea: '',
+        crop: '',
+        cropType: '',
+        cropCycle: '',
+        images: [],
+        payoutMethod: '',
+        payoutMethodId: '',
+        adminArea: '',
+        subLocality: '',
+        notes: '',
+      },
   });
-
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -88,29 +88,24 @@ const RegisterUser = ({navigation, enrollData}) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-  const handleConfirm = date => {
+  const handleConfirm = (date) => {
     const values = getValues();
     if (dateState) {
-      reset({...values, dob: date});
+      reset({ ...values, dob: date });
     } else {
-      reset({...values, applicationTime: date});
+      reset({ ...values, applicationTime: date });
     }
     hideDatePicker();
   };
 
-  const showActionSheet = () => {
-    sheetRef.current.show();
-  };
-
   useEffect(() => {
     if (enrollDataById) {
-        console.log('enrollDataById***********',enrollDataById);
+      console.log('enrollDataById***********', enrollDataById);
       const {
         firstName,
         lastName,
         surName,
         dob,
-        _id,
         gender,
         mobilePhone,
         locality,
@@ -126,7 +121,7 @@ const RegisterUser = ({navigation, enrollData}) => {
         policyActiveId,
         payoutMethod,
       } = enrollDataById;
-      //moment(new Date(date)).format('MM/DD/YYYY')
+      // moment(new Date(date)).format('MM/DD/YYYY')
       reset({
         firstName: firstName ? firstName : '',
         lastName: lastName ? lastName : '',
@@ -153,11 +148,11 @@ const RegisterUser = ({navigation, enrollData}) => {
     }
   }, [enrollDataById]);
 
-  let register_user = data => {
-
+  // eslint-disable-next-line camelcase
+  const register_user = (data) => {
     let isModify = false;
-    if(enrollDataById && enrollDataById._id){
-        isModify = true;
+    if (enrollDataById && enrollDataById._id) {
+      isModify = true;
     }
     submitAddUser({
       firstName: data.firstName,
@@ -177,14 +172,14 @@ const RegisterUser = ({navigation, enrollData}) => {
       images: data.images,
       subLocality: data.subLocality,
       _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
-      //static value for test purpose
+      // static value for test purpose
       adminArea: '',
       adminAreaId: '',
       subLocalityId: '',
       localityId: '',
       cropId: '',
       payoutMethodId: '',
-    },navigation,isModify);
+    }, navigation, isModify);
 
     // Alert.alert(
     //   translations['Success'],
@@ -199,74 +194,21 @@ const RegisterUser = ({navigation, enrollData}) => {
     // );
   };
 
-  const onHandleScan = () => {
-    setModalVisible(true);
-  };
-
   useEffect(() => {
     const values = getValues();
-    reset({...values, images: selectedFiles});
+    reset({ ...values, images: selectedFiles });
   }, [selectedFiles]);
 
-  const formatImage = sourceUri => {
-    return new Promise(function (resolve, reject) {
-      ImgToBase64.getBase64String(sourceUri)
-        .then(base64String => {
-          resolve(base64String);
-        })
-        .catch(err => {
-          console.log('image encode error', err);
-          reject(err);
-        });
-    });
-  };
-  const onImageLibraryPress = async () => {
-    ImagePicker.openPicker({
-      cropping: false,
-      multiple: true,
-      maxFiles: 5,
-    })
-      .then(images => {
-        if (images.didCancel) {
-          console.log('User cancelled photo picker');
-        } else if (images.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (images.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-        } else {
-          let listOfImages = [];
-          images.map(item => {
-            let sourceUri = Platform.OS === 'ios' ? item.sourceURL : item.path;
-            formatImage(sourceUri).then(response => {
-              listOfImages.push({
-                name:
-                  Platform.OS === 'ios'
-                    ? item.filename
-                    : item.path.substring(item.path.lastIndexOf('/') + 1),
-                size: item.size.toString(),
-                uri: response,
-                type: item.mime,
-              });
-              if (selectedFiles && selectedFiles.length > 0) {
-                function getUniqueListBy(arr, key) {
-                  return [
-                    ...new Map(arr.map(item => [item[key], item])).values(),
-                  ];
-                }
-                const finalFilesList = [...listOfImages, ...selectedFiles];
-                const uniqueFilesList = getUniqueListBy(finalFilesList, 'name');
-                setSelectedFiles(uniqueFilesList);
-              } else {
-                setSelectedFiles([...listOfImages]);
-              }
-            });
-          });
-        }
+  const formatImage = (sourceUri) => new Promise((resolve, reject) => {
+    ImgToBase64.getBase64String(sourceUri)
+      .then((base64String) => {
+        resolve(base64String);
       })
-      .catch(err => {
-        console.log('error while choose image from Library===>', err);
+      .catch((err) => {
+        console.log('image encode error', err);
+        reject(err);
       });
-  };
+  });
 
   const onCameraPress = () => {
     ImagePicker.openCamera({
@@ -274,9 +216,9 @@ const RegisterUser = ({navigation, enrollData}) => {
       height: 300,
       cropping: true,
     })
-      .then(image => {
-        let selectedImage = [];
-        formatImage(image.path).then(response => {
+      .then((image) => {
+        const selectedImage = [];
+        formatImage(image.path).then((response) => {
           selectedImage.push({
             name: image.path.substring(image.path.lastIndexOf('/') + 1),
             size: image.size.toString(),
@@ -286,7 +228,7 @@ const RegisterUser = ({navigation, enrollData}) => {
           setSelectedFiles(selectedFiles.concat(selectedImage));
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('error while choose image from Camera===>', err);
       });
   };
@@ -318,13 +260,13 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.firstName']}
                     style={styles.p10}
                     onBlur={onBlur}
                     label={<EText>First Name</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                   />
                 )}
@@ -338,13 +280,13 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.lastName']}
                     style={styles.p10}
                     onBlur={onBlur}
                     label={<EText>Last Name</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                   />
                 )}
@@ -358,13 +300,13 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.surName']}
                     style={styles.p10}
                     onBlur={onBlur}
                     label={<EText>Sur Name</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                   />
                 )}
@@ -379,8 +321,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {value, onChange}}) => {
-                  return (
+                render={({ field: { value, onChange } }) => (
                     <DropDownPicker
                       placeholder={translations['Placeholder.gender']}
                       open={openDropDown}
@@ -388,12 +329,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                       items={gender}
                       setOpen={setOpenDropDown}
                       setValue={onChange}
-                      onChangeValue={value => {
+                      onChangeValue={(value) => {
                         onChange(value);
                       }}
                       style={[
                         localStyles.dropDownStyle,
-                        {...styles.mt10},
+                        { ...styles.mt10 },
                         {
                           borderColor: errors.gender
                             ? colors.error
@@ -410,8 +351,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                       }
                       listMode="SCROLLVIEW"
                     />
-                  );
-                }}
+                )}
                 name="gender"
               />
               {errors.gender && <EText>{translations['Field.required']}</EText>}
@@ -421,14 +361,14 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.contactNo']}
                     style={styles.p10}
                     onBlur={onBlur}
                     keyboardType="numeric"
                     label={<EText>Contact Number</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     maxLength={10}
                   />
@@ -444,7 +384,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {value}}) => (
+                render={({ field: { value } }) => (
                   <EButton
                     title={
                       value
@@ -474,7 +414,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.address']}
                     maxLength={225}
@@ -482,7 +422,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                     multiline={true}
                     numberOfLines={5}
                     label={<EText>Address</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     // style={[{textAlignVertical: 'top'}, styles.p10]}
                   />
@@ -498,12 +438,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: false,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.locality']}
                     onBlur={onBlur}
                     label={<EText>Locality</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
@@ -516,12 +456,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: false,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.sublocality']}
                     onBlur={onBlur}
                     label={<EText>Sub Locality</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
@@ -534,12 +474,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: false,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.geojson']}
                     onBlur={onBlur}
                     label={<EText>Geo Json</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
@@ -552,12 +492,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCropArea']}
                     onBlur={onBlur}
                     label={<EText>Covered Crop Area</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                     keyboardType="numeric"
@@ -574,12 +514,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.payoutMethod']}
                     onBlur={onBlur}
                     label={<EText>Payout Method</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
@@ -595,12 +535,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCrop']}
                     onBlur={onBlur}
                     label={<EText>Covered Crop</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
@@ -614,12 +554,12 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.cropType']}
                     onBlur={onBlur}
                     label={<EText>Crop Type</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
@@ -636,7 +576,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: true,
                 }}
-                render={({field: {value}}) => (
+                render={({ field: { value } }) => (
                   <EButton
                     title={
                       value
@@ -667,26 +607,25 @@ const RegisterUser = ({navigation, enrollData}) => {
                 rules={{
                   required: false,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.cropType']}
                     onBlur={onBlur}
                     label={<EText>Addition Notes (optional)</EText>}
-                    onChangeText={value => onChange(value)}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     maxLength={225}
                     multiline={true}
                     numberOfLines={5}
                     style={[
                       styles.p10,
-                      {textAlignVertical: 'top', height: hp(12)},
+                      { textAlignVertical: 'top', height: hp(12) },
                     ]}
                   />
                 )}
                 name="notes"
               />
               <EText style={localStyles.labelStyle}>add photo</EText>
-
 
               {selectedFiles && selectedFiles.length > 0 ? (
                 <ImagesContainer
@@ -699,9 +638,9 @@ const RegisterUser = ({navigation, enrollData}) => {
                   rules={{
                     required: false,
                   }}
-                  render={({field: {onChange, onBlur, value}}) => (
+                  render={() => (
                     <EButton
-                      title={translations['AddImage']}
+                    title={translations['AddImage']}
                       onClick={() => onCameraPress()}
                       style={localStyles.addImageButton}>
                       <Pressable>
@@ -726,7 +665,7 @@ const RegisterUser = ({navigation, enrollData}) => {
                 <CheckBox
                   value={isSelected}
                   onValueChange={setSelection}
-                  tintColors={{true: colors.black, false: colors.black}}
+                  tintColors={{ true: colors.black, false: colors.black }}
                 />
               </View>
               <EButton
@@ -774,7 +713,7 @@ const localStyles = StyleSheet.create({
   },
   enrollTextContainer: {
     ...styles.center,
-    ...styles.mt15
+    ...styles.mt15,
   },
   headerContent: {
     ...styles.rowSpaceBetween,
@@ -845,8 +784,8 @@ const localStyles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({EnrollReducers}) => {
-  const {enrollData} = EnrollReducers;
+const mapStateToProps = ({ EnrollReducers }) => {
+  const { enrollData } = EnrollReducers;
   return {
     enrollData,
   };

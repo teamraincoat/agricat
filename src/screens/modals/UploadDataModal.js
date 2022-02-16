@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
 import Modal from 'react-native-modal';
 
 import CloseIcon from '../../assets/icons/CloseIcon';
@@ -7,37 +7,34 @@ import CloseIcon from '../../assets/icons/CloseIcon';
 import UploadLargeIcon from '../../assets/icons/UploadLargeIcon';
 import EButton from '../../atoms/EButton';
 import EText from '../../atoms/EText';
-import {colors, styles} from '../../styles';
-import {hp, wp} from '../../styles/metrics';
-import {translations} from '../../provider/LocalizeProvider';
-import {getStorageData} from '../../utils/localStorage';
+import { colors, styles } from '../../styles';
+import { hp } from '../../styles/metrics';
+import { translations } from '../../provider/LocalizeProvider';
+import { getStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
-import getRealm from '../../database/realmConfig';
-const UploadDataModal = props => {
-  const {visible, closeModal} = props;
+// import getRealm from '../../database/realmConfig';
+
+const UploadDataModal = (props) => {
+  const { visible, closeModal } = props;
   const [startSync, setStartSync] = useState(false);
   const [remainFarmer, setRemainFarmer] = useState(null);
   const onCloseModal = () => {
-    //setStartSync(false);
+    // setStartSync(false);
     closeModal(false);
   };
   useEffect(() => {
-    getStorageData(Constants.STORAGE.USER_DATA)
-      .then(result => {
+    getStorageData(Constants.STORAGE.ENROLL_USER_DATA)
+      .then((result) => {
         if (result) {
           setRemainFarmer(result.length);
         } else {
           setRemainFarmer(0);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         console.log('error localStorage', e);
       });
-      getRealm().then(result => {
-        const syncSession = result.syncSession;
-        startSync && syncSession.resume();
-        });
-  }, [visible,startSync]);
+  }, [visible]);
   return (
     <Modal
       isVisible={visible}

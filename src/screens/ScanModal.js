@@ -1,30 +1,36 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  StyleSheet, TouchableOpacity, View,
+} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal';
-import {Buffer} from 'buffer';
+import { Buffer } from 'buffer';
 
-import CloseIcon from '../assets/icons/CloseIcon';
-import {colors, styles} from '../styles';
-import {useLocal} from '../contex/index';
-import {hp, wp} from '../styles/metrics';
+import { colors, styles } from '../styles';
+import { useLocal } from '../contex/index';
+import { hp } from '../styles/metrics';
 import EText from '../atoms/EText';
 import EButton from '../atoms/EButton';
 import ETextInput from '../atoms/ETextInput';
 import BackIcon from '../assets/icons/BackIcon';
-import {translations} from '../provider/LocalizeProvider';
-import {useUsers} from '../provider/UsersProvider';
-const ScanModal = props => {
-  const {visible, closeModal, setQrInfo, route} = props;
-  const {setEnrollData} = useUsers();
+
+import { useUsers } from '../provider/UsersProvider';
+import { decode } from 'base-64';
+
+const ScanModal = (props) => {
+  const {
+    visible, closeModal, setQrInfo, route,
+  } = props;
+  const { setEnrollData, setIsQrScanData, isQrScanData } = useUsers();
   const [id, setId] = useState('');
-  const {translations} = useLocal();
-  const onSuccessScan = e => {
+  const { translations } = useLocal();
+  const onSuccessScan = (e) => {
     try {
       // setQrInfo(JSON.parse(e.data));
       const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
-      const enrollmentId = qrData[1];
-      const campaignKey = qrData[0];
+      //const newQrData = e && e.data && (e.data).split('|');
+      const enrollmentId = newQrData[1];
+      const campaignKey = newQrData[0];
       setQrInfo(qrData);
       setEnrollData(enrollmentId, campaignKey);
       route.navigate('Consent');
@@ -66,8 +72,8 @@ const ScanModal = props => {
         </View>
         <ETextInput
           defaultValue={id}
-          onChangeText={text => setId(text)}
-          //label={<Text>ID</Text>}
+          onChangeText={(text) => setId(text)}
+          // label={<Text>ID</Text>}
           autoCapitalize="none"
           placeholder="enter id"
           returnKeyType="done"
@@ -82,7 +88,7 @@ const ScanModal = props => {
           title={translations['ScanQr.enterManually']}
           onClick={() => {
             closeModal(false);
-            setEnrollData(id)
+            setEnrollData(id);
             route.navigate('Consent');
           }}
           style={localStyles.scanButton}

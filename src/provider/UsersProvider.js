@@ -1,32 +1,33 @@
-import React, {useContext, useState, useEffect, useRef} from 'react';
-import {Buffer} from 'buffer';
-
-import getRealm, {app} from '../database/realmConfig';
-import {ObjectId} from 'bson';
-import {saveStorageData} from '../utils/localStorage';
-import {decrypt} from '../utils/crypto';
+/* eslint-disable no-underscore-dangle */
+import React, {
+  useContext, useState, useEffect, useRef,
+} from 'react';
+import {decode, encode} from 'base-64';
+import getRealm from '../database/realmConfig';
+import { getStorageData, saveStorageData } from '../utils/localStorage';
+import { decrypt, encrypt } from '../utils/crypto';
 import Constants from '../constants/Constants';
-
+import { Buffer } from 'buffer';
 const UsersContext = React.createContext(null);
-
-const UsersProvider = ({children, projectPartition = {}}) => {
+const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [storedUserData, setStoredUserData] = useState(null);
   const [enrollDataById, setEnrollDataById] = useState(null);
   const realmRef = useRef(null);
+  console.log('enrollDataById==>', enrollDataById);
 
   useEffect(() => {
     getRealm()
-      .then(projectRealm => {
+      .then((projectRealm) => {
         realmRef.current = projectRealm;
         const syncUsers = projectRealm.objects('Enrollment');
-        let sortedUsers = syncUsers.sorted('firstName');
+        const sortedUsers = syncUsers.sorted('firstName');
         setUsers([...sortedUsers]);
         sortedUsers.addListener(() => {
-          setUsers([...sortedUsers]);
-        });
-      })
-      .catch(error => {
+            setUsers([...sortedUsers]);
+          });
+        })
+      .catch((error) => {
         console.log('error--->', error);
       });
 
@@ -44,40 +45,26 @@ const UsersProvider = ({children, projectPartition = {}}) => {
     if (UserInfo.firstName) {
       try {
         const ID = '61f75159e8f1ed359e2bc224';
+        const userData = await getStorageData(Constants.STORAGE.USER_DATA);
         const newUser = {
           ...UserInfo,
-          _partition: `campaign=${ID}`, //userId ? userId : app.currentUser.id,
+          _partition: userData && userData.memberOf && userData.memberOf[0],//`campaign=${ID}`, // userId ? userId : app.currentUser.id,
           status: 'Active',
         };
         if (storedUserData && storedUserData.length > 0) {
-          saveStorageData(Constants.STORAGE.USER_DATA, [
+          saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, [
             ...storedUserData,
             newUser._id,
           ]);
           setStoredUserData([...storedUserData, newUser._id]);
         } else {
-          saveStorageData(Constants.STORAGE.USER_DATA, [newUser._id]);
+          saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, [newUser._id]);
           setStoredUserData([newUser._id]);
         }
-        getRealm()
-          .then(projectRealm => {
-            projectRealm.write(() => {
-              if (isModify) {
-                projectRealm.create('Enrollment', newUser, 'modified');
-              } else {
-                projectRealm.create('Enrollment', newUser);
-              }
-            });
-            const userListUpdated = projectRealm.objects('Enrollment');
-            let sortedUsers = userListUpdated.sorted('firstName');
-            saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
-            setUsers([...sortedUsers]);
-            navigation.navigate('Home');
-            setEnrollData(null);
-          })
-          .catch(error => {
-            console.log('error--->>', error);
-          });
+
+         const key = Buffer.from(`campkey=${ID}`).toString('base64');
+        const CampaignKey = Buffer.from(key, 'base64');
+         cipherEnrollmentData(newUser, CampaignKey, navigation, isModify);
       } catch (error) {
         console.log('submitAddUser error==>', error);
       }
@@ -92,32 +79,72 @@ const UsersProvider = ({children, projectPartition = {}}) => {
    * @returns The document with all decrypted fields
    */
   const decryptFields = async (fields, document, key) => {
+    const { _id } = document;
     const clonedDocument = JSON.parse(JSON.stringify(document));
 
     // This is a way to ensure a series of Promises are resolved in serial order
     await fields.reduce(async (previousPromise, field) => {
       await previousPromise;
-      const decryptedField =
-        await decrypt(document[field].split('|')[1], key, document[field].split('|')[0]);
-      clonedDocument[field] = decryptedField;
+        const decryptedField = await decrypt(document[field].split('|')[1], key, document[field].split('|')[0]);
+        clonedDocument[field] = decryptedField;
     }, Promise.resolve());
-
+    clonedDocument._id = _id;
     return clonedDocument;
   };
 
   const decipherEnrollmentData = (enrollment, key) => {
     decryptFields(['firstName', 'lastName', 'surName'], enrollment, key)
-      .then(decipheredEnrollment => {
+      .then((decipheredEnrollment) => {
         setEnrollDataById(decipheredEnrollment);
       })
-      .catch(err => {
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const encryptFields = async (fields, document, key) => {
+    const { _id } = document;
+    const clonedDocument = JSON.parse(JSON.stringify(document));
+    await fields.reduce(async (previousPromise, field) => {
+      await previousPromise;
+      const encryptedField = await encrypt(document[field], key);
+      clonedDocument[field] = encryptedField;
+    }, Promise.resolve());
+    clonedDocument._id = _id;
+    return clonedDocument;
+  };
+
+  const cipherEnrollmentData = (enrollment, key, navigation, isModify) => {
+    encryptFields(['firstName', 'lastName', 'surName'], enrollment, key)
+      .then((cipheredEnrollment) => {
+        getRealm()
+          .then((projectRealm) => {
+            projectRealm.write(() => {
+              if (isModify) {
+                projectRealm.create('Enrollment', cipheredEnrollment, 'modified');
+              } else {
+                projectRealm.create('Enrollment', cipheredEnrollment);
+              }
+            });
+            const userListUpdated = projectRealm.objects('Enrollment');
+             const sortedUsers = userListUpdated.sorted('firstName');
+             setUsers([...sortedUsers]);
+            navigation.navigate('Home');
+          })
+          .catch((error) => {
+            console.log('error--->>', error);
+          });
+      })
+      .catch((err) => {
         console.error(err);
       });
   };
 
   const setEnrollData = (id, key) => {
     if (users && users.length > 0) {
-      users.filter(item => {
+      // eslint-disable-next-line array-callback-return
+      users.filter((item) => {
+        // eslint-disable-next-line eqeqeq
         if (item._id == id) {
           decipherEnrollmentData(item, key);
         }
@@ -125,7 +152,7 @@ const UsersProvider = ({children, projectPartition = {}}) => {
     }
   };
 
-  let userData = {
+  const userData = {
     submitAddUser,
     users,
     enrollDataById,
@@ -145,4 +172,4 @@ const useUsers = () => {
   return user;
 };
 
-export {UsersProvider, useUsers};
+export { UsersProvider, useUsers };
