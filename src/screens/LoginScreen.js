@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import { signIn} from '../database/realmConfig';
+import {signIn} from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -18,14 +18,14 @@ import { hp } from '../styles/metrics';
 import { LocalizeContext, LocalizeProvider } from '../provider/LocalizeProvider';
 
 const LoginScreen = ({navigation}) => {
-const {translations, initializeAppLanguage} = useContext(LocalizeContext);
-    initializeAppLanguage();
+  const {translations, initializeAppLanguage} = useContext(LocalizeContext);
+  initializeAppLanguage();
   const [email, setEmail] = useState({value: 'tushali024+realmapp007@gmail.com', error: ''});
   const [password, setPassword] = useState({value: 'enrollmenttest007', error: ''});
   const [loading, setLoading] = useState(false)
   const onPressSignIn = async () => {
     try {
-        setLoading(true);
+      setLoading(true);
       await signIn(email.value, password.value, null, navigation);
     } catch (error) {
       Alert.alert(`Failed to sign in: ${error.message}`);
