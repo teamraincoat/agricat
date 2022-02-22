@@ -66,17 +66,19 @@ const RegisterUser = ({ navigation }) => {
         mobilePhone: '',
         addressLine: '',
         locality: '',
+        localityId: '',
         applicationTime: '',
         geoJson: '',
         coveredArea: '',
         crop: '',
-        cropType: '',
-        cropCycle: '',
+        cropId: '',
         images: [],
         payoutMethod: '',
         payoutMethodId: '',
         adminArea: '',
+        adminAreaId: '',
         subLocality: '',
+        subLocalityId: '',
         notes: '',
       },
   });
@@ -115,11 +117,13 @@ const RegisterUser = ({ navigation }) => {
         geoJson,
         coveredArea,
         crop,
-        cropType,
-        cropCycle,
-        policyPublicId,
-        policyActiveId,
         payoutMethod,
+        adminArea,
+        adminAreaId,
+        subLocalityId,
+        localityId,
+        cropId,
+        payoutMethodId,
       } = enrollDataById;
       // moment(new Date(date)).format('MM/DD/YYYY')
       reset({
@@ -135,15 +139,16 @@ const RegisterUser = ({ navigation }) => {
         applicationTime: applicationTime
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
-        policyPublicId: policyPublicId ? policyPublicId : '',
-        policyActiveId: policyActiveId ? policyActiveId : '',
         geoJson: geoJson ? geoJson : '',
         coveredArea: coveredArea ? coveredArea : '',
         crop: crop ? crop : '',
-        cropType: cropType ? cropType : '',
-        cropCycle: cropCycle ? cropCycle : '',
         payoutMethod: payoutMethod ? payoutMethod : '',
-
+        adminArea: adminArea ? adminArea : '',
+        adminAreaId: adminAreaId ? adminAreaId : '',
+        subLocalityId: subLocalityId ? subLocalityId : '',
+        localityId: localityId ? localityId : '',
+        cropId: cropId ? cropId : '',
+        payoutMethodId: payoutMethodId ? payoutMethodId : '',
       });
     }
   }, [enrollDataById]);
@@ -166,19 +171,16 @@ const RegisterUser = ({ navigation }) => {
       payoutMethod: data.payoutMethod,
       geoJson: data.geoJson,
       crop: data.crop,
-      cropType: data.cropType,
-      cropCycle: data.cropCycle,
       applicationTime: data.applicationTime,
       images: data.images,
       subLocality: data.subLocality,
       _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
-      // static value for test purpose
-      adminArea: '',
-      adminAreaId: '',
-      subLocalityId: '',
-      localityId: '',
-      cropId: '',
-      payoutMethodId: '',
+      adminArea: data.adminArea,
+      adminAreaId: data.adminAreaId,
+      subLocalityId: data.subLocalityId,
+      localityId: data.localityId,
+      cropId: data.cropId,
+      payoutMethodId: data.payoutMethodId,
     }, navigation, isModify);
 
     // Alert.alert(
@@ -450,7 +452,23 @@ const RegisterUser = ({ navigation }) => {
                 )}
                 name="locality"
               />
-
+              <Controller
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <ETextInput
+                    placeholder={translations['Placeholder.localityId']}
+                    onBlur={onBlur}
+                    label={<EText>locality Id</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={value}
+                    style={styles.p10}
+                  />
+                )}
+                name="localityId"
+              />
               <Controller
                 control={control}
                 rules={{
@@ -468,6 +486,26 @@ const RegisterUser = ({ navigation }) => {
                 )}
                 name="subLocality"
               />
+               <Controller
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <ETextInput
+                    placeholder={translations['Placeholder.subLocalityId']}
+                    onBlur={onBlur}
+                    label={<EText>sub Locality Id</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={value}
+                    style={styles.p10}
+                  />
+                )}
+                name="subLocalityId"
+              />
+            {errors.subLocalityId && (
+                <EText>{translations['Field.required']}</EText>
+            )}
 
               <Controller
                 control={control}
@@ -529,6 +567,26 @@ const RegisterUser = ({ navigation }) => {
               {errors.payoutMethod && (
                 <EText>{translations['Field.required']}</EText>
               )}
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <ETextInput
+                    placeholder={translations['Placeholder.payoutMethodId']}
+                    onBlur={onBlur}
+                    label={<EText>Payout Method Id</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={value}
+                    style={styles.p10}
+                  />
+                )}
+                name="payoutMethodId"
+              />
+              {errors.payoutMethodId && (
+                <EText>{translations['Field.required']}</EText>
+              )}
 
               <Controller
                 control={control}
@@ -539,7 +597,7 @@ const RegisterUser = ({ navigation }) => {
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCrop']}
                     onBlur={onBlur}
-                    label={<EText>Covered Crop</EText>}
+                    label={<EText>Crop</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
@@ -548,7 +606,6 @@ const RegisterUser = ({ navigation }) => {
                 name="crop"
               />
               {errors.crop && <EText>{translations['Field.required']}</EText>}
-
               <Controller
                 control={control}
                 rules={{
@@ -556,20 +613,58 @@ const RegisterUser = ({ navigation }) => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
-                    placeholder={translations['Placeholder.cropType']}
+                    placeholder={translations['Placeholder.cropId']}
                     onBlur={onBlur}
-                    label={<EText>Crop Type</EText>}
+                    label={<EText>crop Id</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
                 )}
-                name="cropType"
+                name="cropId"
               />
-              {errors.cropType && (
-                <EText>{translations['Field.required']}</EText>
-              )}
+              {errors.crop && <EText>{translations['Field.required']}</EText>}
 
+              <Controller
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <ETextInput
+                    placeholder={translations['Placeholder.adminArea']}
+                    onBlur={onBlur}
+                    label={<EText>Admin Area</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={value}
+                    style={styles.p10}
+                  />
+                )}
+                name="adminArea"
+              />
+            {errors.adminArea && (
+                <EText>{translations['Field.required']}</EText>
+            )}
+            <Controller
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <ETextInput
+                    placeholder={translations['Placeholder.adminAreaId']}
+                    onBlur={onBlur}
+                    label={<EText>Admin Area Id</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={value}
+                    style={styles.p10}
+                  />
+                )}
+                name="adminAreaId"
+              />
+            {errors.adminAreaId && (
+                <EText>{translations['Field.required']}</EText>
+            )}
               <EText style={localStyles.labelStyle}>application Date</EText>
               <Controller
                 control={control}
@@ -609,7 +704,7 @@ const RegisterUser = ({ navigation }) => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
-                    placeholder={translations['Placeholder.cropType']}
+                    placeholder={translations['Placeholder.notes']}
                     onBlur={onBlur}
                     label={<EText>Addition Notes (optional)</EText>}
                     onChangeText={(value) => onChange(value)}
