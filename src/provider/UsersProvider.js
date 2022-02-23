@@ -133,7 +133,7 @@ const UsersProvider = ({ children }) => {
             return getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
           })
           .then((campaignData) => {
-            navigation.navigate('Home', { campaignData });
+            navigation.navigate('Complete', { campaignData });
           })
           .catch((error) => {
             console.log('error--->>', error);

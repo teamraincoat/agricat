@@ -8,13 +8,13 @@ const NoCompaign = () => (
     <View style={localStyles.container}>
       <View style={localStyles.textWrapper}>
         <EText style={localStyles.title}>
-          {translations['Campaign.title']}
+          {translations['NoCampaign.title']}
         </EText>
         <EText style={localStyles.subTitle}>
-          {translations['Campaign.title']}
+          {translations['NoCampaign.description1']}
         </EText>
         <EText style={localStyles.subTitle}>
-          {translations['Campaign.title']}
+          {translations['NoCampaign.description2']}
         </EText>
       </View>
     </View>
@@ -31,12 +31,12 @@ const localStyles = StyleSheet.create({
   title: {
     ...styles.h1,
     color: colors.black,
-    ...styles.mv8,
+    ...styles.mv5,
   },
   subTitle: {
     color: colors.black,
     ...styles.h3,
-    ...styles.mv8,
+    ...styles.mv5,
   },
 });
 

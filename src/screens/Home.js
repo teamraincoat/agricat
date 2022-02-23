@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   View,
@@ -28,9 +28,11 @@ import { hp, normalize, wp } from '../styles/metrics';
 import UploadDataModal from './modals/UploadDataModal';
 import ScanModal from './ScanModal';
 import { translations } from '../provider/LocalizeProvider';
+import { getStorageData } from '../utils/localStorage';
+import Constants from '../constants/Constants';
 
 const Home = ({ route, navigation }) => {
-  const { campaignData } = route.params;
+//   const { campaignData } = route.params;
   // const {userInfo} = route.param;
   const [refresh, setRefresh] = useState(false);
   const [searchWord, setSearchWord] = useState('');
@@ -40,12 +42,36 @@ const Home = ({ route, navigation }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [qrInfo, setQrInfo] = React.useState('');
+  const [isCampaignAssign, setIsCampaignAssign] = useState(false);
+  const [campaignData, setCampaignData] = useState(null);
   //   const [isSynced, setIsSynced] = useState(false);
   const { users: enrollData } = useUsers();
 
+  let campaignInfo;
+  if (route && route.params) {
+    campaignInfo = route.params.campaignData;
+  } else if (campaignData) {
+    campaignInfo = campaignData;
+  }
 
-
-
+  useEffect(() => {
+    checkUserData();
+    checkCampaignData();
+  }, []);
+  const checkUserData = async () => {
+    const userData = await getStorageData(Constants.STORAGE.USER_DATA);
+    if (userData && userData.memberOf && userData.memberOf.length > 0) {
+      setIsCampaignAssign(true);
+    } else {
+      setIsCampaignAssign(false);
+    }
+  };
+  const checkCampaignData = async () => {
+    const getCampaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
+    if (getCampaignData) {
+      setCampaignData(getCampaignData);
+    }
+  };
 
   const onHandleScan = () => {
     setModalVisible(true);
@@ -82,13 +108,14 @@ const Home = ({ route, navigation }) => {
     <SafeAreaView style={localStyles.mainContainer}>
       <View style={[styles.flex, styles.p15]}>
         <View style={localStyles.headerContainer}>
-          {isCompaign ? (
+          {isCampaignAssign ? (
             <Pressable onPress={showUploadModal}>
               <UploadIcon />
             </Pressable>
           ) : (
-            <Pressable>
+            <Pressable style={localStyles.syncIconContainer}>
               <SyncIcon />
+              <EText style={localStyles.syncText}>{translations['SyncInfo.title']}</EText>
             </Pressable>
           )}
 
@@ -97,11 +124,11 @@ const Home = ({ route, navigation }) => {
           </Pressable>
         </View>
         <TouchableWithoutFeedback onPress={checkMenuBar}>
-          {isCompaign ? (
+          {isCampaignAssign ? (
             <View style={{ flex: 1 }}>
               <View style={localStyles.compaignInfo}>
                 <EText style={localStyles.title}>
-                  {`${translations['Campaign.title']} - ${campaignData.name}`}
+                  {`${translations['Campaign.title']} - ${campaignInfo && campaignInfo.name}`}
                 </EText>
                 <EText style={localStyles.subTitle}>
                   {translations.formatString(translations['Campaign.assign'], enrollData.length > 0 ? enrollData.length : 0)}
@@ -131,7 +158,7 @@ const Home = ({ route, navigation }) => {
                 <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>
                   <FlatList
                     nestedScrollEnabled={true}
-                    data={enrollData && enrollData.length > 0 ? enrollData.filter(enrollee => enrollee.status === 'Active') : []}
+                    data={enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active') : []}
                     renderItem={_offlineRenderItem}
                     keyExtractor={(item) => item._id.toString()}
                     showsVerticalScrollIndicator={false}
@@ -241,6 +268,14 @@ const localStyles = StyleSheet.create({
     paddingRight: 0,
     backgroundColor: colors.green,
     borderRadius: 5,
+  },
+  syncIconContainer: {
+    ...styles.rowSpaceBetween,
+  },
+  syncText: {
+    ...styles.h3,
+    color: colors.black,
+    ...styles.ml10,
   },
   itemSeparator: { height: 20 },
   item: {

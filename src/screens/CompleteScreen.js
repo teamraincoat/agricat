@@ -1,12 +1,19 @@
 import React from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import DoneIcon from '../assets/icons/DoneIcon';
 import EButton from '../atoms/EButton';
 import EText from '../atoms/EText';
-import {translations} from '../provider/LocalizeProvider';
-import {colors, styles} from '../styles';
+import { translations } from '../provider/LocalizeProvider';
+import { colors, styles } from '../styles';
 
-const CompleteScreen = props => {
+const CompleteScreen = ({ route, navigation }) => {
+  let campaignData;
+  if (route && route.params) {
+    campaignData = route.params.campaignData;
+  }
+  const onComplete = () => {
+    navigation.navigate('Home', { campaignData });
+  };
   return (
     <View style={localStyles.mainContainer}>
       <DoneIcon />
@@ -19,7 +26,7 @@ const CompleteScreen = props => {
       </EText>
       <EButton
         title={translations['Complete.continue']}
-        onClick={() => console.log('click')}
+        onClick={() => onComplete()}
         style={localStyles.button}
       />
     </View>
