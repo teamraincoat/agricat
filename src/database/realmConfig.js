@@ -1,10 +1,12 @@
 /* eslint-disable camelcase */
+import { ObjectId } from 'bson';
 import Realm from 'realm';
 import {
   UserSchema,
   User_memberOfSchema,
   EnrollmentSchema,
   Enrollment_imagesSchema,
+  CampaignSchema,
 } from '../../schemas';
 import Constants from '../constants/Constants';
 import {removeStorageData, saveStorageData, getStorageData} from '../utils/localStorage';
@@ -16,18 +18,24 @@ const getRealm = async () => {
   };
   const userData = await getStorageData(Constants.STORAGE.USER_DATA);
   console.log('userData--->', userData);
+  const campaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
+  console.log('campaignData--->', campaignData);
+
+  // User memberOf is an array but only allows one campaign partition at a time
+  const partitionValue = userData && userData.memberOf && userData.memberOf[0];
+
   const configuration = {
     schema: [
       EnrollmentSchema,
       Enrollment_imagesSchema,
       UserSchema,
       User_memberOfSchema,
+      CampaignSchema,
     ],
 
     sync: {
+      partitionValue,
       user: app.currentUser,
-      // User memberOf is an array but only allows one campaign partition at a time
-      partitionValue: userData && userData.memberOf && userData.memberOf[0],
       newRealmFileBehavior: OpenRealmBehaviorConfiguration,
       existingRealmFileBehavior: OpenRealmBehaviorConfiguration,
     },
@@ -38,8 +46,8 @@ const getRealm = async () => {
     },
   };
 
-  const realmConfiguration = await Realm.open(configuration);
-  const { syncSession } = realmConfiguration;
+  const realm = await Realm.open(configuration);
+  const { syncSession } = realm;
   // syncSession.pause();
 
   syncSession.addProgressNotification(
@@ -75,23 +83,38 @@ const getRealm = async () => {
     },
   );
 
-  return realmConfiguration;
+  return realm;
 };
+
 export const signIn = async (email, password, data, navigation) => {
   try {
     const credential = Realm.Credentials.emailPassword(email, password);
     const newUser = await app.logIn(credential);
     const userData = await newUser.refreshCustomData();
 
+    console.log('MARK I', userData);
+
     console.log('newUser======ID', newUser.id);
+
+    const mongo = newUser.mongoClient("mongodb-atlas");
+    const campaigns = mongo.db("mexico").collection("Campaign");
+
+    // Get Campaign instance from partition value
+    //     `campaign=<the object id>`
+    const campaignData = await campaigns.findOne(
+      { _id: userData && userData.memberOf && ObjectId(userData.memberOf[0].split("=")[1]) },
+      { projection: { _id: 0, encryptionKey: 0, startTime: 0, endTime: 0 } },
+    );
 
     saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
     saveStorageData(Constants.STORAGE.USER_DATA, userData);
+    saveStorageData(Constants.STORAGE.CAMPAIGN_DATA, campaignData);
 
     navigation.navigate('Main', {
-      screen:"Home",
-        params:{
-          userInfo:userData
+      screen: "Home",
+        params: {
+          userData,
+          campaignData,
         }
       }
     );

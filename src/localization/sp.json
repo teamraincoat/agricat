@@ -13,7 +13,7 @@
     "NoCampaign.title": "¡Listo!",
     "NoCampaign.description": ".No ha sido asignado a una campaña. Notifique a su administrador o regrese luego.",
     "Campaign.title": "Campaña",
-    "Campaign.assign": "Hay 142 agricultores asignados a esta campaña.",
+    "Campaign.assign": "Hay {0} agricultores asignados a esta campaña.",
     "Campaign.completed": "Porcentaje de terminación",
     "Campaign.rolledUp": "Agricultores nrolados",
     "Campaign.locallyRolled": "Enrolados localmente",

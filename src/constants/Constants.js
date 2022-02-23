@@ -5,6 +5,7 @@ const Constants = {
     USER_DATA: 'userData',
     USER_DATA_SYNCED: 'userDataSynced',
     ENROLL_USER_DATA: 'enrollUserData',
+    CAMPAIGN_DATA: 'campaignData'
   },
   DEFAULT_LANGUAGE: 'sp',
 };

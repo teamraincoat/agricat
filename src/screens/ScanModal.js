@@ -29,11 +29,11 @@ const ScanModal = (props) => {
       // setQrInfo(JSON.parse(e.data));
       const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
       //const newQrData = e && e.data && (e.data).split('|');
-      const enrollmentId = newQrData[1];
-      const campaignKey = newQrData[0];
+      const enrollmentId = qrData[1];
+      const campaignKey = qrData[0];
       setQrInfo(qrData);
       setEnrollData(enrollmentId, campaignKey);
-      route.navigate('Consent');
+      route.navigate('Consent', { campaignKey });
       closeModal(false);
     } catch (err) {
       console.error('An error occurred', err);

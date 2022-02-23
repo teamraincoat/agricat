@@ -12,7 +12,7 @@ import { hp, normalize, wp } from '../styles/metrics';
 import { translations } from '../provider/LocalizeProvider';
 
 // eslint-disable-next-line react/prop-types
-const ConsentScreen = ({ navigation }) => {
+const ConsentScreen = ({ route, navigation }) => {
   const [isSelected, setSelection] = useState(false);
   return (
     // eslint-disable-next-line global-require
@@ -50,7 +50,7 @@ const ConsentScreen = ({ navigation }) => {
           </View>
           <EButton
             title={translations['Consent.confirm']}
-            onClick={() => navigation.navigate('Register')}
+            onClick={() => navigation.navigate('Register', { campaignKey: route.params.campaignKey })}
             style={localStyles.continueButton}
           />
         </View>

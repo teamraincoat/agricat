@@ -21,12 +21,14 @@ const UsersProvider = ({ children }) => {
       .then((projectRealm) => {
         realmRef.current = projectRealm;
         const syncUsers = projectRealm.objects('Enrollment');
-        const sortedUsers = syncUsers.sorted('firstName');
-        setUsers([...sortedUsers]);
-        sortedUsers.addListener(() => {
-            setUsers([...sortedUsers]);
-          });
-        })
+        // const sortedUsers = syncUsers.sorted('applicationTime');
+        const sortedUsers = syncUsers.sorted('applicationTime').filter((enrollee) => enrollee.status === 'Active');
+
+        setUsers([...sortedUsers].reverse());
+      })
+      // .then((enrolees) => {
+      //   setUsers([...enrolees]);
+      // })
       .catch((error) => {
         console.log('error--->', error);
       });
@@ -41,10 +43,9 @@ const UsersProvider = ({ children }) => {
     };
   }, []);
 
-  const submitAddUser = async (UserInfo, navigation, isModify) => {
+  const submitAddUser = async (UserInfo, navigation, isModify, campaignKey) => {
     if (UserInfo.firstName) {
       try {
-        const ID = '61f75159e8f1ed359e2bc224';
         const userData = await getStorageData(Constants.STORAGE.USER_DATA);
         const newUser = {
           ...UserInfo,
@@ -62,9 +63,7 @@ const UsersProvider = ({ children }) => {
           setStoredUserData([newUser._id]);
         }
 
-         const key = Buffer.from(`campkey=${ID}`).toString('base64');
-        const CampaignKey = Buffer.from(key, 'base64');
-         cipherEnrollmentData(newUser, CampaignKey, navigation, isModify);
+        cipherEnrollmentData(newUser, campaignKey, navigation, isModify);
       } catch (error) {
         console.log('submitAddUser error==>', error);
       }
@@ -85,9 +84,11 @@ const UsersProvider = ({ children }) => {
     // This is a way to ensure a series of Promises are resolved in serial order
     await fields.reduce(async (previousPromise, field) => {
       await previousPromise;
-        const decryptedField = await decrypt(document[field].split('|')[1], key, document[field].split('|')[0]);
-        clonedDocument[field] = decryptedField;
+      const decryptedField = await decrypt(document[field].split('|')[1], key, document[field].split('|')[0]);
+      clonedDocument[field] = decryptedField;
     }, Promise.resolve());
+
+    console.log('clonedDocument', clonedDocument, key);
     clonedDocument._id = _id;
     return clonedDocument;
   };
@@ -127,9 +128,12 @@ const UsersProvider = ({ children }) => {
               }
             });
             const userListUpdated = projectRealm.objects('Enrollment');
-             const sortedUsers = userListUpdated.sorted('firstName');
-             setUsers([...sortedUsers]);
-            navigation.navigate('Home');
+            const sortedUsers = userListUpdated.sorted('firstName');
+            setUsers([...sortedUsers]);
+            return getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
+          })
+          .then((campaignData) => {
+            navigation.navigate('Home', { campaignData });
           })
           .catch((error) => {
             console.log('error--->>', error);

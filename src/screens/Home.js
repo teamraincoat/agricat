@@ -29,7 +29,8 @@ import UploadDataModal from './modals/UploadDataModal';
 import ScanModal from './ScanModal';
 import { translations } from '../provider/LocalizeProvider';
 
-const Home = ({ navigation }) => {
+const Home = ({ route, navigation }) => {
+  const { campaignData } = route.params;
   // const {userInfo} = route.param;
   const [refresh, setRefresh] = useState(false);
   const [searchWord, setSearchWord] = useState('');
@@ -100,10 +101,10 @@ const Home = ({ navigation }) => {
             <View style={{ flex: 1 }}>
               <View style={localStyles.compaignInfo}>
                 <EText style={localStyles.title}>
-                  {translations['Campaign.title']}
+                  {`${translations['Campaign.title']} - ${campaignData.name}`}
                 </EText>
                 <EText style={localStyles.subTitle}>
-                  {translations['Campaign.assign']}
+                  {translations.formatString(translations['Campaign.assign'], enrollData.length > 0 ? enrollData.length : 0)}
                 </EText>
               </View>
               <View style={localStyles.container}>
@@ -130,7 +131,7 @@ const Home = ({ navigation }) => {
                 <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>
                   <FlatList
                     nestedScrollEnabled={true}
-                    data={enrollData && enrollData.length > 0 ? enrollData : []}
+                    data={enrollData && enrollData.length > 0 ? enrollData.filter(enrollee => enrollee.status === 'Active') : []}
                     renderItem={_offlineRenderItem}
                     keyExtractor={(item) => item._id.toString()}
                     showsVerticalScrollIndicator={false}

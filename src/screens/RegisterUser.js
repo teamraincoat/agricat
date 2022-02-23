@@ -38,7 +38,7 @@ const gender = [
   { label: 'Other', value: 'other' },
 ];
 
-const RegisterUser = ({ navigation }) => {
+const RegisterUser = ({ route, navigation }) => {
   const [dateState, setDateState] = useState(true);
   const [openDropDown, setOpenDropDown] = useState(false);
   const [isSelected, setSelection] = useState(false);
@@ -171,7 +171,7 @@ const RegisterUser = ({ navigation }) => {
       payoutMethod: data.payoutMethod,
       geoJson: data.geoJson,
       crop: data.crop,
-      applicationTime: data.applicationTime,
+      applicationTime: new Date(),
       images: data.images,
       subLocality: data.subLocality,
       _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
@@ -181,7 +181,7 @@ const RegisterUser = ({ navigation }) => {
       localityId: data.localityId,
       cropId: data.cropId,
       payoutMethodId: data.payoutMethodId,
-    }, navigation, isModify);
+    }, navigation, isModify, route.params.campaignKey);
 
     // Alert.alert(
     //   translations['Success'],
