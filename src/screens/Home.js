@@ -137,7 +137,7 @@ const Home = ({ route, navigation }) => {
               <View style={localStyles.container}>
                 <FarmerDataBlock
                   title={`${translations['Campaign.completed']}`}
-                  value={'11%'}
+                  value={'n/a%'}
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}

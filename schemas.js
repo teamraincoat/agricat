@@ -99,7 +99,7 @@ export const OrganizerSchema = {
 export const UserSchema = {
   name: 'User',
   properties: {
-    _id: 'objectId',
+    _id: 'string',
     _partition: 'string',
     email: 'string',
     isFirstLogin: 'bool?',
