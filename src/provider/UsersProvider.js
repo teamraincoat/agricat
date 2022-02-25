@@ -8,7 +8,9 @@ import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
 import Constants from '../constants/Constants';
 import { Buffer } from 'buffer';
+
 const UsersContext = React.createContext(null);
+
 const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [storedUserData, setStoredUserData] = useState(null);
@@ -21,14 +23,13 @@ const UsersProvider = ({ children }) => {
       .then((projectRealm) => {
         realmRef.current = projectRealm;
         const syncUsers = projectRealm.objects('Enrollment');
+        console.log('STATUS: Syncing Enrollments', syncUsers.length);
         // const sortedUsers = syncUsers.sorted('applicationTime');
-        const sortedUsers = syncUsers.sorted('applicationTime').filter((enrollee) => enrollee.status === 'Active');
+        // const sortedUsers = syncUsers.sorted('applicationTime').filter((enrollee) => enrollee.status === 'Active');
+        const sortedUsers = syncUsers.sorted('applicationTime');
 
-        setUsers([...sortedUsers].reverse());
+        setUsers([...sortedUsers]);
       })
-      // .then((enrolees) => {
-      //   setUsers([...enrolees]);
-      // })
       .catch((error) => {
         console.log('error--->', error);
       });
@@ -84,11 +85,15 @@ const UsersProvider = ({ children }) => {
     // This is a way to ensure a series of Promises are resolved in serial order
     await fields.reduce(async (previousPromise, field) => {
       await previousPromise;
-      const decryptedField = await decrypt(document[field].split('|')[1], key, document[field].split('|')[0]);
-      clonedDocument[field] = decryptedField;
+      const value = document[field];
+      if (value) {
+        const decryptedField = await decrypt(value.split('|')[1], key, value.split('|')[0]);
+        clonedDocument[field] = decryptedField;
+      } else {
+        clonedDocument[field] = '';
+      }
     }, Promise.resolve());
 
-    console.log('clonedDocument', clonedDocument, key);
     clonedDocument._id = _id;
     return clonedDocument;
   };
@@ -108,8 +113,11 @@ const UsersProvider = ({ children }) => {
     const clonedDocument = JSON.parse(JSON.stringify(document));
     await fields.reduce(async (previousPromise, field) => {
       await previousPromise;
-      const encryptedField = await encrypt(document[field], key);
-      clonedDocument[field] = encryptedField;
+      const value = document[field];
+      if (value) {
+        const encryptedField = await encrypt(document[field], key);
+        clonedDocument[field] = encryptedField;
+      }
     }, Promise.resolve());
     clonedDocument._id = _id;
     return clonedDocument;
@@ -148,7 +156,7 @@ const UsersProvider = ({ children }) => {
     if (users && users.length > 0) {
       // eslint-disable-next-line array-callback-return
       users.filter((item) => {
-        // eslint-disable-next-line eqeqeq
+        // eslint-disable-next-line
         if (item._id == id) {
           decipherEnrollmentData(item, key);
         }

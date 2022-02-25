@@ -7,7 +7,7 @@ const Constants = {
     ENROLL_USER_DATA: 'enrollUserData',
     CAMPAIGN_DATA: 'campaignData'
   },
-  DEFAULT_LANGUAGE: 'sp',
+  DEFAULT_LANGUAGE: 'es',
 };
 
 export default Constants;

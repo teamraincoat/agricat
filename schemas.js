@@ -1,37 +1,4 @@
-const OrganizerSchema = {
-  name: 'Organizer',
-  properties: {
-    _id: 'objectId',
-    _partition: 'string',
-    insurer: 'Insurer',
-    name: 'string',
-    status: 'string',
-  },
-  primaryKey: '_id',
-};
-
-const UserSchema = {
-  name: 'User',
-  properties: {
-    _id: 'string',
-    _partition: 'string',
-    email: 'string',
-    memberOf: 'User_memberOf[]',
-    name: 'string',
-  },
-  primaryKey: '_id',
-};
-
-const User_memberOfSchema = {
-  name: 'User_memberOf',
-  embedded: true,
-  properties: {
-    name: 'string?',
-    partition: 'string?',
-  },
-};
-
-const CampaignSchema = {
+export const CampaignSchema = {
   name: 'Campaign',
   properties: {
     _id: 'objectId',
@@ -47,16 +14,16 @@ const CampaignSchema = {
   primaryKey: '_id',
 };
 
-const EnrollmentSchema = {
-    name: 'Enrollment',
-    properties: {
+export const EnrollmentSchema = {
+  name: 'Enrollment',
+  properties: {
     _id: 'objectId',
     _partition: 'string',
     addressLine: 'string?',
     adminArea: 'string',
     adminAreaId: 'string',
     applicationTime: 'date?',
-    //campaign: 'object',
+    // campaign: 'Campaign',
     coveredAreaHa: 'decimal128?',
     crop: 'string',
     cropId: 'string?',
@@ -65,45 +32,50 @@ const EnrollmentSchema = {
     firstName: 'string',
     gender: 'string',
     geoJson: 'string?',
+    govId: 'string?',
     images: 'Enrollment_images[]',
     lastName: 'string',
     locality: 'string',
     localityId: 'string',
+    marketingChannel: 'string?',
     mobilePhone: 'string?',
+    mobilePhoneOwner: 'string?',
+    notes: 'string?',
     payoutMethod: 'string?',
     payoutMethodId: 'string?',
+    spokenLanguage: 'string?',
     status: 'string?',
     subLocality: 'string',
     subLocalityId: 'string',
     surName: 'string?',
   },
   primaryKey: '_id',
-};;
-
-const Enrollment_imagesSchema = {
-    name: 'Enrollment_images',
-    embedded: true,
-    properties: {
-      name: 'string?',
-      size: 'string?',
-      type: 'string?',
-      uri: 'string?',
-    },
 };
 
-const InsurerSchema = {
-    name: 'Insurer',
-    properties: {
-      _id: 'objectId',
-      _partition: 'string',
-      adminOf: 'Location[]',
-      name: 'string',
-      status: 'string',
-    },
-    primaryKey: '_id',
+export const Enrollment_imagesSchema = {
+  name: 'Enrollment_images',
+  embedded: true,
+  properties: {
+    name: 'string?',
+    size: 'string?',
+    type: 'string?',
+    uri: 'string?',
+  },
 };
 
-const LocationSchema = {
+export const InsurerSchema = {
+  name: 'Insurer',
+  properties: {
+    _id: 'objectId',
+    _partition: 'string',
+    adminOf: 'Location[]',
+    name: 'string',
+    status: 'string',
+  },
+  primaryKey: '_id',
+};
+
+export const LocationSchema = {
   name: 'Location',
   embedded: true,
   properties: {
@@ -111,13 +83,27 @@ const LocationSchema = {
     partition: 'string?',
   },
 };
-export {
-    OrganizerSchema,
-    UserSchema,
-    User_memberOfSchema,
-    CampaignSchema,
-    EnrollmentSchema,
-    Enrollment_imagesSchema,
-    InsurerSchema,
-    LocationSchema,
+
+export const OrganizerSchema = {
+  name: 'Organizer',
+  properties: {
+    _id: 'objectId',
+    _partition: 'string',
+    // insurer: 'Insurer',
+    name: 'string',
+    status: 'string',
+  },
+  primaryKey: '_id',
+};
+
+export const UserSchema = {
+  name: 'User',
+  properties: {
+    _id: 'string',
+    _partition: 'string',
+    email: 'string',
+    memberOf: 'string[]',
+    name: 'string',
+  },
+  primaryKey: '_id',
 };

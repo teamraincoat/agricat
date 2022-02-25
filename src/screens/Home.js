@@ -141,7 +141,7 @@ const Home = ({ route, navigation }) => {
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
-                  value={enrollData.length > 0 ? enrollData.length : 0}
+                  value={enrollData && enrollData.length > 0 ? enrollData.filter(enrollee => enrollee.status === 'Active').length : 0}
                 />
               </View>
               <EText style={[localStyles.title, { ...styles.ml15 }]}>
@@ -154,7 +154,7 @@ const Home = ({ route, navigation }) => {
                 </EText>
               ) : isSynced !== true && */}
 
-              {enrollData && enrollData.length > 0 ? (
+              {enrollData && enrollData.filter(enrollee => enrollee.status === 'Active').length > 0 ? (
                 <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>
                   <FlatList
                     nestedScrollEnabled={true}

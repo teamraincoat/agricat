@@ -3,7 +3,6 @@ import { ObjectId } from 'bson';
 import Realm from 'realm';
 import {
   UserSchema,
-  User_memberOfSchema,
   EnrollmentSchema,
   Enrollment_imagesSchema,
   CampaignSchema,
@@ -11,7 +10,8 @@ import {
 import Constants from '../constants/Constants';
 import {removeStorageData, saveStorageData, getStorageData} from '../utils/localStorage';
 
-export const app = new Realm.App({ id: 'enrollmentappvi-dyzez', timeout: 10000 });
+export const app = new Realm.App({ id: 'enrollmentappvii-dcpxn', timeout: 10000 });
+
 const getRealm = async () => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
@@ -29,7 +29,6 @@ const getRealm = async () => {
       EnrollmentSchema,
       Enrollment_imagesSchema,
       UserSchema,
-      User_memberOfSchema,
       CampaignSchema,
     ],
 
@@ -38,6 +37,23 @@ const getRealm = async () => {
       user: app.currentUser,
       newRealmFileBehavior: OpenRealmBehaviorConfiguration,
       existingRealmFileBehavior: OpenRealmBehaviorConfiguration,
+      error: function (_session, error) {
+        if (realm) {
+          if (error.name === "ClientReset") {
+            const realmPath = realm.path;
+            realm.close();
+            console.log(`Error ${error.message}, need to reset ${realmPath}…`);
+            Realm.App.Sync.initiateClientReset(app, realmPath); // pass your realm app instance, and realm path to initiateClientReset()
+            console.log(`Creating backup from ${error.config.path}…`);
+            // Move backup file to a known location for a restore
+            // fs.renameSync(error.config.path, realmPath + "~");
+            // Discard the reference to the realm instance
+            realm = null;
+          } else {
+            console.log(`Received error ${error.message}`);
+          }
+        }
+      },
     },
     error: (_session, error) => {
       (error) => {
@@ -48,7 +64,6 @@ const getRealm = async () => {
 
   const realm = await Realm.open(configuration);
   const { syncSession } = realm;
-  // syncSession.pause();
 
   syncSession.addProgressNotification(
     'upload',
@@ -91,10 +106,6 @@ export const signIn = async (email, password, data, navigation) => {
     const credential = Realm.Credentials.emailPassword(email, password);
     const newUser = await app.logIn(credential);
     const userData = await newUser.refreshCustomData();
-
-    console.log('MARK I', userData);
-
-    console.log('newUser======ID', newUser.id);
 
     const mongo = newUser.mongoClient("mongodb-atlas");
     const campaigns = mongo.db("mexico").collection("Campaign");

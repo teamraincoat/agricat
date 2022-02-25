@@ -15,19 +15,19 @@ import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
-
 import ImgToBase64 from 'react-native-image-base64';
 import CheckBox from '@react-native-community/checkbox';
-import { ObjectId } from 'bson';
+import { Decimal128, ObjectId, EJSON } from 'bson';
+
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
 import ScanModal from './ScanModal';
 import { colors, styles } from '../styles';
-import { useLocal } from '../contex/index';
 import EText from '../atoms/EText';
 
 import ImagesContainer from '../atoms/ImagesContainer';
 import { useUsers } from '../provider/UsersProvider';
+import { translations } from '../provider/LocalizeProvider';
 import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
@@ -38,9 +38,33 @@ const gender = [
   { label: 'Other', value: 'other' },
 ];
 
+const phoneOwnerItems = [
+  { label: 'Propio', value: 'self' },
+  { label: 'Vecinos/Familiares', value: 'friend-family' },
+];
+
+const marketingChannelItems = [
+  { label: 'CADER', value: 'cader' },
+  { label: 'Vecinos/Familiares', value: 'friends-family' },
+  { label: 'Líderes o Comisarios ejidales', value: 'community-leaders' },
+  { label: 'Folleto, manta, cartel, radio, etc.', value: 'trad-media' },
+  { label: 'Otro', value: 'other' },
+];
+
+const spokenLanguageItems = [
+  { label: 'Zapoteco', value: 'zapoteco' },
+  { label: 'Mixtepo', value: 'mixtepo' },
+  { label: 'Mazateco', value: 'mazateco' },
+  { label: 'Mixe', value: 'mixe' },
+];
+
 const RegisterUser = ({ route, navigation }) => {
   const [dateState, setDateState] = useState(true);
-  const [openDropDown, setOpenDropDown] = useState(false);
+  const [openGenderDropDown, setOpenGenderDropDown] = useState(false);
+  const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
+  const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
+  const [openSpokenLangDropDown, setOpenSpokenLangDropDown] = useState(false);
+  
   const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -48,7 +72,6 @@ const RegisterUser = ({ route, navigation }) => {
   const [qrInfo, setQrInfo] = React.useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const { submitAddUser, enrollDataById } = useUsers();
-  const { translations } = useLocal();
 
   const {
     control,
@@ -57,28 +80,20 @@ const RegisterUser = ({ route, navigation }) => {
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues: {
+      defaultValues: {
         firstName: '',
         lastName: '',
         surName: '',
         dob: '',
         gender: '',
         mobilePhone: '',
-        addressLine: '',
-        locality: '',
-        localityId: '',
+        mobilePhoneOwner: '',
+        govId: '',
         applicationTime: '',
-        geoJson: '',
-        coveredArea: '',
-        crop: '',
-        cropId: '',
+        coveredAreaHa: '',
+        marketingChannel: '',
+        spokenLangauge: '',
         images: [],
-        payoutMethod: '',
-        payoutMethodId: '',
-        adminArea: '',
-        adminAreaId: '',
-        subLocality: '',
-        subLocalityId: '',
         notes: '',
       },
   });
@@ -110,22 +125,14 @@ const RegisterUser = ({ route, navigation }) => {
         dob,
         gender,
         mobilePhone,
-        locality,
-        subLocality,
-        addressLine,
+        mobilePhoneOwner,
+        govId,
         applicationTime,
-        geoJson,
-        coveredArea,
-        crop,
-        payoutMethod,
-        adminArea,
-        adminAreaId,
-        subLocalityId,
-        localityId,
-        cropId,
-        payoutMethodId,
+        coveredAreaHa,
+        marketingChannel,
+        spokenLanguage,
+        notes,
       } = enrollDataById;
-      // moment(new Date(date)).format('MM/DD/YYYY')
       reset({
         firstName: firstName ? firstName : '',
         lastName: lastName ? lastName : '',
@@ -133,22 +140,15 @@ const RegisterUser = ({ route, navigation }) => {
         dob: dob ? moment(new Date(dob)).format('DD/MM/YYYY') : '',
         gender: gender ? gender : '',
         mobilePhone: mobilePhone ? mobilePhone : '',
-        addressLine: addressLine ? addressLine :'',
-        locality: locality ? locality : '',
-        subLocality: subLocality ? subLocality : '',
+        mobilePhoneOwner: mobilePhoneOwner ? mobilePhoneOwner : '',
+        govId: govId ? govId : '',
+        coveredAreaHa: coveredAreaHa ? coveredAreaHa : '0',
+        marketingChannel: marketingChannel ? marketingChannel : '',
+        spokenLanguage: spokenLanguage ? spokenLanguage : '',
+        notes: notes ? notes : '',
         applicationTime: applicationTime
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
-        geoJson: geoJson ? geoJson : '',
-        coveredArea: coveredArea ? coveredArea : '',
-        crop: crop ? crop : '',
-        payoutMethod: payoutMethod ? payoutMethod : '',
-        adminArea: adminArea ? adminArea : '',
-        adminAreaId: adminAreaId ? adminAreaId : '',
-        subLocalityId: subLocalityId ? subLocalityId : '',
-        localityId: localityId ? localityId : '',
-        cropId: cropId ? cropId : '',
-        payoutMethodId: payoutMethodId ? payoutMethodId : '',
       });
     }
   }, [enrollDataById]);
@@ -159,41 +159,33 @@ const RegisterUser = ({ route, navigation }) => {
     if (enrollDataById && enrollDataById._id) {
       isModify = true;
     }
-    submitAddUser({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      surName: data.surName,
-      gender: data.gender,
-      mobilePhone: data.mobilePhone,
-      addressLine: data.addressLine,
-      dob: new Date(data.dob),
-      locality: data.locality,
-      payoutMethod: data.payoutMethod,
-      geoJson: data.geoJson,
-      crop: data.crop,
-      applicationTime: new Date(),
-      images: data.images,
-      subLocality: data.subLocality,
-      _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
-      adminArea: data.adminArea,
-      adminAreaId: data.adminAreaId,
-      subLocalityId: data.subLocalityId,
-      localityId: data.localityId,
-      cropId: data.cropId,
-      payoutMethodId: data.payoutMethodId,
-    }, navigation, isModify, route.params.campaignKey);
-
-    // Alert.alert(
-    //   translations['Success'],
-    //   translations['Registration.success'],
-    //   [
-    //     {
-    //       text: 'Ok',
-    //       onPress: () => navigation.navigate('Home'),
-    //     },
-    //   ],
-    //   {cancelable: false},
-    // );
+    try {
+      const payload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        surName: data.surName,
+        gender: data.gender,
+        dob: new Date(data.dob),
+        mobilePhone: data.mobilePhone,
+        mobilePhoneOwner: data.mobilePhoneOwner,
+        coveredAreaHa: Decimal128.fromString(
+          // If the covered area was already saved as
+          // Decimal, then we check the EJSON or
+          // use the plain text
+          typeof data.coveredAreaHa === 'object' ? data.coveredAreaHa['$numberDecimal'] : data.coveredAreaHa
+        ),
+        govId: data.govId,
+        marketingChannel: data.marketingChannel,
+        spokenLanguage: data.spokenLanguage,
+        notes: data.notes,
+        images: data.images,
+        applicationTime: new Date(),
+        _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
+      };
+      submitAddUser(payload, navigation, isModify, route.params.campaignKey);
+    } catch(err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -267,7 +259,7 @@ const RegisterUser = ({ route, navigation }) => {
                     placeholder={translations['Placeholder.firstName']}
                     style={styles.p10}
                     onBlur={onBlur}
-                    label={<EText>First Name</EText>}
+                    label={<EText>{translations['Enroller.firstName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                   />
@@ -287,7 +279,7 @@ const RegisterUser = ({ route, navigation }) => {
                     placeholder={translations['Placeholder.lastName']}
                     style={styles.p10}
                     onBlur={onBlur}
-                    label={<EText>Last Name</EText>}
+                    label={<EText>{translations['Enroller.lastName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                   />
@@ -307,7 +299,7 @@ const RegisterUser = ({ route, navigation }) => {
                     placeholder={translations['Placeholder.surName']}
                     style={styles.p10}
                     onBlur={onBlur}
-                    label={<EText>Sur Name</EText>}
+                    label={<EText>{translations['Enroller.surName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                   />
@@ -317,70 +309,49 @@ const RegisterUser = ({ route, navigation }) => {
               {errors.surName && (
                 <EText>{translations['Field.required']}</EText>
               )}
-              <EText style={localStyles.labelStyle}>Gender</EText>
+
+              <EText style={localStyles.labelStyle}>{translations['Enroller.gender']}</EText>
               <Controller
                 control={control}
                 rules={{
                   required: true,
                 }}
                 render={({ field: { value, onChange } }) => (
-                    <DropDownPicker
-                      placeholder={translations['Placeholder.gender']}
-                      open={openDropDown}
-                      value={value}
-                      items={gender}
-                      setOpen={setOpenDropDown}
-                      setValue={onChange}
-                      onChangeValue={(value) => {
-                        onChange(value);
-                      }}
-                      style={[
-                        localStyles.dropDownStyle,
-                        { ...styles.mt10 },
-                        {
-                          borderColor: errors.gender
-                            ? colors.error
-                            : colors.transparent,
-                        },
-                      ]}
-                      disableBorderRadius={true}
-                      textStyle={{
-                        color: !value ? colors.grey : colors.black,
-                        ...styles.h3,
-                      }}
-                      dropDownContainerStyle={
-                        localStyles.dropDownContainerStyle
-                      }
-                      listMode="SCROLLVIEW"
-                    />
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.gender']}
+                    open={openGenderDropDown}
+                    value={value}
+                    items={gender}
+                    setOpen={setOpenGenderDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: errors.gender
+                          ? colors.error
+                          : colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    textStyle={{
+                      color: !value ? colors.grey : colors.black,
+                      ...styles.h3,
+                    }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
                 )}
                 name="gender"
               />
               {errors.gender && <EText>{translations['Field.required']}</EText>}
 
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.contactNo']}
-                    style={styles.p10}
-                    onBlur={onBlur}
-                    keyboardType="numeric"
-                    label={<EText>Contact Number</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    maxLength={10}
-                  />
-                )}
-                name="mobilePhone"
-              />
-              {errors.mobilePhone && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <EText style={localStyles.labelStyle}>Date of Birth</EText>
+              <EText style={localStyles.labelStyle}>{translations['Enroller.dob']}</EText>
               <Controller
                 control={control}
                 rules={{
@@ -418,112 +389,76 @@ const RegisterUser = ({ route, navigation }) => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
-                    placeholder={translations['Placeholder.address']}
-                    maxLength={225}
+                    placeholder={translations['Placeholder.contactNo']}
+                    style={styles.p10}
                     onBlur={onBlur}
-                    multiline={true}
-                    numberOfLines={5}
-                    label={<EText>Address</EText>}
+                    keyboardType="numeric"
+                    label={<EText>{translations['Enroller.telephone']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
-                    // style={[{textAlignVertical: 'top'}, styles.p10]}
+                    maxLength={10}
                   />
                 )}
-                name="addressLine"
+                name="mobilePhone"
               />
-              {errors.addressLine && (
+              {errors.mobilePhone && (
                 <EText>{translations['Field.required']}</EText>
               )}
 
+              <EText style={localStyles.labelStyle}>{translations['Enroller.telephoneOwner']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: false,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.locality']}
-                    onBlur={onBlur}
-                    label={<EText>Locality</EText>}
-                    onChangeText={(value) => onChange(value)}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openPhoneOwnerDropDown}
                     value={value}
-                    style={styles.p10}
+                    items={phoneOwnerItems}
+                    setOpen={setOpenPhoneOwnerDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    // textStyle={{
+                    //   color: !value ? colors.grey : colors.black,
+                    //   ...styles.h3,
+                    // }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="locality"
+                name="mobilePhoneOwner"
               />
-              <Controller
-                control={control}
-                rules={{
-                  required: false,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.localityId']}
-                    onBlur={onBlur}
-                    label={<EText>locality Id</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="localityId"
-              />
-              <Controller
-                control={control}
-                rules={{
-                  required: false,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.sublocality']}
-                    onBlur={onBlur}
-                    label={<EText>Sub Locality</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="subLocality"
-              />
-               <Controller
-                control={control}
-                rules={{
-                  required: false,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.subLocalityId']}
-                    onBlur={onBlur}
-                    label={<EText>sub Locality Id</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="subLocalityId"
-              />
-            {errors.subLocalityId && (
-                <EText>{translations['Field.required']}</EText>
-            )}
 
               <Controller
                 control={control}
                 rules={{
-                  required: false,
+                  required: true,
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
-                    placeholder={translations['Placeholder.geojson']}
                     onBlur={onBlur}
-                    label={<EText>Geo Json</EText>}
+                    label={<EText>CURP</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
                   />
                 )}
-                name="geoJson"
+                name="govId"
               />
+              {errors.govId && (
+                <EText>{translations['Field.required']}</EText>
+              )}
 
               <Controller
                 control={control}
@@ -534,179 +469,97 @@ const RegisterUser = ({ route, navigation }) => {
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCropArea']}
                     onBlur={onBlur}
-                    label={<EText>Covered Crop Area</EText>}
+                    label={<EText>{translations['Enroller.coveredCropArea']}</EText>}
                     onChangeText={(value) => onChange(value)}
-                    value={value}
+                    value={typeof value === 'object' ? value['$numberDecimal'] : value}
                     style={styles.p10}
                     keyboardType="numeric"
                   />
                 )}
-                name="coveredArea"
+                name="coveredAreaHa"
               />
               {errors.coveredAreaHa && (
                 <EText>{translations['Field.required']}</EText>
               )}
 
+              <EText style={localStyles.labelStyle}>{translations['Enroller.marketingChannel']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.payoutMethod']}
-                    onBlur={onBlur}
-                    label={<EText>Payout Method</EText>}
-                    onChangeText={(value) => onChange(value)}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openMarketingChannelDropDown}
                     value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="payoutMethod"
-              />
-              {errors.payoutMethod && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.payoutMethodId']}
-                    onBlur={onBlur}
-                    label={<EText>Payout Method Id</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="payoutMethodId"
-              />
-              {errors.payoutMethodId && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.coveredCrop']}
-                    onBlur={onBlur}
-                    label={<EText>Crop</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="crop"
-              />
-              {errors.crop && <EText>{translations['Field.required']}</EText>}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.cropId']}
-                    onBlur={onBlur}
-                    label={<EText>crop Id</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="cropId"
-              />
-              {errors.crop && <EText>{translations['Field.required']}</EText>}
-
-              <Controller
-                control={control}
-                rules={{
-                  required: false,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.adminArea']}
-                    onBlur={onBlur}
-                    label={<EText>Admin Area</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="adminArea"
-              />
-            {errors.adminArea && (
-                <EText>{translations['Field.required']}</EText>
-            )}
-            <Controller
-                control={control}
-                rules={{
-                  required: false,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.adminAreaId']}
-                    onBlur={onBlur}
-                    label={<EText>Admin Area Id</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="adminAreaId"
-              />
-            {errors.adminAreaId && (
-                <EText>{translations['Field.required']}</EText>
-            )}
-              <EText style={localStyles.labelStyle}>application Date</EText>
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { value } }) => (
-                  <EButton
-                    title={
-                      value
-                        ? moment(value).format('DD/MM/YYYY')
-                        : translations['Placeholder.applicationDate']
-                    }
-                    onClick={() => {
-                      setDateState(false);
-                      showDatePicker();
+                    items={marketingChannelItems}
+                    setOpen={setOpenMarketingChannelDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
                     }}
-                    style={localStyles.datePicker}
-                    textStyle={[
-                      styles.selfStart,
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
                       {
-                        color: !value ? colors.grey : '#121212',
-                        ...styles.h3,
+                        borderColor: colors.transparent,
                       },
                     ]}
+                    disableBorderRadius={true}
+                    // textStyle={{
+                    //   color: !value ? colors.grey : colors.black,
+                    //   ...styles.h3,
+                    // }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="applicationTime"
+                name="marketingChannel"
               />
-              {errors.applicationTime && (
-                <EText>{translations['Field.required']}</EText>
-              )}
+
+            <EText style={localStyles.labelStyle}>{translations['Enroller.spokenLanguage']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: false,
-                }}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openSpokenLangDropDown}
+                    value={value}
+                    items={spokenLanguageItems}
+                    setOpen={setOpenSpokenLangDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      console.log('HERE 2', value);
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    // textStyle={{
+                    //   color: !value ? colors.grey : colors.black,
+                    //   ...styles.h3,
+                    // }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="spokenLanguage"
+              />
+
+              <Controller
+                control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.notes']}
                     onBlur={onBlur}
-                    label={<EText>Addition Notes (optional)</EText>}
+                    label={<EText>{translations['Enroller.notes']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     maxLength={225}
@@ -720,8 +573,8 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="notes"
               />
-              <EText style={localStyles.labelStyle}>add photo</EText>
 
+              <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
               {selectedFiles && selectedFiles.length > 0 ? (
                 <ImagesContainer
                   selectedFileImages={selectedFiles}
@@ -735,7 +588,7 @@ const RegisterUser = ({ route, navigation }) => {
                   }}
                   render={() => (
                     <EButton
-                    title={translations['AddImage']}
+                    title={translations['Enroller.imageButton']}
                       onClick={() => onCameraPress()}
                       style={localStyles.addImageButton}>
                       <Pressable>
@@ -764,14 +617,10 @@ const RegisterUser = ({ route, navigation }) => {
                 />
               </View>
               <EButton
-                title={translations['Submit']}
+                title={translations['Enroller.complete']}
                 onClick={handleSubmit(register_user)}
                 style={localStyles.submitButton}
               />
-              {/* <EButton
-                title={translations['Submit']}
-                onClick={() => submitAddEditBook()}
-              /> */}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
@@ -836,7 +685,7 @@ const localStyles = StyleSheet.create({
     ...styles.h2,
     ...styles.mh25,
     fontSize: normalize(12),
-  },
+  }, 
   datePicker: {
     ...styles.mb10,
     ...styles.mh10,
@@ -844,6 +693,7 @@ const localStyles = StyleSheet.create({
     ...styles.mh10,
     ...styles.borderLight,
     height: hp(7),
+    zIndex: 999,
     shadowColor: colors.transparent,
     backgroundColor: colors.white,
   },
@@ -851,6 +701,7 @@ const localStyles = StyleSheet.create({
     ...styles.radius5,
     ...styles.selfCenter,
     ...styles.borderLight,
+    zIndex: 9999,
     width: wp(90),
   },
   addImageButton: {

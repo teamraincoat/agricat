@@ -6,7 +6,7 @@ import {
   Alert,
 } from 'react-native';
 
-import { signIn } from '../database/realmConfig';
+import {signIn, signOut} from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -15,12 +15,13 @@ import { colors, styles } from '../styles';
 import { hp } from '../styles/metrics';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 
-const LoginScreen = ({ navigation }) => {
-  const { translations, initializeAppLanguage } = useContext(LocalizeContext);
-  initializeAppLanguage();
+const LoginScreen = ({navigation}) => {
+  const {translations, initializeAppLanguage} = useContext(LocalizeContext);
+  initializeAppLanguage('es');
   const [email, setEmail] = useState({ value: 'tushali024+realmapp007@gmail.com', error: '' });
   const [password, setPassword] = useState({ value: 'enrollmenttest007', error: '' });
   const [loading, setLoading] = useState(false);
+
   const onPressSignIn = async () => {
     try {
       setLoading(true);

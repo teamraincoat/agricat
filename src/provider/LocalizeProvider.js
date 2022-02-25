@@ -4,10 +4,10 @@ import LocalizedStrings from 'react-native-localization';
 import * as RNLocalize from 'react-native-localize';
 
 import en from '../localization/en.json';
-import sp from '../localization/sp.json';
+import es from '../localization/es.json';
 import Constants from '../constants/Constants';
 
-export const translations = new LocalizedStrings({ en, sp });
+export const translations = new LocalizedStrings({ en, es });
 
 export const LocalizeContext = React.createContext({
   translations,
@@ -16,7 +16,7 @@ export const LocalizeContext = React.createContext({
   initializeAppLanguage: () => {},
 }); // to prevent lint error
 export const LocalizeProvider = ({ children }) => {
-  const [appLanguage, setAppLanguage] = useState('sp');
+  const [appLanguage, setAppLanguage] = useState(Constants.STORAGE.DEFAULT_LANGUAGE);
 
   const setLanguage = (language) => {
     translations.setLanguage(language);
@@ -24,8 +24,8 @@ export const LocalizeProvider = ({ children }) => {
     AsyncStorage.setItem(Constants.STORAGE.APP_LANGUAGE, language);
   };
 
-  const initializeAppLanguage = async () => {
-    const currentLanguage = await AsyncStorage.getItem(
+  const initializeAppLanguage = async (lang) => {
+    const currentLanguage = lang || await AsyncStorage.getItem(
       Constants.STORAGE.APP_LANGUAGE,
     );
 
