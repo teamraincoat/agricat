@@ -18,8 +18,8 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 const LoginScreen = ({navigation}) => {
   const {translations, initializeAppLanguage} = useContext(LocalizeContext);
   initializeAppLanguage('es');
-  const [email, setEmail] = useState({ value: 'tushali024+realmappxi@gmail.com', error: '' });
-  const [password, setPassword] = useState({ value: 'enrollmenttest011', error: '' });
+  const [email, setEmail] = useState({ value: '', error: '' });
+  const [password, setPassword] = useState({ value: '', error: '' });
   const [loading, setLoading] = useState(false);
 
   const onPressSignIn = async () => {
