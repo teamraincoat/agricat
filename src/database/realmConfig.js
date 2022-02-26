@@ -8,10 +8,9 @@ import {
   CampaignSchema,
 } from '../../schemas';
 import Constants from '../constants/Constants';
-import {removeStorageData, saveStorageData, getStorageData} from '../utils/localStorage';
+import { removeStorageData, saveStorageData, getStorageData } from '../utils/localStorage';
 
-export const app = new Realm.App({ id: 'enrollmentappx-rtkmp', timeout: 10000 });
-
+export const app = new Realm.App({ id: 'enrollmentappxi-hmgnf', timeout: 10000 });
 const getRealm = async () => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
@@ -37,9 +36,9 @@ const getRealm = async () => {
       user: app.currentUser,
       newRealmFileBehavior: OpenRealmBehaviorConfiguration,
       existingRealmFileBehavior: OpenRealmBehaviorConfiguration,
-      error: function (_session, error) {
+      error(_session, error) {
         if (realm) {
-          if (error.name === "ClientReset") {
+          if (error.name === 'ClientReset') {
             const realmPath = realm.path;
             realm.close();
             console.log(`Error ${error.message}, need to reset ${realmPath}…`);
@@ -97,7 +96,7 @@ const getRealm = async () => {
       );
     },
   );
- 
+
   return realm;
 };
 
@@ -107,28 +106,43 @@ export const signIn = async (email, password, data, navigation) => {
     const newUser = await app.logIn(credential);
     const userData = await newUser.refreshCustomData();
 
-    const mongo = newUser.mongoClient("mongodb-atlas");
-    const campaigns = mongo.db("mexico").collection("Campaign");
+    const mongo = newUser.mongoClient('mongodb-atlas');
+    const campaigns = mongo.db('mexico').collection('Campaign');
 
     // Get Campaign instance from partition value
     //     `campaign=<the object id>`
     const campaignData = await campaigns.findOne(
-      { _id: userData && userData.memberOf && ObjectId(userData.memberOf[0].split("=")[1]) },
-      { projection: { _id: 0, encryptionKey: 0, startTime: 0, endTime: 0 } },
+      { _id: userData && userData.memberOf && ObjectId(userData.memberOf[0].split('=')[1]) },
+      {
+        projection: {
+          _id: 0, encryptionKey: 0, startTime: 0, endTime: 0,
+        },
+      },
     );
 
     saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
     saveStorageData(Constants.STORAGE.USER_DATA, userData);
     saveStorageData(Constants.STORAGE.CAMPAIGN_DATA, campaignData);
 
-    navigation.navigate('Main', {
-      screen: "Home",
-        params: {
-          userData,
-          campaignData,
-        }
-      }
-    );
+    getRealm().then((result) => {
+      const { syncSession } = result;
+      syncSession.addProgressNotification(
+        'upload',
+        'reportIndefinitely',
+        (transferred, transferable) => {
+          const progressPercentage = (100.0 * transferred) / transferable;
+          if (progressPercentage === 100) {
+            navigation.navigate('Main', {
+              screen: 'Home',
+              params: {
+                userData,
+                campaignData,
+              },
+            });
+          }
+        },
+      );
+    });
     return newUser;
   } catch (error) {
     console.log('SignIn Err', error);
