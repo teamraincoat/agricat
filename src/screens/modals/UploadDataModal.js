@@ -10,8 +10,9 @@ import EText from '../../atoms/EText';
 import { colors, styles } from '../../styles';
 import { hp } from '../../styles/metrics';
 import { translations } from '../../provider/LocalizeProvider';
-import { getStorageData } from '../../utils/localStorage';
+import { getStorageData, saveStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
+import getRealm from '../../database/realmConfig';
 // import getRealm from '../../database/realmConfig';
 
 const UploadDataModal = (props) => {
@@ -35,6 +36,20 @@ const UploadDataModal = (props) => {
         console.log('error localStorage', e);
       });
   }, [visible]);
+
+  const syncData = async () => {
+    getRealm()
+      .then((result) => {
+        const { syncSession } = result;
+        if (syncSession) {
+        saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
+          syncSession.resume();
+        }
+      })
+      .catch((error) => {
+        console.log('error--->', error);
+      });
+  };
   return (
     <Modal
       isVisible={visible}
@@ -54,7 +69,7 @@ const UploadDataModal = (props) => {
           </EText>
           <EButton
             title={translations['Sync.confirm']}
-            onClick={() => setStartSync(true)}
+            onClick={() => syncData()}
             style={localStyles.syncButton}
           />
         </View>

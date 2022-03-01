@@ -135,6 +135,8 @@ const UsersProvider = ({ children }) => {
                 projectRealm.create('Enrollment', cipheredEnrollment);
               }
             });
+            const { syncSession } = projectRealm;
+            syncSession.pause();
             const userListUpdated = projectRealm.objects('Enrollment');
             const sortedUsers = userListUpdated.sorted('firstName');
             setUsers([...sortedUsers]);

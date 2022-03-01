@@ -63,6 +63,10 @@ const getRealm = async () => {
 
   const realm = await Realm.open(configuration);
   const { syncSession } = realm;
+  const isPendingEnrollment = await getStorageData(Constants.STORAGE.ENROLL_USER_DATA);
+  if (isPendingEnrollment) {
+    syncSession.pause();
+  }
 
   syncSession.addProgressNotification(
     'upload',

@@ -16,7 +16,7 @@ export const LocalizeContext = React.createContext({
   initializeAppLanguage: () => {},
 }); // to prevent lint error
 export const LocalizeProvider = ({ children }) => {
-  const [appLanguage, setAppLanguage] = useState(Constants.STORAGE.DEFAULT_LANGUAGE);
+  const [appLanguage, setAppLanguage] = useState(Constants.DEFAULT_LANGUAGE);
 
   const setLanguage = (language) => {
     translations.setLanguage(language);
