@@ -104,15 +104,16 @@ const getRealm = async () => {
   return realm;
 };
 
-export const signIn = async (email, password, data, navigation) => {
+export const signIn = async (email, password, navigation) => {
   try {
     const credential = Realm.Credentials.emailPassword(email, password);
     const newUser = await app.logIn(credential);
     const userData = await newUser.refreshCustomData();
-
     const mongo = newUser.mongoClient('mongodb-atlas');
     const campaigns = mongo.db('mexico').collection('Campaign');
-
+    if (userData && userData.isFirstLogin) {
+      saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, userData.isFirstLogin);
+    }
     // Get Campaign instance from partition value
     //     `campaign=<the object id>`
     const campaignData = await campaigns.findOne(
@@ -130,19 +131,25 @@ export const signIn = async (email, password, data, navigation) => {
 
     getRealm().then((result) => {
       const { syncSession } = result;
+      syncSession.resume();
       syncSession.addProgressNotification(
         'upload',
         'reportIndefinitely',
         (transferred, transferable) => {
           const progressPercentage = (100.0 * transferred) / transferable;
           if (progressPercentage === 100) {
-            navigation.navigate('Main', {
-              screen: 'Home',
-              params: {
-                userData,
-                campaignData,
-              },
-            });
+            if (userData && userData.isFirstLogin) {
+              navigation.navigate('SignUp');
+            } else {
+              saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
+              navigation.navigate('Main', {
+                screen: 'Home',
+                params: {
+                  userData,
+                  campaignData,
+                },
+              });
+            }
           }
         },
       );
@@ -153,8 +160,15 @@ export const signIn = async (email, password, data, navigation) => {
   }
 };
 
-export const signUp = async (email, password) => {
-  await app.emailPasswordAuth.registerUser({ email, password });
+export const signUp = async (email, password, route) => {
+  try {
+    await app.emailPasswordAuth.registerUser({ email, password });
+    route.navigate('SignUp', { userCredential: { email, password } });
+  } catch (error) {
+    if (error && error.code === 49) {
+      await signIn(email, password, route);
+    }
+  }
 };
 
 export const signOut = async (navigation) => {

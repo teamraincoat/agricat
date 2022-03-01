@@ -6,7 +6,7 @@ import {
   Alert,
 } from 'react-native';
 
-import {signIn, signOut} from '../database/realmConfig';
+import { signIn, signOut, signUp } from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -15,19 +15,25 @@ import { colors, styles } from '../styles';
 import { hp } from '../styles/metrics';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 
-const LoginScreen = ({navigation}) => {
-  const {translations, initializeAppLanguage} = useContext(LocalizeContext);
+const LoginScreen = ({ navigation }) => {
+  const { translations, initializeAppLanguage } = useContext(LocalizeContext);
   initializeAppLanguage('es');
-  const [email, setEmail] = useState({ value: '', error: '' });
-  const [password, setPassword] = useState({ value: '', error: '' });
+   const [email, setEmail] = useState({ value: 'tushali024+realmappxi@gmail.com', error: '' });
+   const [password, setPassword] = useState({ value: 'enrollmenttest011', error: '' });
+//const [email, setEmail] = useState({ value: 'test@yopmail.com', error: '' });
+ // const [password, setPassword] = useState({ value: '12345678', error: '' });
   const [loading, setLoading] = useState(false);
 
   const onPressSignIn = async () => {
     try {
       setLoading(true);
-      await signIn(email.value, password.value, null, navigation);
+      await signUp(email.value, password.value, navigation);
     } catch (error) {
-      Alert.alert(`Failed to sign in: ${error.message}`);
+      console.log('error*****', error);
+    //   if (error && error.code === 49) {
+    //     await signIn(email.value, password.value,null, navigation);
+    //   }
+    //   Alert.alert(`Failed to sign in: ${error.message}`);
     }
   };
   return (

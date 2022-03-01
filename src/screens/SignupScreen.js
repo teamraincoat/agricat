@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -9,36 +9,63 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
+import Realm from 'realm';
+import { ObjectId } from 'bson';
 
-import {useForm, Controller} from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import {signIn, signUp} from '../database/realmConfig';
-import {translations} from '../provider/LocalizeProvider';
-import {colors, styles} from '../styles';
-import {hp, normalize, wp} from '../styles/metrics';
+import { app, signIn, signUp } from '../database/realmConfig';
+import { translations } from '../provider/LocalizeProvider';
+import { colors, styles } from '../styles';
+import { hp, normalize, wp } from '../styles/metrics';
 import BackgroundImage from '../atoms/BackgroundImage';
 
 DropDownPicker.setMode('BADGE');
-const SignupScreen = ({navigation}) => {
+const SignupScreen = ({ navigation, route }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
   const [languageSelect, SetLanguageSelect] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [lList, setLList] = useState([]);
+  const userCredential = route && route.params && route.params.userCredential;
 
+  console.log('userCredential', userCredential);
   const Items = [
-    {label: 'German', value: 'German'},
-    {label: 'English', value: 'English'},
-    {label: 'French', value: 'French'},
+    { label: 'German', value: 'German' },
+    { label: 'English', value: 'English' },
+    { label: 'French', value: 'French' },
   ];
 
-  const onPressSignUp = async data => {
+  const onPressSignUp = async (data) => {
+    console.log('data====>', data);
+    const args = [];
+    const { email } = userCredential;
+    const { password } = data;
     try {
-      //await signUp(data.email, data.password);
-      //signIn(data.email, data.password, data, navigation);
+      if (data.password !== data.confirmPassword) {
+        Alert.alert('Password and Confirm Password are not same');
+        return;
+      }
+      // setLoading(true);
+      const credential = Realm.Credentials.emailPassword(userCredential.email, userCredential.password);
+      const newUser = await app.logIn(credential);
+      const userData = await newUser.refreshCustomData();
+      console.log('userData', userData);
+      const mongo = newUser.mongoClient('mongodb-atlas');
+      const userList = mongo.db('mexico').collection('User');
+
+      const filter = {
+        _id: userData && userData._id,
+      };
+      const newUserData = await userList.findOne(filter);
+      console.log('<--------newUserData----->', newUserData);
+      //  todo: newUserData is not getting data from User collection
+      // after getting data from User collection, we need to update the data in User collection
+     // const resetPassword = await app.emailPasswordAuth.callResetPasswordFunction({ email, password });
+
     } catch (error) {
       console.log('Sign up error', error);
       Alert.alert(`Failed to sign up: ${error.message}`);
@@ -48,14 +75,14 @@ const SignupScreen = ({navigation}) => {
   useEffect(() => {
     if (lList) {
       const signUpData = getValues();
-      reset({...signUpData, languagesList: lList.length > 0 ? lList : []});
+      reset({ ...signUpData, languagesList: lList.length > 0 ? lList : [] });
     }
   }, [lList]);
   const {
     control,
     getValues,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     reset,
     register,
   } = useForm({
@@ -89,12 +116,12 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   placeholder={translations['Placeholder.Name']}
                   value={value}
                   onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
+                  onChangeText={(value) => onChange(value)}
                   {...register('name', {
                     required: 'Name is required',
                   })}
@@ -115,13 +142,13 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   phone
                   placeholder={translations['Placeholder.Telephone']}
                   value={value}
                   onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
+                  onChangeText={(value) => onChange(value)}
                   {...register('telephone', {
                     required: 'Telephone is required',
                   })}
@@ -149,12 +176,12 @@ const SignupScreen = ({navigation}) => {
               showArrowIcon={true}
               showBadgeDot={true}
               setOpen={SetLanguageSelect}
-              setValue={value => setLList(value)}
+              setValue={(value) => setLList(value)}
               zIndexInverse={7000}
               zIndex={1000}
               style={[
                 localStyles.dropDownStyle,
-                {...styles.mt10},
+                { ...styles.mt10 },
                 {
                   borderColor: errors.languagesList
                     ? colors.error
@@ -179,13 +206,13 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   secure
                   placeholder={translations['Placeholder.password']}
                   value={value}
                   onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
+                  onChangeText={(value) => onChange(value)}
                   {...register('password', {
                     required: 'Password is required',
                   })}
@@ -205,13 +232,13 @@ const SignupScreen = ({navigation}) => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   secure
                   placeholder={translations['Placeholder.confirmPassword']}
                   value={value}
                   onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
+                  onChangeText={(value) => onChange(value)}
                   {...register('confirmPassword', {
                     required: 'ConfirmPassword is required',
                   })}
@@ -231,10 +258,10 @@ const SignupScreen = ({navigation}) => {
             <View style={localStyles.textContainer}>
               <View style={localStyles.textWrapper}>
                 <EText style={localStyles.subTitle}>
-                  {`By continuing you are accepting the`}
+                  {'By continuing you are accepting the'}
                 </EText>
                 <EText style={localStyles.subTitle}>
-                  {`Terms of Service and Privacy Policy.`}
+                  {'Terms of Service and Privacy Policy.'}
                 </EText>
               </View>
             </View>

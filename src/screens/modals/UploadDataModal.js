@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import {
+  View, StyleSheet, Pressable, ActivityIndicator,
+} from 'react-native';
 import Modal from 'react-native-modal';
 
 import CloseIcon from '../../assets/icons/CloseIcon';
@@ -19,6 +21,8 @@ const UploadDataModal = (props) => {
   const { visible, closeModal } = props;
   const [startSync, setStartSync] = useState(false);
   const [remainFarmer, setRemainFarmer] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [progressPercentage, setProgressPercentage] = useState(0);
   const onCloseModal = () => {
     // setStartSync(false);
     closeModal(false);
@@ -42,9 +46,24 @@ const UploadDataModal = (props) => {
       .then((result) => {
         const { syncSession } = result;
         if (syncSession) {
-        saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
+          saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
           syncSession.resume();
         }
+        syncSession.addProgressNotification(
+          'upload',
+          'reportIndefinitely',
+          (transferred, transferable) => {
+            const Percentage = (100.0 * transferred) / transferable;
+            setProgressPercentage(Percentage);
+            if (transferred < transferable) {
+              setLoading(true);
+            } else if (transferred === transferable) {
+              setLoading(false);
+              onCloseModal();
+              console.log('same size or greater');
+            }
+          },
+        );
       })
       .catch((error) => {
         console.log('error--->', error);
@@ -57,28 +76,48 @@ const UploadDataModal = (props) => {
       onBackButtonPress={onCloseModal}
       backdropColor={colors.lightGrey}>
       <View style={localStyles.mainContainer}>
-        <Pressable style={localStyles.iconContainer} onPress={onCloseModal}>
-          <CloseIcon />
-        </Pressable>
-        <View style={localStyles.uploadDataContainer}>
-          <UploadLargeIcon />
+        {loading ? (
+          <View style={localStyles.loaderContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <EText style={localStyles.loaderText}>
+                {progressPercentage}</EText>
+          </View>
+        ) : (
+          <>
+            <Pressable style={localStyles.iconContainer} onPress={onCloseModal}>
+              <CloseIcon />
+            </Pressable>
+            <View style={localStyles.uploadDataContainer}>
+              <UploadLargeIcon />
 
-          <EText style={localStyles.title}>{translations['Sync.title']}</EText>
-          <EText style={localStyles.subTitle}>
-            {`You are going to synchronize ${remainFarmer} farmers.`}
-          </EText>
-          <EButton
-            title={translations['Sync.confirm']}
-            onClick={() => syncData()}
-            style={localStyles.syncButton}
-          />
-        </View>
+              <EText style={localStyles.title}>
+                {translations['Sync.title']}
+              </EText>
+              <EText style={localStyles.subTitle}>
+                {`You are going to synchronize ${remainFarmer} farmers.`}
+              </EText>
+              <EButton
+                title={translations['Sync.confirm']}
+                onClick={() => syncData()}
+                style={localStyles.syncButton}
+              />
+            </View>
+          </>
+        )}
       </View>
     </Modal>
   );
 };
 
 const localStyles = StyleSheet.create({
+  loaderContainer: {
+    ...styles.flex,
+    ...styles.center,
+  },
+  loaderText: {
+    ...styles.h1,
+    ...styles.mt25,
+  },
   mainContainer: {
     // ...styles.flex,
     backgroundColor: colors.lightGrey,
