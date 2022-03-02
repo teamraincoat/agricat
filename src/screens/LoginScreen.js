@@ -18,10 +18,8 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 const LoginScreen = ({ navigation }) => {
   const { translations, initializeAppLanguage } = useContext(LocalizeContext);
   initializeAppLanguage('es');
-   const [email, setEmail] = useState({ value: 'tushali024+realmappxi@gmail.com', error: '' });
-   const [password, setPassword] = useState({ value: 'enrollmenttest011', error: '' });
-//const [email, setEmail] = useState({ value: 'test@yopmail.com', error: '' });
- // const [password, setPassword] = useState({ value: '12345678', error: '' });
+  const [email, setEmail] = useState({ value: 'tushali024+realmappxi@gmail.com', error: '' });
+  const [password, setPassword] = useState({ value: 'enrollmenttest011', error: '' });
   const [loading, setLoading] = useState(false);
 
   const onPressSignIn = async () => {
@@ -29,11 +27,8 @@ const LoginScreen = ({ navigation }) => {
       setLoading(true);
       await signUp(email.value, password.value, navigation);
     } catch (error) {
+      setLoading(false);
       console.log('error*****', error);
-    //   if (error && error.code === 49) {
-    //     await signIn(email.value, password.value,null, navigation);
-    //   }
-    //   Alert.alert(`Failed to sign in: ${error.message}`);
     }
   };
   return (

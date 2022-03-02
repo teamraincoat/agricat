@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { ObjectId } from 'bson';
+import { Alert } from 'react-native';
 import Realm from 'realm';
 import {
   UserSchema,
@@ -111,6 +112,9 @@ export const signIn = async (email, password, navigation) => {
     const userData = await newUser.refreshCustomData();
     const mongo = newUser.mongoClient('mongodb-atlas');
     const campaigns = mongo.db('mexico').collection('Campaign');
+    const userList = mongo.db('mexico').collection('User');
+    const newUserData = await userList.findOne();
+    console.log('<--------newUserData----->', newUserData);
     if (userData && userData.isFirstLogin) {
       saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, userData.isFirstLogin);
     }
@@ -138,6 +142,7 @@ export const signIn = async (email, password, navigation) => {
         (transferred, transferable) => {
           const progressPercentage = (100.0 * transferred) / transferable;
           if (progressPercentage === 100) {
+            console.log('<===userData userData====>>', userData);
             if (userData && userData.isFirstLogin) {
               navigation.navigate('SignUp');
             } else {
@@ -157,6 +162,16 @@ export const signIn = async (email, password, navigation) => {
     return newUser;
   } catch (error) {
     console.log('SignIn Err', error);
+    if (error && error.code === 50) {
+      Alert.alert(
+        'Error',
+        'Invalid email or password',
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
+    }
   }
 };
 

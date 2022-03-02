@@ -9,8 +9,6 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import Realm from 'realm';
-import { ObjectId } from 'bson';
 
 import { useForm, Controller } from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -22,6 +20,8 @@ import { translations } from '../provider/LocalizeProvider';
 import { colors, styles } from '../styles';
 import { hp, normalize, wp } from '../styles/metrics';
 import BackgroundImage from '../atoms/BackgroundImage';
+import { saveStorageData } from '../utils/localStorage';
+import Constants from '../constants/Constants';
 
 DropDownPicker.setMode('BADGE');
 const SignupScreen = ({ navigation, route }) => {
@@ -40,32 +40,29 @@ const SignupScreen = ({ navigation, route }) => {
   ];
 
   const onPressSignUp = async (data) => {
-    console.log('data====>', data);
-    const args = [];
-    const { email } = userCredential;
     const { password } = data;
     try {
       if (data.password !== data.confirmPassword) {
         Alert.alert('Password and Confirm Password are not same');
         return;
       }
-      // setLoading(true);
-      const credential = Realm.Credentials.emailPassword(userCredential.email, userCredential.password);
-      const newUser = await app.logIn(credential);
-      const userData = await newUser.refreshCustomData();
+      const userData = await app.currentUser.refreshCustomData();
       console.log('userData', userData);
-      const mongo = newUser.mongoClient('mongodb-atlas');
+      const mongo = app.currentUser.mongoClient('mongodb-atlas');
       const userList = mongo.db('mexico').collection('User');
-
-      const filter = {
-        _id: userData && userData._id,
-      };
-      const newUserData = await userList.findOne(filter);
-      console.log('<--------newUserData----->', newUserData);
-      //  todo: newUserData is not getting data from User collection
-      // after getting data from User collection, we need to update the data in User collection
-     // const resetPassword = await app.emailPasswordAuth.callResetPasswordFunction({ email, password });
-
+      const newUserData = await userList.updateOne(
+        { _id: userData && userData._id },
+        {
+          $set: {
+            name: data.name, languagesList: [...data.languagesList], telephone: data.telephone, isFirstLogin: false,
+          },
+        },
+      );
+      if (newUserData.modifiedCount === 1) {
+          saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
+        navigation.navigate('Home');
+      }
+       // const resetPassword = await app.emailPasswordAuth.callResetPasswordFunction({ email, password });
     } catch (error) {
       console.log('Sign up error', error);
       Alert.alert(`Failed to sign up: ${error.message}`);
