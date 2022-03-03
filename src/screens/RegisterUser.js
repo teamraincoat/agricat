@@ -64,7 +64,7 @@ const RegisterUser = ({ route, navigation }) => {
   const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
   const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
   const [openSpokenLangDropDown, setOpenSpokenLangDropDown] = useState(false);
-  
+
   const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -132,6 +132,7 @@ const RegisterUser = ({ route, navigation }) => {
         marketingChannel,
         spokenLanguage,
         notes,
+        images,
       } = enrollDataById;
       reset({
         firstName: firstName ? firstName : '',
@@ -149,7 +150,11 @@ const RegisterUser = ({ route, navigation }) => {
         applicationTime: applicationTime
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
+          images: images ? images : [],
       });
+      if(enrollDataById && enrollDataById.images && enrollDataById.images.length > 0 && selectedFiles && selectedFiles.length === 0){
+        setSelectedFiles([...enrollDataById.images]);
+      }
     }
   }, [enrollDataById]);
 
@@ -685,7 +690,7 @@ const localStyles = StyleSheet.create({
     ...styles.h2,
     ...styles.mh25,
     fontSize: normalize(12),
-  }, 
+  },
   datePicker: {
     ...styles.mb10,
     ...styles.mh10,

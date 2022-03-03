@@ -2,12 +2,12 @@
 import React, {
   useContext, useState, useEffect, useRef,
 } from 'react';
-import {decode, encode} from 'base-64';
+import { decode, encode } from 'base-64';
+import { Buffer } from 'buffer';
 import getRealm from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
 import Constants from '../constants/Constants';
-import { Buffer } from 'buffer';
 
 const UsersContext = React.createContext(null);
 
@@ -50,7 +50,7 @@ const UsersProvider = ({ children }) => {
         const userData = await getStorageData(Constants.STORAGE.USER_DATA);
         const newUser = {
           ...UserInfo,
-          _partition: userData && userData.memberOf && userData.memberOf[0],//`campaign=${ID}`, // userId ? userId : app.currentUser.id,
+          _partition: userData && userData.memberOf && userData.memberOf[0], // `campaign=${ID}`, // userId ? userId : app.currentUser.id,
           status: 'Active',
         };
         if (storedUserData && storedUserData.length > 0) {
@@ -86,9 +86,21 @@ const UsersProvider = ({ children }) => {
     await fields.reduce(async (previousPromise, field) => {
       await previousPromise;
       const value = document[field];
-      if (value) {
+      if (value && typeof value === 'string') {
         const decryptedField = await decrypt(value.split('|')[1], key, value.split('|')[0]);
         clonedDocument[field] = decryptedField;
+      } else if (value && field === 'images') {
+        const decryptImage = clonedDocument.images.map(async (image) => {
+          const filteredImage = value.filter((img) => img.name === image.name);
+          if (filteredImage.length > 0) {
+            const decryptedImageUri = await decrypt(filteredImage[0].uri.split('|')[1], key, filteredImage[0].uri.split('|')[0]);
+            console.log('decryptedImageUri==>', decryptedImageUri);
+            image.uri = decryptedImageUri;
+            return image;
+          }
+        });
+        const decryptedImages = await Promise.all(decryptImage);
+        clonedDocument.images = decryptedImages;
       } else {
         clonedDocument[field] = '';
       }
@@ -99,7 +111,7 @@ const UsersProvider = ({ children }) => {
   };
 
   const decipherEnrollmentData = (enrollment, key) => {
-    decryptFields(['firstName', 'lastName', 'surName'], enrollment, key)
+    decryptFields(['firstName', 'lastName', 'surName', 'images'], enrollment, key)
       .then((decipheredEnrollment) => {
         setEnrollDataById(decipheredEnrollment);
       })
@@ -114,9 +126,21 @@ const UsersProvider = ({ children }) => {
     await fields.reduce(async (previousPromise, field) => {
       await previousPromise;
       const value = document[field];
-      if (value) {
+      if (value && typeof value === 'string') {
         const encryptedField = await encrypt(document[field], key);
         clonedDocument[field] = encryptedField;
+      }
+      if (field === 'images') {
+        const imageEncrypt = clonedDocument.images.map(async (image) => {
+          const filteredImage = value.filter((img) => img.name === image.name);
+          if (filteredImage.length > 0) {
+            const encryptedImageUri = await encrypt(filteredImage[0].uri, key);
+            image.uri = encryptedImageUri;
+            return image;
+          }
+        });
+        const encryptedImages = await Promise.all(imageEncrypt);
+        clonedDocument.images = encryptedImages;
       }
     }, Promise.resolve());
     clonedDocument._id = _id;
@@ -124,7 +148,7 @@ const UsersProvider = ({ children }) => {
   };
 
   const cipherEnrollmentData = (enrollment, key, navigation, isModify) => {
-    encryptFields(['firstName', 'lastName', 'surName'], enrollment, key)
+    encryptFields(['firstName', 'lastName', 'surName', 'images'], enrollment, key)
       .then((cipheredEnrollment) => {
         getRealm()
           .then((projectRealm) => {
