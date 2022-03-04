@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
+import SplashScreen from 'react-native-splash-screen';
 import Home from './src/screens/Home';
 import RegisterUser from './src/screens/RegisterUser';
 import appReducer from './src/redux/store';
@@ -40,6 +41,7 @@ function App() {
       .catch((e) => {
         console.log('error localStorage', e);
       });
+    SplashScreen.hide();
   }, [userId]);
   const MainStackNavigator = () => (
     <UsersProvider>
