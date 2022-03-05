@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import LocalizedStrings from 'react-native-localization';
 import * as RNLocalize from 'react-native-localize';
@@ -7,16 +7,17 @@ import en from '../localization/en.json';
 import es from '../localization/es.json';
 import Constants from '../constants/Constants';
 
-export const translations = new LocalizedStrings({ en, es });
+export const translations = new LocalizedStrings({ es, en });
 
-export const LocalizeContext = React.createContext({
+export const LocalizeContext = createContext({
   translations,
   setAppLanguage: () => {},
   appLanguage: Constants.DEFAULT_LANGUAGE,
   initializeAppLanguage: () => {},
-}); // to prevent lint error
+});
+
 export const LocalizeProvider = ({ children }) => {
-  const [appLanguage, setAppLanguage] = useState(Constants.DEFAULT_LANGUAGE);
+  const [appLanguage, setAppLanguage] = useState();
 
   const setLanguage = (language) => {
     translations.setLanguage(language);
@@ -24,42 +25,38 @@ export const LocalizeProvider = ({ children }) => {
     AsyncStorage.setItem(Constants.STORAGE.APP_LANGUAGE, language);
   };
 
-  const initializeAppLanguage = async (lang) => {
-    const currentLanguage = lang || await AsyncStorage.getItem(
+  const initializeAppLanguage = async () => {
+    const currentLanguage = await AsyncStorage.getItem(
       Constants.STORAGE.APP_LANGUAGE,
     );
 
-    console.log('currentLna', currentLanguage);
-    if (currentLanguage) {
-      setLanguage(currentLanguage);
+    if (!currentLanguage) {
+      // let localeCode = Constants.DEFAULT_LANGUAGE;
+      // const supportedLocaleCodes = translations.getAvailableLanguages();
+      // const phoneLocaleCodes = RNLocalize.getLocales().map(
+      //   (locale) => locale.languageCode,
+      // );
+      // phoneLocaleCodes.some((code) => {
+      //   if (supportedLocaleCodes.includes(code)) {
+      //     localeCode = code;
+      //     return true;
+      //   }
+      // });
+      setLanguage(Constants.DEFAULT_LANGUAGE);
     } else {
-      let localeCode = Constants.DEFAULT_LANGUAGE;
-      const supportedLocaleCodes = translations.getAvailableLanguages();
-      console.log('supportedLocaleCodes', supportedLocaleCodes);
-      const phoneLocaleCodes = RNLocalize.getLocales().map(
-        (locale) => locale.languageCode,
-      );
-      // eslint-disable-next-line array-callback-return
-      phoneLocaleCodes.some((code) => {
-        console.log('code', code);
-        if (supportedLocaleCodes.includes(code)) {
-          localeCode = code;
-          return true;
-        }
-      });
-      setLanguage(localeCode);
+      setLanguage(currentLanguage);
     }
   };
 
   return (
-      <LocalizeContext.Provider
-        value={{
-          translations,
-          setAppLanguage: setLanguage,
-          appLanguage,
-          initializeAppLanguage,
-        }}>
-        {children}
-      </LocalizeContext.Provider>
+    <LocalizeContext.Provider
+      value={{
+        translations,
+        setAppLanguage: setLanguage,
+        appLanguage,
+        initializeAppLanguage,
+      }}>
+      {children}
+    </LocalizeContext.Provider>
   );
 };

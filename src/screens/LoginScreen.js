@@ -1,9 +1,6 @@
 import React, { useContext, useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  Pressable,
-  Alert,
+  View, StyleSheet, Pressable,
 } from 'react-native';
 
 import { signIn, signOut, signUp } from '../database/realmConfig';
@@ -16,10 +13,17 @@ import { hp } from '../styles/metrics';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 
 const LoginScreen = ({ navigation }) => {
-  const { translations, initializeAppLanguage } = useContext(LocalizeContext);
-  initializeAppLanguage('es');
-  const [email, setEmail] = useState({ value: 'tushali024+realmappxi@gmail.com', error: '' });
-  const [password, setPassword] = useState({ value: 'enrollmenttest011', error: '' });
+  const {
+    translations,
+  } = useContext(LocalizeContext);
+  const [email, setEmail] = useState({
+    value: 'tushali024+realmappxi@gmail.com',
+    error: '',
+  });
+  const [password, setPassword] = useState({
+    value: 'enrollmenttest011',
+    error: '',
+  });
   const [loading, setLoading] = useState(false);
 
   const onPressSignIn = async () => {
@@ -32,12 +36,13 @@ const LoginScreen = ({ navigation }) => {
     }
   };
   return (
-      // eslint-disable-next-line global-require
-      <BackgroundImage src={require('../assets/SplashBackground.png')}>
+    // eslint-disable-next-line global-require
+    <BackgroundImage src={require('../assets/SplashBackground.png')}>
       <View style={localStyles.loginTextContainer}>
-
-      <EText style={localStyles.title}>{translations['Login.title']}</EText>
-      <EText style={localStyles.subTitle}>{translations['Login.subTitle']}</EText>
+        <EText style={localStyles.title}>{translations['Login.title']}</EText>
+        <EText style={localStyles.subTitle}>
+          {translations['Login.subTitle']}
+        </EText>
       </View>
       <View>
         <ETextInput
@@ -69,9 +74,13 @@ const LoginScreen = ({ navigation }) => {
           keyboardShouldPersistTaps
         />
       </View>
-      <Pressable style={localStyles.signupTextContainer} onPress={() => navigation.navigate('SignUp')}>
-          <EText style={localStyles.signupText}>{translations['Login.signUpText']}</EText>
-        </Pressable>
+      <Pressable
+        style={localStyles.signupTextContainer}
+        onPress={() => navigation.navigate('SignUp')}>
+        <EText style={localStyles.signupText}>
+          {translations['Login.signUpText']}
+        </EText>
+      </Pressable>
       <EButton
         style={localStyles.button}
         onClick={() => onPressSignIn()}
