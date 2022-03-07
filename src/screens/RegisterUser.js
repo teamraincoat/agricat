@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Platform,
   Pressable,
+  Alert,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useForm, Controller } from 'react-hook-form';
@@ -27,7 +28,7 @@ import EText from '../atoms/EText';
 
 import ImagesContainer from '../atoms/ImagesContainer';
 import { useUsers } from '../provider/UsersProvider';
-import { translations } from '../provider/LocalizeProvider';
+import { LocalizeContext } from '../provider/LocalizeProvider';
 import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
@@ -59,6 +60,7 @@ const spokenLanguageItems = [
 ];
 
 const RegisterUser = ({ route, navigation }) => {
+  const { translations } = useContext(LocalizeContext);
   const [dateState, setDateState] = useState(true);
   const [openGenderDropDown, setOpenGenderDropDown] = useState(false);
   const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
@@ -72,6 +74,7 @@ const RegisterUser = ({ route, navigation }) => {
   const [qrInfo, setQrInfo] = React.useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const { submitAddUser, enrollDataById } = useUsers();
+  const [loading, setLoading] = useState(false);
 
   const {
     control,
@@ -79,23 +82,24 @@ const RegisterUser = ({ route, navigation }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    register,
   } = useForm({
-      defaultValues: {
-        firstName: '',
-        lastName: '',
-        surName: '',
-        dob: '',
-        gender: '',
-        mobilePhone: '',
-        mobilePhoneOwner: '',
-        govId: '',
-        applicationTime: '',
-        coveredAreaHa: '',
-        marketingChannel: '',
-        spokenLangauge: '',
-        images: [],
-        notes: '',
-      },
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      surName: '',
+      dob: '',
+      gender: '',
+      mobilePhone: '',
+      mobilePhoneOwner: '',
+      govId: '',
+      applicationTime: '',
+      coveredAreaHa: '',
+      marketingChannel: '',
+      spokenLangauge: '',
+      images: [],
+      notes: '',
+    },
   });
 
   const showDatePicker = () => {
@@ -135,24 +139,25 @@ const RegisterUser = ({ route, navigation }) => {
         images,
       } = enrollDataById;
       reset({
-        firstName: firstName ? firstName : '',
-        lastName: lastName ? lastName : '',
-        surName: surName ? surName : '',
+        firstName: firstName || '',
+        lastName: lastName || '',
+        surName: surName || '',
         dob: dob ? moment(new Date(dob)).format('DD/MM/YYYY') : '',
-        gender: gender ? gender : '',
-        mobilePhone: mobilePhone ? mobilePhone : '',
-        mobilePhoneOwner: mobilePhoneOwner ? mobilePhoneOwner : '',
-        govId: govId ? govId : '',
-        coveredAreaHa: coveredAreaHa ? coveredAreaHa : '0',
-        marketingChannel: marketingChannel ? marketingChannel : '',
-        spokenLanguage: spokenLanguage ? spokenLanguage : '',
-        notes: notes ? notes : '',
+        gender: gender || '',
+        mobilePhone: mobilePhone || '',
+        mobilePhoneOwner: mobilePhoneOwner || '',
+        govId: govId || '',
+        coveredAreaHa: coveredAreaHa || '0',
+        marketingChannel: marketingChannel || '',
+        spokenLanguage: spokenLanguage || '',
+        notes: notes || '',
         applicationTime: applicationTime
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
-          images: images ? images : [],
+        images: images || [],
       });
-      if(enrollDataById && enrollDataById.images && enrollDataById.images.length > 0 && selectedFiles && selectedFiles.length === 0){
+      if (enrollDataById && enrollDataById.images
+        && enrollDataById.images.length > 0 && selectedFiles && selectedFiles.length === 0) {
         setSelectedFiles([...enrollDataById.images]);
       }
     }
@@ -177,7 +182,7 @@ const RegisterUser = ({ route, navigation }) => {
           // If the covered area was already saved as
           // Decimal, then we check the EJSON or
           // use the plain text
-          typeof data.coveredAreaHa === 'object' ? data.coveredAreaHa['$numberDecimal'] : data.coveredAreaHa
+          typeof data.coveredAreaHa === 'object' ? data.coveredAreaHa.$numberDecimal : data.coveredAreaHa,
         ),
         govId: data.govId,
         marketingChannel: data.marketingChannel,
@@ -187,12 +192,25 @@ const RegisterUser = ({ route, navigation }) => {
         applicationTime: new Date(),
         _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
       };
-      submitAddUser(payload, navigation, isModify, route.params.campaignKey);
-    } catch(err) {
+      submitAddUser(payload, navigation, isModify, route?.params?.campaignKey, setLoading);
+    } catch (err) {
       console.error(err);
     }
   };
 
+  const checkValidation = () => {
+    const values = getValues();
+    if (values.firstName === '' || values.lastName === '' || values.surName === '' || values.gender === '' || values.dob === '' || values.mobilePhone === '' || values.govId === '' || values.coveredAreaHa === '') {
+      return false;
+    }
+    return true;
+  };
+  const onSubmit = () => {
+    handleSubmit(register_user)();
+    if (!checkValidation()) {
+      Alert.alert(translations.Error, translations['Message.requireAlert']);
+    }
+  };
   useEffect(() => {
     const values = getValues();
     reset({ ...values, images: selectedFiles });
@@ -240,11 +258,11 @@ const RegisterUser = ({ route, navigation }) => {
             <Pressable onPress={() => navigation.goBack()}>
               <CloseIcon />
             </Pressable>
-            <EText style={localStyles.title}>Enrolar</EText>
+            <EText style={localStyles.title}>{translations['Enroller.title']}</EText>
             <View></View>
           </View>
           <EText style={localStyles.subTitle}>
-            Complete y verifique la informacion del agricultor.
+            {translations['Enroller.subTitle']}
           </EText>
         </View>
         <View style={styles.flex}>
@@ -267,13 +285,18 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.firstName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
+                    {...register('firstName', {
+                      required: translations['Field.required'],
+                    })}
+                    error={!!errors.firstName}
+                    errorText={errors.firstName && errors.firstName.message}
                   />
                 )}
                 name="firstName"
               />
-              {errors.firstName && (
+              {/* {errors.firstName && (
                 <EText>{translations['Field.required']}</EText>
-              )}
+              )} */}
               <Controller
                 control={control}
                 rules={{
@@ -287,13 +310,15 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.lastName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
+                    {...register('lastName', {
+                      required: translations['Field.required'],
+                    })}
+                    error={!!errors.lastName}
+                    errorText={errors.lastName && errors.lastName.message}
                   />
                 )}
                 name="lastName"
               />
-              {errors.lastName && (
-                <EText>{translations['Field.required']}</EText>
-              )}
               <Controller
                 control={control}
                 rules={{
@@ -307,14 +332,15 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.surName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
+                    {...register('surName', {
+                      required: translations['Field.required'],
+                    })}
+                    error={!!errors.surName}
+                    errorText={errors.surName && errors.surName.message}
                   />
                 )}
                 name="surName"
               />
-              {errors.surName && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
               <EText style={localStyles.labelStyle}>{translations['Enroller.gender']}</EText>
               <Controller
                 control={control}
@@ -337,7 +363,7 @@ const RegisterUser = ({ route, navigation }) => {
                       { ...styles.mt10 },
                       {
                         borderColor: errors.gender
-                          ? colors.error
+                          ? colors.red
                           : colors.transparent,
                       },
                     ]}
@@ -354,7 +380,7 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="gender"
               />
-              {errors.gender && <EText>{translations['Field.required']}</EText>}
+              {errors.gender && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
 
               <EText style={localStyles.labelStyle}>{translations['Enroller.dob']}</EText>
               <Controller
@@ -373,7 +399,8 @@ const RegisterUser = ({ route, navigation }) => {
                       setDateState(true);
                       showDatePicker();
                     }}
-                    style={localStyles.datePicker}
+                    style={[localStyles.datePicker,
+                      errors.dob && { borderColor: colors.red, borderWidth: 1 }]}
                     textStyle={[
                       styles.selfStart,
                       {
@@ -385,7 +412,7 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="dob"
               />
-              {errors.dob && <EText>{translations['Field.required']}</EText>}
+              {errors.dob && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
 
               <Controller
                 control={control}
@@ -402,14 +429,15 @@ const RegisterUser = ({ route, navigation }) => {
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     maxLength={10}
+                    {...register('mobilePhone', {
+                      required: translations['Field.required'],
+                    })}
+                    error={!!errors.mobilePhone}
+                    errorText={errors.mobilePhone && errors.mobilePhone.message}
                   />
                 )}
                 name="mobilePhone"
               />
-              {errors.mobilePhone && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
               <EText style={localStyles.labelStyle}>{translations['Enroller.telephoneOwner']}</EText>
               <Controller
                 control={control}
@@ -457,18 +485,19 @@ const RegisterUser = ({ route, navigation }) => {
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
+                    {...register('govId', {
+                      required: translations['Field.required'],
+                    })}
+                    error={!!errors.govId}
+                    errorText={errors.govId && errors.govId.message}
                   />
                 )}
                 name="govId"
               />
-              {errors.govId && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
               <Controller
                 control={control}
                 rules={{
-                  required: true,
+                  required: false,
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
@@ -476,17 +505,14 @@ const RegisterUser = ({ route, navigation }) => {
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.coveredCropArea']}</EText>}
                     onChangeText={(value) => onChange(value)}
-                    value={typeof value === 'object' ? value['$numberDecimal'] : value}
+                    value={typeof value === 'object' ? value.$numberDecimal : value}
                     style={styles.p10}
                     keyboardType="numeric"
+                    editable={false}
                   />
                 )}
                 name="coveredAreaHa"
               />
-              {errors.coveredAreaHa && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
               <EText style={localStyles.labelStyle}>{translations['Enroller.marketingChannel']}</EText>
               <Controller
                 control={control}
@@ -623,8 +649,8 @@ const RegisterUser = ({ route, navigation }) => {
               </View>
               <EButton
                 title={translations['Enroller.complete']}
-                onClick={handleSubmit(register_user)}
-                style={localStyles.submitButton}
+                onClick={onSubmit}
+                loading={loading}
               />
             </ScrollView>
           </KeyboardAvoidingView>
@@ -698,8 +724,7 @@ const localStyles = StyleSheet.create({
     ...styles.mh10,
     ...styles.borderLight,
     height: hp(7),
-    zIndex: 999,
-    shadowColor: colors.transparent,
+    elevation: 0,
     backgroundColor: colors.white,
   },
   dropDownContainerStyle: {
@@ -732,6 +757,11 @@ const localStyles = StyleSheet.create({
   },
   submitButton: {
     ...styles.mv15,
+  },
+  errorText: {
+    color: colors.red,
+    ...styles.mh20,
+    ...styles.mv10,
   },
 });
 

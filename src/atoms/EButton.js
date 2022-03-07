@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
+  View,
 } from 'react-native';
 import { colors, styles } from '../styles';
 import { hp, wp } from '../styles/metrics';
@@ -17,9 +18,16 @@ const EButton = (props) => (
       styles.itemsCenter,
       props.style,
     ]}
-    onPress={props.onClick}>
+    onPress={() => !props.loading && props.onClick()}>
     {props.loading ? (
-      <ActivityIndicator />
+      <View style={[styles.flex, styles.rowCenter]}>
+        <ActivityIndicator />
+        {props.loadingText ? (
+          <Text style={[localStyles.text, props.textStyle, styles.ml10]}>
+            {props.loadingText}
+          </Text>
+        ) : null}
+      </View>
     ) : (
       <Text style={[localStyles.text, props.textStyle]}>{props.title}</Text>
     )}

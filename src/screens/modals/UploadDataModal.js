@@ -42,6 +42,7 @@ const UploadDataModal = (props) => {
   }, [visible]);
 
   const syncData = async () => {
+    setLoading(true);
     getRealm()
       .then((result) => {
         const { syncSession } = result;
@@ -76,7 +77,25 @@ const UploadDataModal = (props) => {
       onBackButtonPress={onCloseModal}
       backdropColor={colors.lightGrey}>
       <View style={localStyles.mainContainer}>
-        {loading ? (
+        <Pressable style={localStyles.iconContainer} onPress={onCloseModal}>
+          <CloseIcon />
+        </Pressable>
+        <View style={localStyles.uploadDataContainer}>
+          <UploadLargeIcon />
+
+          <EText style={localStyles.title}>{translations['Sync.title']}</EText>
+          <EText style={localStyles.subTitle}>
+            {`You are going to synchronize ${remainFarmer} farmers.`}
+          </EText>
+          <EButton
+            title={translations['Sync.confirm']}
+            onClick={() => syncData()}
+            style={localStyles.syncButton}
+            loading={loading}
+            loadingText={progressPercentage}
+          />
+        </View>
+        {/* {loading ? (
           <View style={localStyles.loaderContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
             <EText style={localStyles.loaderText}>
@@ -97,13 +116,14 @@ const UploadDataModal = (props) => {
                 {`You are going to synchronize ${remainFarmer} farmers.`}
               </EText>
               <EButton
-                title={translations['Sync.confirm']}
+                title={loading ? progressPercentage : translations['Sync.confirm']}
                 onClick={() => syncData()}
                 style={localStyles.syncButton}
+                loading={loading}
               />
             </View>
           </>
-        )}
+        )} */}
       </View>
     </Modal>
   );

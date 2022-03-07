@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { ObjectId } from 'bson';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import Realm from 'realm';
 import {
   UserSchema,
@@ -9,7 +9,11 @@ import {
   CampaignSchema,
 } from '../../schemas';
 import Constants from '../constants/Constants';
-import { removeStorageData, saveStorageData, getStorageData } from '../utils/localStorage';
+import {
+  removeStorageData,
+  saveStorageData,
+  getStorageData,
+} from '../utils/localStorage';
 
 export const app = new Realm.App({ id: 'enrollmentappxi-hmgnf', timeout: 10000 });
 const getRealm = async () => {
@@ -64,7 +68,9 @@ const getRealm = async () => {
 
   const realm = await Realm.open(configuration);
   const { syncSession } = realm;
-  const isPendingEnrollment = await getStorageData(Constants.STORAGE.ENROLL_USER_DATA);
+  const isPendingEnrollment = await getStorageData(
+    Constants.STORAGE.ENROLL_USER_DATA,
+  );
   if (isPendingEnrollment) {
     syncSession.pause();
   }
@@ -105,7 +111,7 @@ const getRealm = async () => {
   return realm;
 };
 
-export const signIn = async (email, password, navigation) => {
+export const signIn = async (email, password, navigation, setLoading) => {
   try {
     const credential = Realm.Credentials.emailPassword(email, password);
     const newUser = await app.logIn(credential);
@@ -116,15 +122,26 @@ export const signIn = async (email, password, navigation) => {
     const newUserData = await userList.findOne();
     console.log('<--------newUserData----->', newUserData);
     if (userData && userData.isFirstLogin) {
-      saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, userData.isFirstLogin);
+      saveStorageData(
+        Constants.STORAGE.IS_PENDING_REGISTRATION,
+        userData.isFirstLogin,
+      );
     }
     // Get Campaign instance from partition value
     //     `campaign=<the object id>`
     const campaignData = await campaigns.findOne(
-      { _id: userData && userData.memberOf && ObjectId(userData.memberOf[0].split('=')[1]) },
+      {
+        _id:
+          userData
+          && userData.memberOf
+          && ObjectId(userData.memberOf[0].split('=')[1]),
+      },
       {
         projection: {
-          _id: 0, encryptionKey: 0, startTime: 0, endTime: 0,
+          _id: 0,
+          encryptionKey: 0,
+          startTime: 0,
+          endTime: 0,
         },
       },
     );
@@ -143,8 +160,10 @@ export const signIn = async (email, password, navigation) => {
           const progressPercentage = (100.0 * transferred) / transferable;
           if (progressPercentage === 100) {
             console.log('<===userData userData====>>', userData);
+            setLoading(false);
             if (userData && userData.isFirstLogin) {
-              navigation.navigate('SignUp');
+              // navigation.navigate('SignUp');
+              Linking.openURL('https://www.google.com/');
             } else {
               saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
               navigation.navigate('Main', {
@@ -162,15 +181,11 @@ export const signIn = async (email, password, navigation) => {
     return newUser;
   } catch (error) {
     console.log('SignIn Err', error);
+    setLoading(false);
     if (error && error.code === 50) {
-      Alert.alert(
-        'Error',
-        'Invalid email or password',
-        [
-          { text: 'OK' },
-        ],
-        { cancelable: false },
-      );
+      Alert.alert('Error', 'Invalid email or password', [{ text: 'OK' }], {
+        cancelable: false,
+      });
     }
   }
 };

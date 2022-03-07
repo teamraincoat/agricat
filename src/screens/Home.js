@@ -141,7 +141,7 @@ const Home = ({ route, navigation }) => {
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
-                  value={enrollData && enrollData.length > 0 ? enrollData.filter(enrollee => enrollee.status === 'Active').length : 0}
+                  value={enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active').length : 0}
                 />
               </View>
               <EText style={[localStyles.title, { ...styles.ml15 }]}>
@@ -154,7 +154,7 @@ const Home = ({ route, navigation }) => {
                 </EText>
               ) : isSynced !== true && */}
 
-              {enrollData && enrollData.filter(enrollee => enrollee.status === 'Active').length > 0 ? (
+              {enrollData && enrollData.filter((enrollee) => enrollee.status === 'Active').length > 0 ? (
                 <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>
                   <FlatList
                     nestedScrollEnabled={true}
@@ -179,7 +179,6 @@ const Home = ({ route, navigation }) => {
               <Pressable
                 style={[
                   styles.absolute,
-                  styles.p10,
                   localStyles.scanIconButton,
                 ]}
                 onPress={onHandleScan}>
@@ -263,11 +262,23 @@ const localStyles = StyleSheet.create({
     ...styles.left,
   },
   scanIconButton: {
-    bottom: 0,
-    right: 0,
+    bottom: 10,
+    right: 10,
     paddingRight: 0,
-    backgroundColor: colors.green,
-    borderRadius: 5,
+    backgroundColor: colors.primary,
+    height: 88,
+    width: 88,
+    ...styles.center,
+    borderRadius: 44,
+    shadowColor: '#4e4f72',
+    shadowOpacity: 0.5,
+    shadowRadius: 44,
+    shadowOffset: {
+      height: 1,
+      width: 1,
+    },
+
+    elevation: 44,
   },
   syncIconContainer: {
     ...styles.rowSpaceBetween,

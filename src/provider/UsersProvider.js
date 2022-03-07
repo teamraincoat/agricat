@@ -44,9 +44,10 @@ const UsersProvider = ({ children }) => {
     };
   }, []);
 
-  const submitAddUser = async (UserInfo, navigation, isModify, campaignKey) => {
+  const submitAddUser = async (UserInfo, navigation, isModify, campaignKey, setLoading) => {
     if (UserInfo.firstName) {
       try {
+        setLoading(true);
         const userData = await getStorageData(Constants.STORAGE.USER_DATA);
         const newUser = {
           ...UserInfo,
@@ -64,8 +65,9 @@ const UsersProvider = ({ children }) => {
           setStoredUserData([newUser._id]);
         }
 
-        cipherEnrollmentData(newUser, campaignKey, navigation, isModify);
+        cipherEnrollmentData(newUser, campaignKey, navigation, isModify, setLoading);
       } catch (error) {
+        setLoading(false);
         console.log('submitAddUser error==>', error);
       }
     }
@@ -147,7 +149,7 @@ const UsersProvider = ({ children }) => {
     return clonedDocument;
   };
 
-  const cipherEnrollmentData = (enrollment, key, navigation, isModify) => {
+  const cipherEnrollmentData = (enrollment, key, navigation, isModify, setLoading) => {
     encryptFields(['firstName', 'lastName', 'surName', 'images'], enrollment, key)
       .then((cipheredEnrollment) => {
         getRealm()
@@ -167,13 +169,16 @@ const UsersProvider = ({ children }) => {
             return getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
           })
           .then((campaignData) => {
+            setLoading(false);
             navigation.navigate('Complete', { campaignData });
           })
           .catch((error) => {
+            setLoading(false);
             console.log('error--->>', error);
           });
       })
       .catch((err) => {
+        setLoading(false);
         console.error(err);
       });
   };

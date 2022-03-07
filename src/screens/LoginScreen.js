@@ -1,9 +1,7 @@
 import React, { useContext, useState } from 'react';
-import {
-  View, StyleSheet, Pressable,
-} from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 
-import { signIn, signOut, signUp } from '../database/realmConfig';
+import { signIn } from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -13,9 +11,9 @@ import { hp } from '../styles/metrics';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 
 const LoginScreen = ({ navigation }) => {
-  const {
-    translations,
-  } = useContext(LocalizeContext);
+  const { translations } = useContext(LocalizeContext);
+  // tushali024+realmappxi@gmail.com
+  // enrollmenttest011
   const [email, setEmail] = useState({
     value: 'tushali024+realmappxi@gmail.com',
     error: '',
@@ -26,10 +24,35 @@ const LoginScreen = ({ navigation }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  const validateEmail = (emailAddress) => emailAddress.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  );
+
+  const checkValidation = () => {
+    if (email.value === '') {
+      setEmail({ ...email, error: translations['Message.emailRequired'] });
+      return false;
+    }
+    if (!validateEmail(email.value)) {
+      setEmail({ ...email, error: translations['Message.emailInvalid'] });
+      return false;
+    }
+    if (password.value === '') {
+      setPassword({ ...password, error: translations['Message.passwordRequired'] });
+      return false;
+    }
+    if (password.value.length < 8) {
+      setPassword({ ...password, error: translations['Message.passwordLength'] });
+      return false;
+    }
+    return true;
+  };
   const onPressSignIn = async () => {
     try {
-      setLoading(true);
-      await signUp(email.value, password.value, navigation);
+      if (checkValidation()) {
+        setLoading(true);
+        await signIn(email.value, password.value, navigation, setLoading);
+      }
     } catch (error) {
       setLoading(false);
       console.log('error*****', error);
@@ -51,9 +74,9 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={(text) => setEmail({ value: text, error: '' })}
           error={!!email.error}
           errorText={email.error}
-          label={<EText>Email</EText>}
+          label={<EText>{translations['Login.email']}</EText>}
           autoCapitalize="none"
-          placeholder="enter email"
+          placeholder={translations['Placeholder.email']}
           returnKeyType="next"
           blurOnSubmit={false}
           keyboardShouldPersistTaps
@@ -64,12 +87,12 @@ const LoginScreen = ({ navigation }) => {
           password
           secureTextEntry={true}
           defaultValue={password.value}
-          error={!!email.error}
-          errorText={email.error}
+          error={!!password.error}
+          errorText={password.error}
           onChangeText={(text) => setPassword({ value: text, error: '' })}
           returnKeyType="done"
-          placeholder="enter password"
-          label={<EText>Password</EText>}
+          placeholder={translations['Placeholder.password']}
+          label={<EText>{translations['Login.password']}</EText>}
           onSubmitEditing={() => console.warn('submit')}
           keyboardShouldPersistTaps
         />
@@ -84,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
       <EButton
         style={localStyles.button}
         onClick={() => onPressSignIn()}
-        title="Log in"
+        title={translations['Login.title']}
         loading={loading}
         textStyle={localStyles.buttonText}
       />

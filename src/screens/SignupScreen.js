@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -15,8 +15,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import { app, signIn, signUp } from '../database/realmConfig';
-import { translations } from '../provider/LocalizeProvider';
+import { app } from '../database/realmConfig';
+import { LocalizeContext } from '../provider/LocalizeProvider';
 import { colors, styles } from '../styles';
 import { hp, normalize, wp } from '../styles/metrics';
 import BackgroundImage from '../atoms/BackgroundImage';
@@ -24,8 +24,10 @@ import { saveStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
 
 DropDownPicker.setMode('BADGE');
+const Image = require('../assets/Profile.png');
+
 const SignupScreen = ({ navigation, route }) => {
-  const [openDropDown, setOpenDropDown] = useState(false);
+  const { translations } = useContext(LocalizeContext);
   const [languageSelect, SetLanguageSelect] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
@@ -40,12 +42,12 @@ const SignupScreen = ({ navigation, route }) => {
   ];
 
   const onPressSignUp = async (data) => {
-    const { password } = data;
     try {
       if (data.password !== data.confirmPassword) {
-        Alert.alert('Password and Confirm Password are not same');
+        Alert.alert(translations['Message.passwordAreSame']);
         return;
       }
+      setLoading(true);
       const userData = await app.currentUser.refreshCustomData();
       console.log('userData', userData);
       const mongo = app.currentUser.mongoClient('mongodb-atlas');
@@ -54,19 +56,30 @@ const SignupScreen = ({ navigation, route }) => {
         { _id: userData && userData._id },
         {
           $set: {
-            name: data.name, languagesList: [...data.languagesList], telephone: data.telephone, isFirstLogin: false,
+            name: data.name,
+            languagesList: [...data.languagesList],
+            telephone: data.telephone,
+            isFirstLogin: false,
           },
         },
       );
+      setLoading(false);
       if (newUserData.modifiedCount === 1) {
-          saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
+        saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
         navigation.navigate('Home');
       }
-       // const resetPassword = await app.emailPasswordAuth.callResetPasswordFunction({ email, password });
+      // const resetPassword = await app.emailPasswordAuth.callResetPasswordFunction({ email, password });
     } catch (error) {
+      setLoading(false);
       console.log('Sign up error', error);
       Alert.alert(`Failed to sign up: ${error.message}`);
     }
+  };
+
+  const onPhoneNumberChange = (value, onChange) => {
+    const x = value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+    value = !x[2] ? x[1] : `(${x[1]}) ${x[2]}${x[3] ? `-${x[3]}` : ''}`;
+    onChange(value);
   };
 
   useEffect(() => {
@@ -93,18 +106,19 @@ const SignupScreen = ({ navigation, route }) => {
   });
 
   return (
-    // eslint-disable-next-line global-require
-    <BackgroundImage src={require('../assets/Profile.png')}>
-      <View style={localStyles.signupTextContainer}>
-        <EText style={localStyles.title}>Perfil</EText>
-        <EText style={localStyles.subTitle}>
-          Completa su perfil para continuar.
-        </EText>
-      </View>
-      <View style={localStyles.signupForm}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : null}
-          style={[localStyles.signupData, localStyles.justifyBetween]}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={[localStyles.signupData, localStyles.justifyBetween]}>
+      <BackgroundImage src={Image}>
+        <View style={localStyles.signupTextContainer}>
+          <EText style={localStyles.title}>
+            {translations['Profile.title']}
+          </EText>
+          <EText style={localStyles.subTitle}>
+            {translations['Profile.subTitle']}
+          </EText>
+        </View>
+        <View style={localStyles.signupForm}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
@@ -115,16 +129,16 @@ const SignupScreen = ({ navigation, route }) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
-                  placeholder={translations['Placeholder.Name']}
+                  placeholder={translations['Placeholder.name']}
                   value={value}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   {...register('name', {
-                    required: 'Name is required',
+                    required: translations['Message.nameRequired'],
                   })}
                   error={!!errors.name}
                   errorText={errors.name && errors.name.message}
-                  label={<Text>Name</Text>}
+                  label={<Text>{translations['Profile.name']}</Text>}
                   autoCapitalize="none"
                   returnKeyType="next"
                   blurOnSubmit={false}
@@ -142,16 +156,16 @@ const SignupScreen = ({ navigation, route }) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   phone
-                  placeholder={translations['Placeholder.Telephone']}
+                  placeholder={translations['Placeholder.telephone']}
                   value={value}
                   onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
+                  onChangeText={(value) => onPhoneNumberChange(value, onChange)}
                   {...register('telephone', {
-                    required: 'Telephone is required',
+                    required: translations['Message.telephoneRequired'],
                   })}
                   error={!!errors.telephone}
                   errorText={errors.telephone && errors.telephone.message}
-                  label={<Text>Telephone</Text>}
+                  label={<Text>{translations['Profile.Telephone']}</Text>}
                   autoCapitalize="none"
                   returnKeyType="next"
                   blurOnSubmit={false}
@@ -161,7 +175,7 @@ const SignupScreen = ({ navigation, route }) => {
               name="telephone"
             />
             <EText style={localStyles.labelStyle}>
-              Language (besides Spanish)
+              {translations['Profile.Language']}
             </EText>
             <DropDownPicker
               multiple={true}
@@ -211,15 +225,16 @@ const SignupScreen = ({ navigation, route }) => {
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   {...register('password', {
-                    required: 'Password is required',
+                    required: translations['Message.passwordRequired'],
                   })}
                   error={!!errors.password}
                   errorText={errors.password && errors.password.message}
-                  label={<Text>New Password</Text>}
+                  label={<Text>{translations['Profile.newPassword']}</Text>}
                   autoCapitalize="none"
                   returnKeyType="next"
                   blurOnSubmit={false}
                   keyboardShouldPersistTaps
+                  secureTextEntry
                 />
               )}
               name="password"
@@ -237,17 +252,18 @@ const SignupScreen = ({ navigation, route }) => {
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   {...register('confirmPassword', {
-                    required: 'ConfirmPassword is required',
+                    required: translations['Message.confirmPasswordRequired'],
                   })}
                   error={!!errors.confirmPassword}
                   errorText={
                     errors.confirmPassword && errors.confirmPassword.message
                   }
-                  label={<Text>Confirm Password</Text>}
+                  label={<Text>{translations['Profile.confirmPassword']}</Text>}
                   autoCapitalize="none"
                   returnKeyType="next"
                   blurOnSubmit={false}
                   keyboardShouldPersistTaps
+                  secureTextEntry
                 />
               )}
               name="confirmPassword"
@@ -255,23 +271,20 @@ const SignupScreen = ({ navigation, route }) => {
             <View style={localStyles.textContainer}>
               <View style={localStyles.textWrapper}>
                 <EText style={localStyles.subTitle}>
-                  {'By continuing you are accepting the'}
-                </EText>
-                <EText style={localStyles.subTitle}>
-                  {'Terms of Service and Privacy Policy.'}
+                  {translations['Profile.Term']}
                 </EText>
               </View>
             </View>
             <EButton
               style={localStyles.button}
               onClick={handleSubmit(onPressSignUp)}
-              title="Sign up"
+              title={translations['Profile.signUp']}
               loading={loading}
             />
           </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-    </BackgroundImage>
+        </View>
+      </BackgroundImage>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -285,6 +298,7 @@ const localStyles = StyleSheet.create({
   },
   textWrapper: {
     ...styles.center,
+    ...styles.mh25,
   },
   title: {
     ...styles.h1,
@@ -325,7 +339,7 @@ const localStyles = StyleSheet.create({
   },
   button: {
     ...styles.mt20,
-    ...styles.mb30,
+    ...styles.mb50,
     bottom: 5,
   },
   errorText: {

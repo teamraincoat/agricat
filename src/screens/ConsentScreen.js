@@ -50,7 +50,7 @@ const ConsentScreen = ({ route, navigation }) => {
           </View>
           <EButton
             title={translations['Consent.confirm']}
-            onClick={() => navigation.navigate('Register', { campaignKey: route.params.campaignKey })}
+            onClick={() => navigation.navigate('Register', { campaignKey: route?.params?.campaignKey })}
             style={localStyles.continueButton}
           />
         </View>
