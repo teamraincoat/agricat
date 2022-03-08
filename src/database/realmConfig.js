@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { ObjectId } from 'bson';
-import { Alert, Linking } from 'react-native';
+import { Alert } from 'react-native';
 import Realm from 'realm';
 import {
   UserSchema,
@@ -161,9 +161,15 @@ export const signIn = async (email, password, navigation, setLoading) => {
           if (progressPercentage === 100) {
             console.log('<===userData userData====>>', userData);
             setLoading(false);
+            navigation.navigate('Main', {
+              screen: 'Home',
+              params: {
+                userData,
+                campaignData,
+              },
+            });
             if (userData && userData.isFirstLogin) {
-              // navigation.navigate('SignUp');
-              Linking.openURL('https://www.google.com/');
+              navigation.navigate('SignUp');
             } else {
               saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
               navigation.navigate('Main', {
@@ -190,13 +196,13 @@ export const signIn = async (email, password, navigation, setLoading) => {
   }
 };
 
-export const signUp = async (email, password, route) => {
+export const signUp = async (email, password, route, setLoading) => {
   try {
     await app.emailPasswordAuth.registerUser({ email, password });
     route.navigate('SignUp', { userCredential: { email, password } });
   } catch (error) {
     if (error && error.code === 49) {
-      await signIn(email, password, route);
+      await signIn(email, password, route, setLoading);
     }
   }
 };

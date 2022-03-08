@@ -1,7 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import {
+  View, StyleSheet, Pressable, Linking,
+} from 'react-native';
 
-import { signIn } from '../database/realmConfig';
+import { signUp } from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -15,11 +17,11 @@ const LoginScreen = ({ navigation }) => {
   // tushali024+realmappxi@gmail.com
   // enrollmenttest011
   const [email, setEmail] = useState({
-    value: 'tushali024+realmappxi@gmail.com',
+    value: '',
     error: '',
   });
   const [password, setPassword] = useState({
-    value: 'enrollmenttest011',
+    value: '',
     error: '',
   });
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       if (checkValidation()) {
         setLoading(true);
-        await signIn(email.value, password.value, navigation, setLoading);
+        await signUp(email.value, password.value, navigation, setLoading);
       }
     } catch (error) {
       setLoading(false);
@@ -99,7 +101,7 @@ const LoginScreen = ({ navigation }) => {
       </View>
       <Pressable
         style={localStyles.signupTextContainer}
-        onPress={() => navigation.navigate('SignUp')}>
+        onPress={() => Linking.openURL('https://www.google.com/')}>
         <EText style={localStyles.signupText}>
           {translations['Login.signUpText']}
         </EText>
