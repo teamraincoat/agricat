@@ -2,59 +2,16 @@
 import moment from 'moment';
 import React from 'react';
 import {
-  View, Pressable, Image, StyleSheet, ScrollView,
+  View, Pressable, StyleSheet,
 } from 'react-native';
 
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EText from '../atoms/EText';
-import { translations } from '../provider/LocalizeProvider';
+
 import { colors, styles } from '../styles';
 import { normalize, wp } from '../styles/metrics';
 
 export default function PendingUserList({ item }) {
-  const [showFullDetails, setShowFullDetails] = React.useState(false);
-
-  // eslint-disable-next-line no-shadow
-  const ListItemView = ({ item }) => (
-          <View key={item._id} style={localStyles.item}>
-            <EText>{`${translations.Id}: ${item._id}`}</EText>
-            <EText>{`${translations.FirstName}: ${item.firstName}`}</EText>
-            <EText>{`${translations.LastName}: ${item.lastName}`}</EText>
-            <EText>{`${translations.SurName}: ${item.surName}`}</EText>
-            <EText>{`${translations.Gender}: ${item.gender}`}</EText>
-            <EText> {`${translations.MobilePhone}: ${item.mobilePhone}`}</EText>
-            <EText>{`${translations.Dob}: ${moment(item.dateOfBirth).format(
-              'DD/MM/YYYY',
-            )}`}</EText>
-            <EText>{`${translations.Locality}: ${item.locality}`}</EText>
-            <EText>{`${translations.Sublocality}: ${item.municipality}`}</EText>
-            <EText>{`${translations.GeoJson}: ${item.geoJson}`}</EText>
-            <EText>{`${translations.CoveredArea}: ${item.coveredArea}`}</EText>
-            <EText>{`${translations.Crop}: ${item.crop}`}</EText>
-            <EText>{`${translations.CropType}: ${item.cropType}`}</EText>
-            <EText>{`${translations.CropCycle}: ${item.cropCycle}`}</EText>
-            <EText>
-              {`${translations.ApplicationTime}: ${moment(
-                item.dateOfApplication,
-              ).format('DD/MM/YYYY')}`}
-            </EText>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              style={localStyles.imageContainer}>
-              {item
-                && item.images
-                && item.images.length > 0
-                && item.images.map((img) => (
-                  <Image
-                    key={img.name}
-                    source={{ uri: `data:image/png;base64,${img.uri}` }}
-                    style={localStyles.imageStyle}
-                  />
-                ))}
-            </ScrollView>
-          </View>
-  );
   return (
     <View style={localStyles.movieContainer}>
       <View style={localStyles.mainContainer}>
@@ -76,13 +33,11 @@ export default function PendingUserList({ item }) {
         </View>
 
         <View >
-          <Pressable onPress={() => setShowFullDetails(!showFullDetails)}>
-            {/* {showFullDetails ? <VerifiedIcon /> : <BottomIndicator />} */}
+          <Pressable>
             <VerifiedIcon />
           </Pressable>
         </View>
       </View>
-      {showFullDetails && <ListItemView item={item} />}
     </View>
   );
 }

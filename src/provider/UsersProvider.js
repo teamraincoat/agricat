@@ -26,7 +26,7 @@ const UsersProvider = ({ children }) => {
         console.log('STATUS: Syncing Enrollments', syncUsers.length);
         // const sortedUsers = syncUsers.sorted('applicationTime');
         // const sortedUsers = syncUsers.sorted('applicationTime').filter((enrollee) => enrollee.status === 'Active');
-        const sortedUsers = syncUsers.sorted('applicationTime');
+        const sortedUsers = syncUsers.sorted('applicationTime', true);
 
         setUsers([...sortedUsers]);
       })
@@ -164,7 +164,7 @@ const UsersProvider = ({ children }) => {
             const { syncSession } = projectRealm;
             syncSession.pause();
             const userListUpdated = projectRealm.objects('Enrollment');
-            const sortedUsers = userListUpdated.sorted('firstName');
+            const sortedUsers = userListUpdated.sorted('applicationTime', true);
             setUsers([...sortedUsers]);
             return getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
           })

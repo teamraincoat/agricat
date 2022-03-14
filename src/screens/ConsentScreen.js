@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   View, StyleSheet, ScrollView, Pressable,
 } from 'react-native';
+import moment from 'moment';
 import BackIcon from '../assets/icons/BackIcon';
 import BackgroundImage from '../atoms/BackgroundImage';
 import EButton from '../atoms/EButton';
@@ -24,12 +25,22 @@ const ConsentScreen = ({ route, navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <EText style={localStyles.title}>{translations['Consent.title']}</EText>
         <EText style={localStyles.description}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        {translations['Consent.description1']}
         </EText>
         <EText style={localStyles.description}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        {translations['Consent.description2']}
+        </EText>
+        <EText style={localStyles.description}>
+        {translations['Consent.termA']}
+        </EText>
+        <EText style={localStyles.description}>
+        {translations['Consent.termB']}
+        </EText>
+        <EText style={localStyles.description}>
+        {translations['Consent.term']}
+        </EText>
+        <EText style={localStyles.description}>
+        {`${translations['Consent.acceptDate']} ${moment(new Date()).format('DD-MM-YYYY')}`}
         </EText>
         <View style={localStyles.confirmation}>
           <EText style={localStyles.subTitle}>{translations['Consent.subTitle']}</EText>
