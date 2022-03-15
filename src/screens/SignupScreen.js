@@ -63,15 +63,22 @@ const SignupScreen = ({ navigation, route }) => {
           },
         },
       );
+      const resetParams = {
+        email: userData.email,
+        password: data.password,
+      };
+      await app.emailPasswordAuth.callResetPasswordFunction(
+        resetParams,
+      );
+
       setLoading(false);
       if (newUserData.modifiedCount === 1) {
         saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
         navigation.navigate('Home');
       }
-      // const resetPassword = await app.emailPasswordAuth.callResetPasswordFunction({ email, password });
     } catch (error) {
       setLoading(false);
-      console.log('Sign up error', error);
+      console.error('Sign up error', error);
       Alert.alert(`Failed to sign up: ${error.message}`);
     }
   };

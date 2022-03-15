@@ -170,6 +170,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
             });
             if (userData && userData.isFirstLogin) {
               navigation.navigate('SignUp');
+              // Linking.openURL('https://www.google.com/');
             } else {
               saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
               navigation.navigate('Main', {

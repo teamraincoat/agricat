@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
       setPassword({ ...password, error: translations['Message.passwordRequired'] });
       return false;
     }
-    if (password.value.length < 8) {
+    if (password.value.length < 3) {
       setPassword({ ...password, error: translations['Message.passwordLength'] });
       return false;
     }
