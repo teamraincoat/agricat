@@ -74,7 +74,7 @@ const SignupScreen = ({ navigation, route }) => {
       setLoading(false);
       if (newUserData.modifiedCount === 1) {
         saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
-        navigation.navigate('Home');
+        navigation.navigate('Main');
       }
     } catch (error) {
       setLoading(false);
@@ -134,11 +134,16 @@ const SignupScreen = ({ navigation, route }) => {
               rules={{
                 required: true,
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange, onBlur, value, ref,
+                },
+              }) => (
                 <ETextInput
                   placeholder={translations['Placeholder.name']}
                   value={value}
                   onBlur={onBlur}
+                    refs={ref}
                   onChangeText={(value) => onChange(value)}
                   {...register('name', {
                     required: translations['Message.nameRequired'],
@@ -160,11 +165,16 @@ const SignupScreen = ({ navigation, route }) => {
               rules={{
                 required: true,
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange, onBlur, value, ref,
+                },
+              }) => (
                 <ETextInput
                   phone
                   placeholder={translations['Placeholder.telephone']}
                   value={value}
+                  refs={ref}
                   onBlur={onBlur}
                   onChangeText={(value) => onPhoneNumberChange(value, onChange)}
                   {...register('telephone', {
@@ -224,11 +234,16 @@ const SignupScreen = ({ navigation, route }) => {
               rules={{
                 required: true,
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange, onBlur, value, ref,
+                },
+              }) => (
                 <ETextInput
                   secure
                   placeholder={translations['Placeholder.password']}
                   value={value}
+                  refs={ref}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   {...register('password', {
@@ -251,11 +266,16 @@ const SignupScreen = ({ navigation, route }) => {
               rules={{
                 required: true,
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange, onBlur, value, ref,
+                },
+              }) => (
                 <ETextInput
                   secure
                   placeholder={translations['Placeholder.confirmPassword']}
                   value={value}
+                  refs={ref}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
                   {...register('confirmPassword', {

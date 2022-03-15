@@ -71,9 +71,10 @@ const getRealm = async () => {
   const isPendingEnrollment = await getStorageData(
     Constants.STORAGE.ENROLL_USER_DATA,
   );
-  if (isPendingEnrollment) {
-    syncSession.pause();
-  }
+  //   if (isPendingEnrollment) {
+  //     syncSession.pause();
+  //   }
+  syncSession.pause();
 
   syncSession.addProgressNotification(
     'upload',
@@ -154,25 +155,18 @@ export const signIn = async (email, password, navigation, setLoading) => {
       const { syncSession } = result;
       syncSession.resume();
       syncSession.addProgressNotification(
-        'upload',
+        'download',
         'reportIndefinitely',
         (transferred, transferable) => {
           const progressPercentage = (100.0 * transferred) / transferable;
           if (progressPercentage === 100) {
             console.log('<===userData userData====>>', userData);
             setLoading(false);
-            navigation.navigate('Main', {
-              screen: 'Home',
-              params: {
-                userData,
-                campaignData,
-              },
-            });
             if (userData && userData.isFirstLogin) {
+              console.log('<===navigation navigation====>>', navigation);
               navigation.navigate('SignUp');
               // Linking.openURL('https://www.google.com/');
             } else {
-              saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
               navigation.navigate('Main', {
                 screen: 'Home',
                 params: {

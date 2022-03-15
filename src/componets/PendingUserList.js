@@ -21,13 +21,13 @@ export default function PendingUserList({ item }) {
               ellipsizeMode={'tail'}
               numberOfLines={1}
               style={localStyles.enrolledTitle}>
-              {item._id.toString()}
+              {item && item._id.toString()}
             </EText>
             <EText
               ellipsizeMode={'tail'}
               numberOfLines={1}
               style={localStyles.enrolledId}>
-              {moment(item.applicationTime).fromNow()}
+              {moment(item && item.applicationTime).fromNow()}
             </EText>
           </Pressable>
         </View>

@@ -15,6 +15,7 @@ import { translations } from '../../provider/LocalizeProvider';
 import { getStorageData, saveStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
 import getRealm from '../../database/realmConfig';
+import { useUsers } from '../../provider/UsersProvider';
 // import getRealm from '../../database/realmConfig';
 
 const UploadDataModal = (props) => {
@@ -23,6 +24,7 @@ const UploadDataModal = (props) => {
   const [remainFarmer, setRemainFarmer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const { setUsers } = useUsers();
   const onCloseModal = () => {
     // setStartSync(false);
     closeModal(false);
@@ -47,24 +49,30 @@ const UploadDataModal = (props) => {
       .then((result) => {
         const { syncSession } = result;
         if (syncSession) {
-          saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
           syncSession.resume();
+          saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
+          syncSession.addProgressNotification(
+            'upload',
+            'forCurrentlyOutstandingWork',
+            (transferred, transferable) => {
+              const Percentage = (100.0 * transferred) / transferable;
+              setProgressPercentage(Percentage);
+              if (transferred < transferable) {
+                setLoading(true);
+              } else if (transferred === transferable) {
+                const syncUsers = result.objects('Enrollment');
+                if (syncUsers.length > 0) {
+                  const sortedUsers = syncUsers.sorted('applicationTime', true);
+                  sortedUsers.addListener(() => {
+                    setUsers([...sortedUsers]);
+                  });
+                  setLoading(false);
+                  onCloseModal();
+                }
+              }
+            },
+          );
         }
-        syncSession.addProgressNotification(
-          'upload',
-          'reportIndefinitely',
-          (transferred, transferable) => {
-            const Percentage = (100.0 * transferred) / transferable;
-            setProgressPercentage(Percentage);
-            if (transferred < transferable) {
-              setLoading(true);
-            } else if (transferred === transferable) {
-              setLoading(false);
-              onCloseModal();
-              console.log('same size or greater');
-            }
-          },
-        );
       })
       .catch((error) => {
         console.log('error--->', error);
@@ -92,7 +100,7 @@ const UploadDataModal = (props) => {
             onClick={() => syncData()}
             style={localStyles.syncButton}
             loading={loading}
-            loadingText={progressPercentage}
+            loadingText={`${progressPercentage.toFixed(2)}%`}
           />
         </View>
         {/* {loading ? (

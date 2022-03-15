@@ -27,8 +27,9 @@ const UsersProvider = ({ children }) => {
         // const sortedUsers = syncUsers.sorted('applicationTime');
         // const sortedUsers = syncUsers.sorted('applicationTime').filter((enrollee) => enrollee.status === 'Active');
         const sortedUsers = syncUsers.sorted('applicationTime', true);
-
-        setUsers([...sortedUsers]);
+        sortedUsers.addListener(() => {
+          setUsers([...sortedUsers]);
+        });
       })
       .catch((error) => {
         console.log('error--->', error);
@@ -115,6 +116,7 @@ const UsersProvider = ({ children }) => {
   const decipherEnrollmentData = (enrollment, key) => {
     decryptFields(['firstName', 'lastName', 'surName', 'images'], enrollment, key)
       .then((decipheredEnrollment) => {
+        console.log('decipheredEnrollment==>', decipheredEnrollment);
         setEnrollDataById(decipheredEnrollment);
       })
       .catch((err) => {
@@ -166,7 +168,7 @@ const UsersProvider = ({ children }) => {
             const userListUpdated = projectRealm.objects('Enrollment');
             const sortedUsers = userListUpdated.sorted('applicationTime', true);
             setUsers([...sortedUsers]);
-            return getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
+            getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
           })
           .then((campaignData) => {
             setLoading(false);
@@ -184,10 +186,13 @@ const UsersProvider = ({ children }) => {
   };
 
   const setEnrollData = (id, key) => {
+    console.log('setEnrollData--ID==>', id);
+    console.log('setEnrollData--Key==>', key);
     if (users && users.length > 0) {
       // eslint-disable-next-line array-callback-return
       users.filter((item) => {
         // eslint-disable-next-line
+        console.log('item.id==>', item._id);
         if (item._id == id) {
           decipherEnrollmentData(item, key);
         }
@@ -198,6 +203,7 @@ const UsersProvider = ({ children }) => {
   const userData = {
     submitAddUser,
     users,
+    setUsers,
     enrollDataById,
     setEnrollData,
   };
