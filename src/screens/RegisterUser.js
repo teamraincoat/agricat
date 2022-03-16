@@ -26,6 +26,8 @@ import ScanModal from './ScanModal';
 import { colors, styles } from '../styles';
 import EText from '../atoms/EText';
 
+import Constants from '../constants/Constants';
+
 import ImagesContainer from '../atoms/ImagesContainer';
 import { useUsers } from '../provider/UsersProvider';
 import { LocalizeContext } from '../provider/LocalizeProvider';
@@ -34,9 +36,8 @@ import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
 
 const gender = [
-  { label: 'Male', value: 'male' },
-  { label: 'Female', value: 'female' },
-  { label: 'Other', value: 'other' },
+  { label: 'Masculino', value: 'male' },
+  { label: 'Femenino', value: 'female' },
 ];
 
 const phoneOwnerItems = [
@@ -52,12 +53,9 @@ const marketingChannelItems = [
   { label: 'Otro', value: 'other' },
 ];
 
-const spokenLanguageItems = [
-  { label: 'Zapoteco', value: 'zapoteco' },
-  { label: 'Mixtepo', value: 'mixtepo' },
-  { label: 'Mazateco', value: 'mazateco' },
-  { label: 'Mixe', value: 'mixe' },
-];
+const spokenLanguageItems = Constants.MX_INDIGENOUS_LANGUAGES.map(
+  (lang) => ({ label: lang, value: lang.toLowerCase() }),
+);
 
 const RegisterUser = ({ route, navigation }) => {
   const { translations } = useContext(LocalizeContext);
@@ -560,7 +558,6 @@ const RegisterUser = ({ route, navigation }) => {
                     setOpen={setOpenSpokenLangDropDown}
                     setValue={onChange}
                     onChangeValue={(value) => {
-                      console.log('HERE 2', value);
                       onChange(value);
                     }}
                     style={[
@@ -571,10 +568,10 @@ const RegisterUser = ({ route, navigation }) => {
                       },
                     ]}
                     disableBorderRadius={true}
-                    // textStyle={{
-                    //   color: !value ? colors.grey : colors.black,
-                    //   ...styles.h3,
-                    // }}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
                     dropDownContainerStyle={
                       localStyles.dropDownContainerStyle
                     }

@@ -9,6 +9,20 @@ const Constants = {
     IS_PENDING_REGISTRATION: 'isPendingRegistration',
   },
   DEFAULT_LANGUAGE: 'es',
+  MX_INDIGENOUS_LANGUAGES: [
+    'Tseltal',
+    'Tsotsil',
+    'Mixteco',
+    'Zapoteco',
+    'Huave',
+    'Maya',
+    'Náhuatl',
+    'Zoque',
+    'Mixe',
+    'Mazateco',
+    'Ch´ol',
+    'Tojolabal',
+  ],
 };
 
 export default Constants;

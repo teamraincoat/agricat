@@ -22,6 +22,7 @@ export const EnrollmentSchema = {
     addressLine: 'string?',
     adminArea: 'string',
     adminAreaId: 'string',
+    applicationStartTime: 'date?',
     applicationTime: 'date?',
     // campaign: 'Campaign',
     coveredAreaHa: 'decimal128?',

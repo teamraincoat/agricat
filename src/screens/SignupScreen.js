@@ -26,20 +26,17 @@ import Constants from '../constants/Constants';
 DropDownPicker.setMode('BADGE');
 const Image = require('../assets/Profile.png');
 
-const SignupScreen = ({ navigation, route }) => {
+const SignupScreen = ({ navigation }) => {
   const { translations } = useContext(LocalizeContext);
   const [languageSelect, SetLanguageSelect] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [lList, setLList] = useState([]);
-  const userCredential = route && route.params && route.params.userCredential;
+  // const userCredential = route && route.params && route.params.userCredential;
 
-  console.log('userCredential', userCredential);
-  const Items = [
-    { label: 'German', value: 'German' },
-    { label: 'English', value: 'English' },
-    { label: 'French', value: 'French' },
-  ];
+  const Items = Constants.MX_INDIGENOUS_LANGUAGES.map(
+    (lang) => ({ label: lang, value: lang.toLowerCase() }),
+  );
 
   const onPressSignUp = async (data) => {
     try {
@@ -49,7 +46,6 @@ const SignupScreen = ({ navigation, route }) => {
       }
       setLoading(true);
       const userData = await app.currentUser.refreshCustomData();
-      console.log('userData', userData);
       const mongo = app.currentUser.mongoClient('mongodb-atlas');
       const userList = mongo.db('mexico').collection('User');
       const newUserData = await userList.updateOne(
@@ -218,7 +214,8 @@ const SignupScreen = ({ navigation, route }) => {
               ]}
               disableBorderRadius={true}
               textStyle={{
-                color: lList.length > 0 ? colors.black : colors.grey,
+                // color: lList.length > 0 ? colors.black : colors.grey,
+                color: colors.black,
                 ...styles.h3,
               }}
               dropDownContainerStyle={localStyles.dropDownContainerStyle}
