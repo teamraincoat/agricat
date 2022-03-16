@@ -19,6 +19,7 @@ export const EnrollmentSchema = {
   properties: {
     _id: 'objectId',
     _partition: 'string',
+    _userId: 'string?',
     addressLine: 'string?',
     adminArea: 'string',
     adminAreaId: 'string',
