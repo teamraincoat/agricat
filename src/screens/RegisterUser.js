@@ -156,7 +156,7 @@ const RegisterUser = ({ route, navigation }) => {
         lastName: data.lastName,
         surName: data.surName,
         gender: data.gender,
-        dob: moment(data.dob.replace(/-/g, '/'), "DD-MM-YYYY"),
+        dob: moment(data.dob.replace(/-/g, '/'), 'DD-MM-YYYY'),
         mobilePhone: data.mobilePhone,
         mobilePhoneOwner: data.mobilePhoneOwner,
         coveredAreaHa: Decimal128.fromString(
@@ -698,6 +698,7 @@ const localStyles = StyleSheet.create({
     width: wp(90),
     ...styles.selfCenter,
     backgroundColor: colors.white,
+    color: 'black',
     ...styles.radius5,
   },
   dropDownContainerStyle: {

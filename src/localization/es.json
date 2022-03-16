@@ -41,7 +41,7 @@
   "Enroller.lastName": "Primer Apellido",
   "Enroller.surName": "Segundo Apellido",
   "Enroller.gender": "Sexo",
-  "Enroller.dob": "Fecha de nacimiento",
+  "Enroller.dob": "Fecha de nacimiento (DD-MM-AAAA)",
   "Enroller.telephone": "Número teléfono",
   "Enroller.telephoneOwner": "¿De quíen es el número?",
   "Enroller.locality": "Municipio",
@@ -131,5 +131,5 @@
   "Message.telephoneRequired": "teléfono es requerido",
   "Message.confirmPasswordRequired": "Se requiere confirmar contraseña",
   "Message.requireAlert": "Por favor, llena todos los campos requeridos",
-  "Error": "Error",
+  "Error": "Error"
 }
