@@ -48,7 +48,7 @@ const Home = ({ route, navigation }) => {
   const { users: enrollData } = useUsers();
 
   let campaignInfo;
-  if (route && route.params) {
+  if (route && route.params && route.params.campaignData) {
     campaignInfo = route.params.campaignData;
   } else if (campaignData) {
     campaignInfo = campaignData;
@@ -67,12 +67,14 @@ const Home = ({ route, navigation }) => {
     }
   };
   const checkCampaignData = async () => {
+    if (campaignData) {
+      return campaignData;
+    }
     const getCampaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
     if (getCampaignData) {
       setCampaignData(getCampaignData);
     }
   };
-
   const onHandleScan = () => {
     setModalVisible(true);
   };

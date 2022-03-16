@@ -98,7 +98,7 @@
   "Placeholder.confirmPassword": "Ingresar Confirmar contraseña",
   "Placeholder.languageList": "Por favor selecciona idiomas",
   "Placeholder.surName": "Enter Surname",
-  "Placeholder.birthDate": "Select  Date of Birth ",
+  "Placeholder.birthDate": "DD-MM-YYYY",
   "Placeholder.enrollId": "Enter Enrolled id",
   "Placeholder.gender": "Seleccione el sexo",
   "Placeholder.contactNo": "Entre el número de teléfono",

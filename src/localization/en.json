@@ -102,7 +102,7 @@
   "Placeholder.confirmPassword": "Enter Confirm Password",
   "Placeholder.languageList": "Please select languages",
   "Placeholder.surName": "Enter Surname",
-  "Placeholder.birthDate": "Select  Date of Birth ",
+  "Placeholder.birthDate": "DD-MM-YYYY",
   "Placeholder.enrollId": "Enter Enrolled id",
   "Placeholder.gender": "Select gender",
   "Placeholder.contactNo": "Enter the phone number",

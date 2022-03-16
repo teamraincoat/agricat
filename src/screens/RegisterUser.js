@@ -10,7 +10,6 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -20,6 +19,7 @@ import ImgToBase64 from 'react-native-image-base64';
 import CheckBox from '@react-native-community/checkbox';
 import { Decimal128, ObjectId, EJSON } from 'bson';
 
+import { TextInputMask } from 'react-native-masked-text';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
 import ScanModal from './ScanModal';
@@ -59,7 +59,6 @@ const spokenLanguageItems = Constants.MX_INDIGENOUS_LANGUAGES.map(
 
 const RegisterUser = ({ route, navigation }) => {
   const { translations } = useContext(LocalizeContext);
-  const [dateState, setDateState] = useState(true);
   const [openGenderDropDown, setOpenGenderDropDown] = useState(false);
   const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
   const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
@@ -70,7 +69,7 @@ const RegisterUser = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [qrInfo, setQrInfo] = React.useState('');
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
   const { submitAddUser, enrollDataById } = useUsers();
   const [loading, setLoading] = useState(false);
 
@@ -100,22 +99,6 @@ const RegisterUser = ({ route, navigation }) => {
     },
   });
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-  const handleConfirm = (date) => {
-    const values = getValues();
-    if (dateState) {
-      reset({ ...values, dob: date });
-    } else {
-      reset({ ...values, applicationTime: date });
-    }
-    hideDatePicker();
-  };
 
   useEffect(() => {
     if (enrollDataById) {
@@ -140,7 +123,7 @@ const RegisterUser = ({ route, navigation }) => {
         firstName: firstName || '',
         lastName: lastName || '',
         surName: surName || '',
-        dob: dob ? moment(new Date(dob)).format('DD/MM/YYYY') : '',
+        dob: dob ? moment(new Date(dob)).format('DD-MM-YYYY') : '',
         gender: gender || '',
         mobilePhone: mobilePhone || '',
         mobilePhoneOwner: mobilePhoneOwner || '',
@@ -173,7 +156,7 @@ const RegisterUser = ({ route, navigation }) => {
         lastName: data.lastName,
         surName: data.surName,
         gender: data.gender,
-        dob: new Date(data.dob),
+        dob: moment(data.dob.replace(/-/g, '/'), "DD-MM-YYYY"),
         mobilePhone: data.mobilePhone,
         mobilePhoneOwner: data.mobilePhoneOwner,
         coveredAreaHa: Decimal128.fromString(
@@ -386,31 +369,30 @@ const RegisterUser = ({ route, navigation }) => {
                 rules={{
                   required: true,
                 }}
-                render={({ field: { value } }) => (
-                  <EButton
-                    title={
-                      value
-                        ? moment(value).format('DD/MM/YYYY')
-                        : translations['Placeholder.birthDate']
-                    }
-                    onClick={() => {
-                      setDateState(true);
-                      showDatePicker();
+                render={({ field: { onChange, value } }) => (
+                  <TextInputMask
+                    type={'datetime'}
+                    options={{
+                      format: 'DD-MM-YYYY',
                     }}
+                    placeholder={translations['Placeholder.birthDate']}
                     style={[localStyles.datePicker,
                       errors.dob && { borderColor: colors.red, borderWidth: 1 }]}
-                    textStyle={[
-                      styles.selfStart,
-                      {
-                        color: !value ? colors.grey : '#121212',
-                        ...styles.h3,
-                      },
-                    ]}
-                  />
+                      {...register('dob', {
+                        required: translations['Field.required'],
+                        pattern: {
+                          value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
+                          message: 'invalid date',
+                        },
+
+                      })}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                    />
                 )}
                 name="dob"
               />
-              {errors.dob && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
+              {errors.dob && <EText style={localStyles.errorText}>{errors.dob.message}</EText>}
 
               <Controller
                 control={control}
@@ -658,13 +640,6 @@ const RegisterUser = ({ route, navigation }) => {
         closeModal={setModalVisible}
         setQrInfo={setQrInfo}
       />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        maximumDate={new Date()}
-      />
     </SafeAreaView>
   );
 };
@@ -715,14 +690,15 @@ const localStyles = StyleSheet.create({
     fontSize: normalize(12),
   },
   datePicker: {
-    ...styles.mb10,
-    ...styles.mh10,
-    ...styles.mv8,
-    ...styles.mh10,
+    ...styles.mv5,
+    ...styles.pv10,
     ...styles.borderLight,
-    height: hp(7),
+    ...styles.ph15,
     elevation: 0,
+    width: wp(90),
+    ...styles.selfCenter,
     backgroundColor: colors.white,
+    ...styles.radius5,
   },
   dropDownContainerStyle: {
     ...styles.radius5,

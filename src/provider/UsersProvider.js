@@ -53,6 +53,7 @@ const UsersProvider = ({ children }) => {
         const newUser = {
           ...UserInfo,
           _partition: userData && userData.memberOf && userData.memberOf[0], // `campaign=${ID}`, // userId ? userId : app.currentUser.id,
+          _userId: userData && userData._id,
           status: 'Active',
         };
         if (storedUserData && storedUserData.length > 0) {
