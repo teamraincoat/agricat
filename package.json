@@ -19,6 +19,7 @@
     "base-64": "^1.0.0",
     "bson": "^4.6.1",
     "buffer": "^6.0.3",
+    "curp": "^1.1.0",
     "eslint-plugin-import": "^2.25.4",
     "events": "^3.3.0",
     "lodash": "^4.17.21",

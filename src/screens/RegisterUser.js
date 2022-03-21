@@ -34,6 +34,7 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
+import checkEnrollInfo from '../utils/curp';
 
 const gender = [
   { label: 'Masculino', value: 'male' },
@@ -98,7 +99,6 @@ const RegisterUser = ({ route, navigation }) => {
       notes: '',
     },
   });
-
 
   useEffect(() => {
     if (enrollDataById) {
@@ -173,7 +173,18 @@ const RegisterUser = ({ route, navigation }) => {
         applicationTime: new Date(),
         _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
       };
-      submitAddUser(payload, navigation, isModify, route?.params?.campaignKey, setLoading);
+
+      const farmerInfo = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        dob: data.dob,
+        gender: data.gender,
+      };
+
+      const isVerifiedData = checkEnrollInfo(farmerInfo);
+      if (isVerifiedData) {
+        submitAddUser(payload, navigation, isModify, route?.params?.campaignKey, setLoading);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -261,7 +272,7 @@ const RegisterUser = ({ route, navigation }) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.firstName']}
-                    style={styles.p10}
+                    style={[styles.p10, localStyles.readOnly]}
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.firstName']}</EText>}
                     onChangeText={(value) => onChange(value)}
@@ -286,7 +297,7 @@ const RegisterUser = ({ route, navigation }) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.lastName']}
-                    style={styles.p10}
+                    style={[styles.p10, localStyles.readOnly]}
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.lastName']}</EText>}
                     onChangeText={(value) => onChange(value)}
@@ -308,7 +319,7 @@ const RegisterUser = ({ route, navigation }) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.surName']}
-                    style={styles.p10}
+                    style={[styles.p10, localStyles.readOnly]}
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.surName']}</EText>}
                     onChangeText={(value) => onChange(value)}
@@ -342,6 +353,7 @@ const RegisterUser = ({ route, navigation }) => {
                     style={[
                       localStyles.dropDownStyle,
                       { ...styles.mt10 },
+                      localStyles.readOnly,
                       {
                         borderColor: errors.gender
                           ? colors.red
@@ -377,6 +389,7 @@ const RegisterUser = ({ route, navigation }) => {
                     }}
                     placeholder={translations['Placeholder.birthDate']}
                     style={[localStyles.datePicker,
+                      localStyles.readOnly,
                       errors.dob && { borderColor: colors.red, borderWidth: 1 }]}
                       {...register('dob', {
                         required: translations['Field.required'],
@@ -393,28 +406,27 @@ const RegisterUser = ({ route, navigation }) => {
                 name="dob"
               />
               {errors.dob && <EText style={localStyles.errorText}>{errors.dob.message}</EText>}
-
+              <EText style={localStyles.labelStyle}>{translations['Enroller.telephone']}</EText>
               <Controller
                 control={control}
                 rules={{
                   required: true,
                 }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.contactNo']}
-                    style={styles.p10}
-                    onBlur={onBlur}
-                    keyboardType="numeric"
-                    label={<EText>{translations['Enroller.telephone']}</EText>}
-                    onChangeText={(value) => onChange(value)}
-                    value={value}
-                    maxLength={10}
-                    {...register('mobilePhone', {
-                      required: translations['Field.required'],
-                    })}
-                    error={!!errors.mobilePhone}
-                    errorText={errors.mobilePhone && errors.mobilePhone.message}
-                  />
+                render={({ field: { onChange, value } }) => (
+                  <TextInputMask
+                  type={'custom'}
+                  options={{
+                    mask: '+52 999 999 9999',
+                  }}
+                 placeholder={translations['Placeholder.contactNo']}
+                 value={value}
+                 onChangeText={(value) => onChange(value)}
+                 {...register('mobilePhone', {
+                   required: translations['Field.required'],
+                 })}
+                    style={[localStyles.inputStyle,
+                      errors.mobilePhone && { borderColor: colors.red, borderWidth: 1 }]}
+                />
                 )}
                 name="mobilePhone"
               />
@@ -486,7 +498,7 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.coveredCropArea']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={typeof value === 'object' ? value.$numberDecimal : value}
-                    style={styles.p10}
+                    style={[styles.p10, localStyles.readOnly]}
                     keyboardType="numeric"
                     editable={false}
                   />
@@ -689,6 +701,10 @@ const localStyles = StyleSheet.create({
     ...styles.mh25,
     fontSize: normalize(12),
   },
+  readOnly: {
+    backgroundColor: colors.cream,
+    color: colors.black,
+  },
   datePicker: {
     ...styles.mv5,
     ...styles.pv10,
@@ -736,6 +752,18 @@ const localStyles = StyleSheet.create({
     color: colors.red,
     ...styles.mh20,
     ...styles.mv10,
+  },
+  inputStyle: {
+    ...styles.mv10,
+    ...styles.ph10,
+    ...styles.pv10,
+    ...styles.borderLight,
+    ...styles.ph15,
+    elevation: 0,
+    width: wp(90),
+    ...styles.selfCenter,
+    backgroundColor: colors.white,
+    ...styles.radius5,
   },
 });
 

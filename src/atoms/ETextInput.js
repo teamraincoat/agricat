@@ -57,7 +57,6 @@ const localStyles = StyleSheet.create({
     ...styles.mv5,
   },
   input: {
-    color: colors.primary,
     height: hp(7),
     backgroundColor: colors.white,
     ...styles.h3,

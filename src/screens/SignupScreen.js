@@ -1,5 +1,7 @@
 /* eslint-disable no-shadow */
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
 import {
   View,
   StyleSheet,
@@ -12,6 +14,7 @@ import {
 
 import { useForm, Controller } from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { TextInputMask } from 'react-native-masked-text';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -22,13 +25,15 @@ import { hp, normalize, wp } from '../styles/metrics';
 import BackgroundImage from '../atoms/BackgroundImage';
 import { saveStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
+import { checkUserInfo } from '../utils/curp';
 
 DropDownPicker.setMode('BADGE');
 const Image = require('../assets/Profile.png');
 
 const SignupScreen = ({ navigation }) => {
   const { translations } = useContext(LocalizeContext);
-  const [languageSelect, SetLanguageSelect] = useState(false);
+
+  const [visibleLangDropDown, setVisibleLangDropDown] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [lList, setLList] = useState([]);
@@ -54,7 +59,7 @@ const SignupScreen = ({ navigation }) => {
           $set: {
             name: data.name,
             languagesList: [...data.languagesList],
-            telephone: data.telephone,
+            telephone: data.telephone.replace(/ /g, ''),
             isFirstLogin: false,
           },
         },
@@ -77,12 +82,6 @@ const SignupScreen = ({ navigation }) => {
       console.error('Sign up error', error);
       Alert.alert(`Failed to sign up: ${error.message}`);
     }
-  };
-
-  const onPhoneNumberChange = (value, onChange) => {
-    const x = value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-    value = !x[2] ? x[1] : `(${x[1]}) ${x[2]}${x[3] ? `-${x[3]}` : ''}`;
-    onChange(value);
   };
 
   useEffect(() => {
@@ -155,6 +154,9 @@ const SignupScreen = ({ navigation }) => {
               )}
               name="name"
             />
+            <EText style={localStyles.labelStyle}>
+            {translations['Profile.Telephone']}
+            </EText>
 
             <Controller
               control={control}
@@ -163,26 +165,23 @@ const SignupScreen = ({ navigation }) => {
               }}
               render={({
                 field: {
-                  onChange, onBlur, value, ref,
+                  onChange, value,
                 },
               }) => (
-                <ETextInput
-                  phone
+                <TextInputMask
+                  type={'custom'}
+                  options={{
+                    mask: '+52 999 999 9999',
+                  }}
                   placeholder={translations['Placeholder.telephone']}
-                  value={value}
-                  refs={ref}
-                  onBlur={onBlur}
-                  onChangeText={(value) => onPhoneNumberChange(value, onChange)}
-                  {...register('telephone', {
-                    required: translations['Message.telephoneRequired'],
-                  })}
-                  error={!!errors.telephone}
-                  errorText={errors.telephone && errors.telephone.message}
-                  label={<Text>{translations['Profile.Telephone']}</Text>}
-                  autoCapitalize="none"
-                  returnKeyType="next"
-                  blurOnSubmit={false}
-                  keyboardShouldPersistTaps
+                 value={value}
+                 onChangeText={(value) => onChange(value)}
+                 {...register('telephone', {
+                   required: translations['Message.telephoneRequired'],
+                 })}
+                 returnKeyType="next"
+                 style={[localStyles.inputStyle,
+                   errors.telephone && { borderColor: colors.red, borderWidth: 1 }]}
                 />
               )}
               name="telephone"
@@ -193,14 +192,17 @@ const SignupScreen = ({ navigation }) => {
             <DropDownPicker
               multiple={true}
               placeholder={translations['Placeholder.languageList']}
-              open={languageSelect}
+              open={visibleLangDropDown}
               value={[...lList]}
               items={Items}
               showTickIcon={true}
               showArrowIcon={true}
               showBadgeDot={true}
-              setOpen={SetLanguageSelect}
-              setValue={(value) => setLList(value)}
+              setOpen={setVisibleLangDropDown}
+              setValue={(value) => {
+                setLList(value);
+                setVisibleLangDropDown(!visibleLangDropDown);
+              }}
               zIndexInverse={7000}
               zIndex={1000}
               style={[
@@ -378,6 +380,18 @@ const localStyles = StyleSheet.create({
     color: colors.black,
     ...styles.h3,
     ...styles.mv8,
+  },
+  inputStyle: {
+    ...styles.mv10,
+    ...styles.ph10,
+    ...styles.pv10,
+    ...styles.borderLight,
+    ...styles.ph15,
+    elevation: 0,
+    width: wp(90),
+    ...styles.selfCenter,
+    backgroundColor: colors.white,
+    ...styles.radius5,
   },
 });
 export default SignupScreen;
