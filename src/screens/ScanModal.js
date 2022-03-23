@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, TouchableOpacity, View,
+  StyleSheet, TouchableOpacity, View, BackHandler,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal';
 import { Buffer } from 'buffer';
+import { useRoute } from '@react-navigation/native';
 
+import moment from 'moment';
 import { colors, styles } from '../styles';
 import { useLocal } from '../contex/index';
 import { hp } from '../styles/metrics';
@@ -15,23 +17,23 @@ import ETextInput from '../atoms/ETextInput';
 import BackIcon from '../assets/icons/BackIcon';
 
 import { useUsers } from '../provider/UsersProvider';
-import { decode } from 'base-64';
 
 const ScanModal = (props) => {
   const {
-    visible, closeModal, setQrInfo, route,
+    visible, closeModal, route,
   } = props;
-  const { setEnrollData, setIsQrScanData, isQrScanData } = useUsers();
+  const { setEnrollData, setApplicationStartTime, isQrScanData } = useUsers();
   const [id, setId] = useState('');
   const { translations } = useLocal();
+  const currentRoute = useRoute();
   const onSuccessScan = (e) => {
     try {
-      // setQrInfo(JSON.parse(e.data));
       const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
-      //const newQrData = e && e.data && (e.data).split('|');
+      const applicationStartTime = moment(new Date()).toISOString();
+      setApplicationStartTime(applicationStartTime);
+      // const newQrData = e && e.data && (e.data).split('|');
       const enrollmentId = qrData[1];
       const campaignKey = qrData[0];
-      setQrInfo(qrData);
       setEnrollData(enrollmentId, campaignKey);
       route.navigate('Consent', { campaignKey });
       closeModal(false);
@@ -41,14 +43,21 @@ const ScanModal = (props) => {
   };
 
   const onCloseModal = () => {
-    closeModal(false);
+    if (currentRoute && currentRoute.name !== 'Home') {
+      route.navigate('Home');
+      closeModal(false);
+    } else {
+      closeModal(false);
+    }
   };
-
   return (
     <>
       <Modal
         isVisible={visible}
-        style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}>
+        style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}
+        onRequestClose={onCloseModal}
+        >
+
         <View
           style={[
             styles.rowSpaceBetween,

@@ -4,6 +4,7 @@ import React, {
 } from 'react';
 import { decode, encode } from 'base-64';
 import { Buffer } from 'buffer';
+import moment from 'moment';
 import getRealm from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
@@ -13,6 +14,7 @@ const UsersContext = React.createContext(null);
 
 const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
+  const [applicationStartTime, setApplicationStartTime] = useState(null);
   const [storedUserData, setStoredUserData] = useState(null);
   const [enrollDataById, setEnrollDataById] = useState(null);
   const realmRef = useRef(null);
@@ -45,6 +47,19 @@ const UsersProvider = ({ children }) => {
     };
   }, []);
 
+  const getTimeDifference = (startTime, endTime) => {
+    const start = moment(startTime);
+    const end = moment(endTime);
+    const diff = end.diff(start);
+
+    const day = moment.duration(diff, 'milliseconds');
+    const hours = Math.floor(day.asHours());
+    const mins = Math.floor(day.asMinutes()) - hours * 60;
+    const secs = Math.floor(day.asSeconds()) - mins * 60 - hours * 60 * 60;
+    console.log('Time****', `${hours}:${mins}:${secs}`);
+    return `${hours}:${mins}:${secs}`;
+  };
+
   const submitAddUser = async (UserInfo, navigation, isModify, campaignKey, setLoading) => {
     if (UserInfo.firstName) {
       try {
@@ -54,8 +69,11 @@ const UsersProvider = ({ children }) => {
           ...UserInfo,
           _partition: userData && userData.memberOf && userData.memberOf[0], // `campaign=${ID}`, // userId ? userId : app.currentUser.id,
           _userId: userData && userData._id,
+          applicationStartTime,
+          applicationTime: moment(new Date()).toISOString(),
           status: 'Active',
         };
+        getTimeDifference(applicationStartTime, newUser.applicationTime);
         if (storedUserData && storedUserData.length > 0) {
           saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, [
             ...storedUserData,
@@ -207,6 +225,8 @@ const UsersProvider = ({ children }) => {
     setUsers,
     enrollDataById,
     setEnrollData,
+    setApplicationStartTime,
+    setEnrollDataById,
   };
 
   return (

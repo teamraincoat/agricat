@@ -4,15 +4,20 @@ import DoneIcon from '../assets/icons/DoneIcon';
 import EButton from '../atoms/EButton';
 import EText from '../atoms/EText';
 import { translations } from '../provider/LocalizeProvider';
+import { useUsers } from '../provider/UsersProvider';
 import { colors, styles } from '../styles';
+import ScanModal from './ScanModal';
 
 const CompleteScreen = ({ route, navigation }) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const { setEnrollDataById } = useUsers();
   let campaignData;
   if (route && route.params) {
     campaignData = route.params.campaignData;
   }
   const onComplete = () => {
-    navigation.navigate('Home', { campaignData });
+    setEnrollDataById(null);
+    setModalVisible(true);
   };
   return (
     <View style={localStyles.mainContainer}>
@@ -28,6 +33,11 @@ const CompleteScreen = ({ route, navigation }) => {
         title={translations['Complete.continue']}
         onClick={() => onComplete()}
         style={localStyles.button}
+      />
+      <ScanModal
+        visible={modalVisible}
+        closeModal={setModalVisible}
+        route={navigation}
       />
     </View>
   );
