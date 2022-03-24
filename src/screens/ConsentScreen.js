@@ -61,8 +61,12 @@ const ConsentScreen = ({ route, navigation }) => {
           </View>
           <EButton
             title={translations['Consent.confirm']}
-            onClick={() => navigation.navigate('Register', { campaignKey: route?.params?.campaignKey })}
-            style={localStyles.continueButton}
+            disabled={!isSelected}
+            onClick={ () => {
+              navigation.navigate('Register', { campaignKey: route?.params?.campaignKey });
+              setSelection(false);
+            }}
+            style={[localStyles.continueButton, !isSelected && { opacity: 0.5 }]}
           />
         </View>
       </ScrollView>

@@ -18,6 +18,7 @@ const EButton = (props) => (
       styles.itemsCenter,
       props.style,
     ]}
+    disabled={props.disabled}
     onPress={() => !props.loading && props.onClick()}>
     {props.loading ? (
       <View style={[styles.flex, styles.rowCenter]}>
