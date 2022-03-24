@@ -382,6 +382,7 @@ const localStyles = StyleSheet.create({
     ...styles.mv8,
   },
   inputStyle: {
+    color: colors.black,
     ...styles.mv10,
     ...styles.ph10,
     ...styles.pv10,

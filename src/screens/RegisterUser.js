@@ -272,7 +272,7 @@ const RegisterUser = ({ route, navigation }) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.firstName']}
-                    style={[styles.p10, localStyles.readOnly]}
+                    style={[styles.p10]}
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.firstName']}</EText>}
                     onChangeText={(value) => onChange(value)}
@@ -297,7 +297,7 @@ const RegisterUser = ({ route, navigation }) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.lastName']}
-                    style={[styles.p10, localStyles.readOnly]}
+                    style={[styles.p10]}
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.lastName']}</EText>}
                     onChangeText={(value) => onChange(value)}
@@ -319,7 +319,7 @@ const RegisterUser = ({ route, navigation }) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.surName']}
-                    style={[styles.p10, localStyles.readOnly]}
+                    style={[styles.p10]}
                     onBlur={onBlur}
                     label={<EText>{translations['Enroller.surName']}</EText>}
                     onChangeText={(value) => onChange(value)}
@@ -353,7 +353,6 @@ const RegisterUser = ({ route, navigation }) => {
                     style={[
                       localStyles.dropDownStyle,
                       { ...styles.mt10 },
-                      localStyles.readOnly,
                       {
                         borderColor: errors.gender
                           ? colors.red
@@ -389,7 +388,6 @@ const RegisterUser = ({ route, navigation }) => {
                     }}
                     placeholder={translations['Placeholder.birthDate']}
                     style={[localStyles.datePicker,
-                      localStyles.readOnly,
                       errors.dob && { borderColor: colors.red, borderWidth: 1 }]}
                       {...register('dob', {
                         required: translations['Field.required'],
@@ -754,6 +752,7 @@ const localStyles = StyleSheet.create({
     ...styles.mv10,
   },
   inputStyle: {
+    color: colors.black,
     ...styles.mv10,
     ...styles.ph10,
     ...styles.pv10,

@@ -18,7 +18,7 @@ const UsersProvider = ({ children }) => {
   const [storedUserData, setStoredUserData] = useState(null);
   const [enrollDataById, setEnrollDataById] = useState(null);
   const realmRef = useRef(null);
-  console.log('enrollDataById==>', enrollDataById);
+  // console.log('enrollDataById==>', enrollDataById);
 
   useEffect(() => {
     getRealm()

@@ -2776,6 +2776,11 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.11.tgz#d66700c5eacfac1940deb4e3ee5642792d85cd33"
   integrity sha512-sa6P2wJ+CAbgyy4KFssIb/JNMLxFvKF1pCYCSXS8ZMuqZnMsrxqI2E5sPyoTpxoPU/gVZMzr2zjOfg8GIZOMsw==
 
+curp@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/curp/-/curp-1.1.0.tgz#fc122afb57ad56829c15c4859ae6f150a4608ab6"
+  integrity sha512-owENcDtaJKHhDCga3D4iRb1/G4LBKi5L2hMerrSIAsF5hAp7wYIpQBvy5fcMcRM03DYz0L2Tb8gFC2MYXAtsKA==
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
