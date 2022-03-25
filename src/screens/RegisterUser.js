@@ -54,6 +54,13 @@ const marketingChannelItems = [
   { label: 'Otro', value: 'other' },
 ];
 
+const questionOneOptions = [
+  { label: 'No tuve perdida.', value: 'no-loss' },
+];
+const questionTwoOptions = [
+  { label: 'Ninguno', value: 'Neither' },
+];
+
 const spokenLanguageItems = Constants.MX_INDIGENOUS_LANGUAGES.map(
   (lang) => ({ label: lang, value: lang.toLowerCase() }),
 );
@@ -64,6 +71,8 @@ const RegisterUser = ({ route, navigation }) => {
   const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
   const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
   const [openSpokenLangDropDown, setOpenSpokenLangDropDown] = useState(false);
+  const [openQuestion1DropDown, setOpenQuestion1DropDown] = useState(false);
+  const [openQuestion2DropDown, setOpenQuestion2DropDown] = useState(false);
 
   const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -184,6 +193,17 @@ const RegisterUser = ({ route, navigation }) => {
       const isVerifiedData = checkEnrollInfo(farmerInfo);
       if (isVerifiedData) {
         submitAddUser(payload, navigation, isModify, route?.params?.campaignKey, setLoading);
+      } else {
+        Alert.alert(
+          'Error',
+          'Por favor verifique los datos ingresados',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+          { cancelable: false },
+        );
       }
     } catch (err) {
       console.error(err);
@@ -361,7 +381,7 @@ const RegisterUser = ({ route, navigation }) => {
                     ]}
                     disableBorderRadius={true}
                     textStyle={{
-                      color: !value ? colors.grey : colors.black,
+                      color: colors.black,
                       ...styles.h3,
                     }}
                     dropDownContainerStyle={
@@ -450,10 +470,6 @@ const RegisterUser = ({ route, navigation }) => {
                       },
                     ]}
                     disableBorderRadius={true}
-                    // textStyle={{
-                    //   color: !value ? colors.grey : colors.black,
-                    //   ...styles.h3,
-                    // }}
                     dropDownContainerStyle={
                       localStyles.dropDownContainerStyle
                     }
@@ -525,10 +541,10 @@ const RegisterUser = ({ route, navigation }) => {
                       },
                     ]}
                     disableBorderRadius={true}
-                    // textStyle={{
-                    //   color: !value ? colors.grey : colors.black,
-                    //   ...styles.h3,
-                    // }}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
                     dropDownContainerStyle={
                       localStyles.dropDownContainerStyle
                     }
@@ -593,6 +609,72 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="notes"
               />
+            <View style={[localStyles.enrollTextContainer, styles.mb20]}>
+            <EText style={localStyles.title}>{translations['Enroller.questions']}</EText>
+            <EText style={localStyles.subTitle}>
+                {translations['Enroller.questionInstruction']}
+            </EText>
+            </View>
+            <EText style={localStyles.labelStyle}>{translations['Enroller.question1']}</EText>
+              <Controller
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openQuestion1DropDown}
+                    value={value}
+                    items={questionOneOptions}
+                    setOpen={setOpenQuestion1DropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="question1"
+              />
+               <EText style={localStyles.labelStyle}>{translations['Enroller.question2']}</EText>
+              <Controller
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openQuestion2DropDown}
+                    value={value}
+                    items={questionTwoOptions}
+                    setOpen={setOpenQuestion2DropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="question2"
+              />
 
               <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
               {selectedFiles && selectedFiles.length > 0 ? (
@@ -621,25 +703,11 @@ const RegisterUser = ({ route, navigation }) => {
               )}
               {/* {errors.images && <EText>{translations['Field.required']}</EText>} */}
 
-              <View style={localStyles.acceptPermission}>
-                <EText
-                  maxLength={10}
-                  multiline={true}
-                  numberOfLines={2}
-                  style={localStyles.permissionText}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod.
-                </EText>
-                <CheckBox
-                  value={isSelected}
-                  onValueChange={setSelection}
-                  tintColors={{ true: colors.black, false: colors.black }}
-                />
-              </View>
               <EButton
                 title={translations['Enroller.complete']}
                 onClick={onSubmit}
                 loading={loading}
+                style={styles.mb10}
               />
             </ScrollView>
           </KeyboardAvoidingView>
@@ -692,6 +760,7 @@ const localStyles = StyleSheet.create({
     ...styles.selfCenter,
     ...styles.borderLight,
     width: wp(90),
+    height: hp(7),
   },
   labelStyle: {
     color: colors.black,
@@ -714,6 +783,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: colors.white,
     color: 'black',
     ...styles.radius5,
+    height: hp(7),
   },
   dropDownContainerStyle: {
     ...styles.radius5,
@@ -727,24 +797,8 @@ const localStyles = StyleSheet.create({
     ...styles.ph15,
     ...styles.selfStart,
     ...styles.rowSpaceBetween,
+    ...styles.mv10,
     width: wp(50),
-  },
-  acceptPermission: {
-    width: wp(90),
-    ...styles.rowSpaceBetween,
-    ...styles.ph20,
-    ...styles.mt10,
-  },
-  permissionText: {
-    ...styles.h3,
-    width: wp(80),
-    color: colors.black,
-  },
-  disabledtext: {
-    color: colors.greyDark,
-  },
-  submitButton: {
-    ...styles.mv15,
   },
   errorText: {
     color: colors.red,
@@ -763,6 +817,7 @@ const localStyles = StyleSheet.create({
     ...styles.selfCenter,
     backgroundColor: colors.white,
     ...styles.radius5,
+    height: hp(7),
   },
 });
 

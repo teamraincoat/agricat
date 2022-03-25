@@ -5,7 +5,7 @@ import React, {
 import { decode, encode } from 'base-64';
 import { Buffer } from 'buffer';
 import moment from 'moment';
-import getRealm from '../database/realmConfig';
+import getRealm, { checkCampaignMatrix } from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
 import Constants from '../constants/Constants';
@@ -17,8 +17,8 @@ const UsersProvider = ({ children }) => {
   const [applicationStartTime, setApplicationStartTime] = useState(null);
   const [storedUserData, setStoredUserData] = useState(null);
   const [enrollDataById, setEnrollDataById] = useState(null);
+  const [completionRate, setCompletionRate] = useState(null);
   const realmRef = useRef(null);
-  // console.log('enrollDataById==>', enrollDataById);
 
   useEffect(() => {
     getRealm()
@@ -36,6 +36,15 @@ const UsersProvider = ({ children }) => {
       .catch((error) => {
         console.log('error--->', error);
       });
+
+    getStorageData(Constants.STORAGE.CAMPAIGN_DATA).then(async (campaignData) => {
+      if (campaignData) {
+        const completeRate = await checkCampaignMatrix(campaignData);
+        if (completeRate) {
+          setCompletionRate(completeRate);
+        }
+      }
+    });
 
     return () => {
       const projectRealm = realmRef.current;
@@ -224,6 +233,7 @@ const UsersProvider = ({ children }) => {
     users,
     setUsers,
     enrollDataById,
+    completionRate,
     setEnrollData,
     setApplicationStartTime,
     setEnrollDataById,

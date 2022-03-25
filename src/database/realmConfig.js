@@ -112,6 +112,22 @@ const getRealm = async () => {
   return realm;
 };
 
+export const checkCampaignMatrix = async (campaignData) => {
+  const partitionInfo = campaignData && campaignData._partition;
+  if (partitionInfo) {
+    const campaignId = partitionInfo.replace('campaign=', '');
+    try {
+      const response = await fetch(`https://data.mongodb-api.com/app/enrollmentappxi-hmgnf/endpoint/campaign/metrics?campaignId=${campaignId}`);
+      const res = await response.json();
+      if (res.metrics && res.metrics.finishedPercent) {
+        return res.metrics.finishedPercent;
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
+};
+
 export const signIn = async (email, password, navigation, setLoading) => {
   try {
     const credential = Realm.Credentials.emailPassword(email, password);

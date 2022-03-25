@@ -50,13 +50,14 @@ const ConsentScreen = ({ route, navigation }) => {
               multiline={true}
               numberOfLines={2}
               style={localStyles.permissionText}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod.
+            {translations['Consent.acceptTerm']}
             </EText>
             <CheckBox
               value={isSelected}
+
+              style={{transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
               onValueChange={setSelection}
-              tintColors={{ true: colors.black, false: colors.black }}
+              tintColors={{ true: colors.darkCharcoal, false: colors.darkCharcoal }}
             />
           </View>
           <EButton
@@ -99,7 +100,6 @@ const localStyles = StyleSheet.create({
   },
   confirmation: {
     width: wp(90),
-    ...styles.ph5,
   },
   subTitle: {
     color: colors.black,

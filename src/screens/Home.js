@@ -8,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 
 import ScanIcon from '../assets/icons/ScanIcon';
@@ -45,7 +46,7 @@ const Home = ({ route, navigation }) => {
   const [isCampaignAssign, setIsCampaignAssign] = useState(false);
   const [campaignData, setCampaignData] = useState(null);
   //   const [isSynced, setIsSynced] = useState(false);
-  const { users: enrollData } = useUsers();
+  const { users: enrollData, completionRate } = useUsers();
 
   let campaignInfo;
   if (route && route.params && route.params.campaignData) {
@@ -90,7 +91,7 @@ const Home = ({ route, navigation }) => {
     } = localStyles;
     return (
       <View style={itemStyle}>
-        <EText style={remainingPercentage}>{value}</EText>
+      {value === 'loading' ? <ActivityIndicator size="large" color={colors.primary} /> : <EText style={remainingPercentage}>{value}</EText> }
         <EText numberOfLines={2} style={itemText}>
           {title}
         </EText>
@@ -139,7 +140,7 @@ const Home = ({ route, navigation }) => {
               <View style={localStyles.container}>
                 <FarmerDataBlock
                   title={`${translations['Campaign.completed']}`}
-                  value={'n/a%'}
+                  value={completionRate ? `${completionRate}%` : 'loading'}
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
