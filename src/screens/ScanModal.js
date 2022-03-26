@@ -10,7 +10,7 @@ import { useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import { colors, styles } from '../styles';
 import { useLocal } from '../contex/index';
-import { hp } from '../styles/metrics';
+import { hp, wp } from '../styles/metrics';
 import EText from '../atoms/EText';
 import EButton from '../atoms/EButton';
 import ETextInput from '../atoms/ETextInput';
@@ -57,38 +57,43 @@ const ScanModal = (props) => {
         style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}
         onRequestClose={onCloseModal}
         >
-
-        <View
-          style={[
-            styles.rowSpaceBetween,
-            styles.mt25,
-            styles.ph20,
-            styles.mb15,
-          ]}>
-          <TouchableOpacity onPress={onCloseModal}>
-            <BackIcon />
-          </TouchableOpacity>
-          <EText
+            <View style={{ zIndex: 1 }}>
+            <View
             style={[
-              localStyles.centerText,
-              styles.selfCenter,
-              styles.pb0,
-              styles.h3,
+              styles.rowSpaceBetween,
+              styles.selfStart,
+              styles.mt25,
+              styles.mb15,
+              localStyles.headerContainer,
             ]}>
-            {translations['ScanQr.title']}
-          </EText>
-          <View />
-        </View>
-        <ETextInput
-          defaultValue={id}
-          onChangeText={(text) => setId(text)}
-          // label={<Text>ID</Text>}
-          autoCapitalize="none"
-          placeholder="enter id"
-          returnKeyType="done"
-          blurOnSubmit={false}
-          keyboardShouldPersistTaps
-        />
+            <TouchableOpacity onPress={onCloseModal}>
+              <BackIcon />
+            </TouchableOpacity>
+            <EText
+              style={[
+                localStyles.centerText,
+                styles.selfCenter,
+                styles.pb0,
+                styles.h3,
+                { color: colors.white },
+              ]}>
+              {translations['ScanQr.title']}
+            </EText>
+            <View />
+          </View>
+          <ETextInput
+            defaultValue={id}
+            onChangeText={(text) => setId(text)}
+            autoCapitalize="none"
+            placeholder="enter id"
+            returnKeyType="done"
+            blurOnSubmit={false}
+            style={localStyles.input}
+            placeholderTextColor={colors.black}
+            // keyboardShouldPersistTaps
+          />
+          </View>
+
         <QRCodeScanner
           cameraStyle={[localStyles.cameraStyle, styles.selfCenter]}
           onRead={onSuccessScan}
@@ -111,13 +116,14 @@ const localStyles = StyleSheet.create({
   mainContainer: {
     backgroundColor: colors.lightGrey,
   },
+  headerContainer: { width: wp(90), alignSelf: 'center' },
   cameraStyle: {
-    // width: 200,
-    // height: 200,
-    // borderRadius: 4,
-    // borderWidth: 4,
-    // width: wp(100),//
-    height: hp(100),
+    width: hp(100),
+  },
+  input: {
+    color: colors.black,
+    width: wp(90),
+    alignSelf: 'center',
   },
   centerText: {
     fontSize: 18,

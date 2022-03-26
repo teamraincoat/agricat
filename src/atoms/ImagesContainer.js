@@ -5,7 +5,6 @@ import {
   PixelRatio,
   StyleSheet,
   Image,
-  FlatList,
 } from 'react-native';
 import DeleteIcon from '../assets/icons/DeleteIcon';
 
@@ -21,33 +20,19 @@ const ImagesContainer = (props) => {
     },
     [selectedFileImages],
   );
-
-  // eslint-disable-next-line react/display-name
-  const ImagesViewContainer = React.memo(({ item }) => (
-    <View style={localStyles.imageInnerContainer}>
+  return (
+    <View style={localStyles.imageContainer}>
+      <View style={localStyles.imageInnerContainer}>
       <Image
-        source={{ uri: `data:image/png;base64,${item.uri}` }}
+        source={{ uri: `data:image/png;base64,${selectedFileImages[0].uri}` }}
         style={localStyles.imageStyle}
       />
       <TouchableOpacity
         style={localStyles.deleteIcon}
-        onPress={() => removeImage(item.name)}>
+        onPress={() => removeImage(selectedFileImages[0].name)}>
         <DeleteIcon />
       </TouchableOpacity>
     </View>
-  ));
-
-  const renderImageView = ({ item }) => <ImagesViewContainer item={item} />;
-  return (
-    <View style={localStyles.imageContainer}>
-      <FlatList
-        data={selectedFileImages}
-        keyExtractor={(item) => item.name}
-        extraData={selectedFileImages}
-        renderItem={renderImageView}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      />
     </View>
   );
 };
