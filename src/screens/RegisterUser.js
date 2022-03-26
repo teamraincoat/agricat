@@ -13,7 +13,6 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImgToBase64 from 'react-native-image-base64';
 import CheckBox from '@react-native-community/checkbox';
@@ -821,11 +820,5 @@ const localStyles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({ EnrollReducers }) => {
-  const { enrollData } = EnrollReducers;
-  return {
-    enrollData,
-  };
-};
 
-export default connect(mapStateToProps)(RegisterUser);
+export default RegisterUser;

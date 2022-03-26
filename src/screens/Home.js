@@ -4,7 +4,6 @@ import {
   FlatList,
   View,
   SafeAreaView,
-  RefreshControl,
   Pressable,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -13,7 +12,6 @@ import {
 
 import ScanIcon from '../assets/icons/ScanIcon';
 import { colors, styles } from '../styles';
-import { setEnrollDataInStore } from '../redux/action/EnrollActions';
 
 import EText from '../atoms/EText';
 import { useUsers } from '../provider/UsersProvider';
@@ -33,19 +31,12 @@ import { getStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
 
 const Home = ({ route, navigation }) => {
-//   const { campaignData } = route.params;
-  // const {userInfo} = route.param;
-  const [refresh, setRefresh] = useState(false);
-  const [searchWord, setSearchWord] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
-  const [isCompaign, setIsCompaign] = useState(true);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [qrInfo, setQrInfo] = React.useState('');
   const [isCampaignAssign, setIsCampaignAssign] = useState(false);
   const [campaignData, setCampaignData] = useState(null);
-  //   const [isSynced, setIsSynced] = useState(false);
+
   const { users: enrollData, completionRate } = useUsers();
 
   let campaignInfo;
@@ -165,12 +156,6 @@ const Home = ({ route, navigation }) => {
                     renderItem={_offlineRenderItem}
                     keyExtractor={(item) => item._id.toString()}
                     showsVerticalScrollIndicator={false}
-                    refreshControl={
-                      <RefreshControl
-                        refreshing={refresh}
-                        onRefresh={setEnrollDataInStore}
-                      />
-                    }
                   />
                 </View>
               ) : (
@@ -223,7 +208,6 @@ const Home = ({ route, navigation }) => {
       <ScanModal
         visible={modalVisible}
         closeModal={setModalVisible}
-        setQrInfo={setQrInfo}
         route={navigation}
       />
     </SafeAreaView>
