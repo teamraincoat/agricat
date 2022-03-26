@@ -159,13 +159,14 @@ const RegisterUser = ({ route, navigation }) => {
       isModify = true;
     }
     try {
+      console.log('removed Space mobile phone====>>>>', `+${data.mobilePhone.replace(/\s/g, '')}`);
       const payload = {
         firstName: data.firstName,
         lastName: data.lastName,
         surName: data.surName,
         gender: data.gender,
         dob: moment(data.dob.replace(/-/g, '/'), 'DD-MM-YYYY'),
-        mobilePhone: data.mobilePhone,
+        mobilePhone: data.mobilePhone.replace(/\s/g, ''),
         mobilePhoneOwner: data.mobilePhoneOwner,
         coveredAreaHa: Decimal128.fromString(
           // If the covered area was already saved as
@@ -437,6 +438,7 @@ const RegisterUser = ({ route, navigation }) => {
                   }}
                  placeholder={translations['Placeholder.contactNo']}
                  value={value}
+                 keyboardType="number-pad"
                  onChangeText={(value) => onChange(value)}
                  {...register('mobilePhone', {
                    required: translations['Field.required'],
@@ -819,6 +821,5 @@ const localStyles = StyleSheet.create({
     height: hp(7),
   },
 });
-
 
 export default RegisterUser;
