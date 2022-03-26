@@ -8,5 +8,8 @@ export const colors = {
   lightGrey: '#FFF6EB',
   red: '#FF0000',
   cream: '#F1ECE4',
-  darkCharcoal : '#333333'
+  darkCharcoal: '#333333',
+  grey: '#818181',
 };
+
+export default colors;

@@ -93,7 +93,7 @@ const UploadDataModal = (props) => {
 
           <EText style={localStyles.title}>{translations['Sync.title']}</EText>
           <EText style={localStyles.subTitle}>
-            {`You are going to synchronize ${remainFarmer} farmers.`}
+            {translations.formatString(translations['Sync.subTitle'], remainFarmer || 0)}
           </EText>
           <EButton
             title={translations['Sync.confirm']}

@@ -26,8 +26,6 @@ const UsersProvider = ({ children }) => {
         realmRef.current = projectRealm;
         const syncUsers = projectRealm.objects('Enrollment');
         console.log('STATUS: Syncing Enrollments', syncUsers.length);
-        // const sortedUsers = syncUsers.sorted('applicationTime');
-        // const sortedUsers = syncUsers.sorted('applicationTime').filter((enrollee) => enrollee.status === 'Active');
         const sortedUsers = syncUsers.sorted('applicationTime', true);
         sortedUsers.addListener(() => {
           setUsers([...sortedUsers]);
