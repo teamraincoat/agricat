@@ -279,7 +279,8 @@ const RegisterUser = ({ route, navigation }) => {
         return ImagePicker.clean();
       })
       .catch((err) => {
-        console.error('error while choose image from Camera===>', err);
+        if (err.code === 'E_PICKER_CANCELLED') return;
+        console.error('Error while choosing image from camera:', err);
       });
   };
 
@@ -775,6 +776,7 @@ const localStyles = StyleSheet.create({
     ...styles.selfCenter,
     ...styles.borderLight,
     zIndex: 9999,
+    elevation: 9999,
     width: wp(90),
   },
   addImageButton: {

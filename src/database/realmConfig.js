@@ -22,8 +22,8 @@ const getRealm = async () => {
   };
   const userData = await getStorageData(Constants.STORAGE.USER_DATA);
   // console.log('userData--->', userData);
-  const campaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
-  console.log('campaignData--->', campaignData);
+  // const campaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
+  // console.log('campaignData--->', campaignData);
 
   // User memberOf is an array but only allows one campaign partition at a time
   const partitionValue = userData && userData.memberOf && userData.memberOf[0];
@@ -46,7 +46,7 @@ const getRealm = async () => {
           if (error.name === 'ClientReset') {
             const realmPath = realm.path;
             realm.close();
-            console.log(`Error ${error.message}, need to reset ${realmPath}…`);
+            console.error(`Error ${error.message}, need to reset ${realmPath}…`);
             // pass your realm app instance, and realm path to initiateClientReset()
             Realm.App.Sync.initiateClientReset(app, realmPath);
             console.log(`Creating backup from ${error.config.path}…`);
@@ -94,7 +94,7 @@ const getRealm = async () => {
         // console.log('size less + show loader');
         // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
       } else {
-        console.log('same size or greater');
+        // console.log('same size or greater');
       }
     },
   );

@@ -34,14 +34,14 @@ const ALGORITHM = 'aes-256-cbc';
  */
 
 export const decrypt = async (encryptedMessage, cipherKey, iv) => {
-   const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.from(iv, 'base64'));
+  const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.from(iv, 'base64'));
 
-    let decrypted = decipher.update(Buffer.from(encryptedMessage, 'base64'), 'base64');
-    decrypted += decipher.final();
-    const plainMessage = decrypted.toString('utf8');
+  let decrypted = decipher.update(Buffer.from(encryptedMessage, 'base64'), 'base64');
+  decrypted += decipher.final();
+  const plainMessage = decrypted.toString('utf8');
 
-    // console.log('utils::crypto::decrypt', plainMessage);
-    return plainMessage;
+  // console.log('utils::crypto::decrypt', plainMessage);
+  return plainMessage;
 };
 
 /**
@@ -60,13 +60,13 @@ export const encrypt = async (message, cipherKey) => {
       // bytes is a Buffer object
       if (err) return reject(err);
       resolve(bytes);
-    })
+    });
   }));
   const cipher = createCipheriv(ALGORITHM, cipherKey, iv);
   const encrypted = cipher.update(message, 'utf8', 'base64') + cipher.final('base64');
 
   const result = `${Buffer.from(iv).toString('base64')}|${encrypted}`;
 
-   console.log('utils::crypto::encrypted', result);
+  // console.log('utils::crypto::encrypted', result);
   return result;
 };
