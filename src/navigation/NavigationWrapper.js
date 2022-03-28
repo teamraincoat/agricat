@@ -37,6 +37,7 @@ const NavigationWrapper = () => {
         } else {
           console.log('No User Data found');
           setInitializing(false);
+          SplashScreen.hide();
         }
       })
       .catch((e) => {
