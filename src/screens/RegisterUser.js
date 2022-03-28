@@ -244,6 +244,22 @@ const RegisterUser = ({ route, navigation }) => {
     reset({ ...values, images: selectedFiles });
   }, [selectedFiles]);
 
+  useEffect(() => {
+    register('firstName', { required: translations['Field.required'] });
+    register('lastName', { required: translations['Field.required'] });
+    register('surName', { required: translations['Field.required'] });
+    register('gender', { required: translations['Field.required'] });
+    register('dob', {
+      required: translations['Field.required'],
+      pattern: {
+        value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
+        message: 'invalid date',
+      },
+    });
+    register('govId', { required: translations['Field.required'] });
+    register('mobilePhone', { required: translations['Field.required'] });
+  }, []);
+
   const onCameraPress = () => {
     const selectedImage = [];
     ImagePicker.openCamera({
@@ -291,10 +307,11 @@ const RegisterUser = ({ route, navigation }) => {
               showsVerticalScrollIndicator={false}>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
+                render={({
+                  field: {
+                    onChange, onBlur, value,
+                  },
+                }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.firstName']}
                     style={[styles.p10]}
@@ -302,9 +319,6 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.firstName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
-                    {...register('firstName', {
-                      required: translations['Field.required'],
-                    })}
                     error={!!errors.firstName}
                     errorText={errors.firstName && errors.firstName.message}
                   />
@@ -316,9 +330,6 @@ const RegisterUser = ({ route, navigation }) => {
               )} */}
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.lastName']}
@@ -327,9 +338,6 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.lastName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
-                    {...register('lastName', {
-                      required: translations['Field.required'],
-                    })}
                     error={!!errors.lastName}
                     errorText={errors.lastName && errors.lastName.message}
                   />
@@ -338,9 +346,6 @@ const RegisterUser = ({ route, navigation }) => {
               />
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.surName']}
@@ -349,9 +354,6 @@ const RegisterUser = ({ route, navigation }) => {
                     label={<EText>{translations['Enroller.surName']}</EText>}
                     onChangeText={(value) => onChange(value)}
                     value={value}
-                    {...register('surName', {
-                      required: translations['Field.required'],
-                    })}
                     error={!!errors.surName}
                     errorText={errors.surName && errors.surName.message}
                   />
@@ -361,9 +363,6 @@ const RegisterUser = ({ route, navigation }) => {
               <EText style={localStyles.labelStyle}>{translations['Enroller.gender']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
                 render={({ field: { value, onChange } }) => (
                   <DropDownPicker
                     placeholder={translations['Placeholder.gender']}
@@ -413,15 +412,7 @@ const RegisterUser = ({ route, navigation }) => {
                     }}
                     placeholder={translations['Placeholder.birthDate']}
                     style={[localStyles.datePicker,
-                      errors.dob && { borderColor: colors.red, borderWidth: 1 }]}
-                      {...register('dob', {
-                        required: translations['Field.required'],
-                        pattern: {
-                          value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
-                          message: 'invalid date',
-                        },
-
-                      })}
+                      errors.dob && { borderColor: colors.red, borderWidth: 2 }]}
                     value={value}
                     onChangeText={(text) => onChange(text)}
                     />
@@ -432,9 +423,6 @@ const RegisterUser = ({ route, navigation }) => {
               <EText style={localStyles.labelStyle}>{translations['Enroller.telephone']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
                 render={({ field: { onChange, value } }) => (
                   <TextInputMask
                   type={'custom'}
@@ -445,15 +433,13 @@ const RegisterUser = ({ route, navigation }) => {
                  value={value}
                  keyboardType="number-pad"
                  onChangeText={(value) => onChange(value)}
-                 {...register('mobilePhone', {
-                   required: translations['Field.required'],
-                 })}
                     style={[localStyles.inputStyle,
-                      errors.mobilePhone && { borderColor: colors.red, borderWidth: 1 }]}
+                      errors.mobilePhone && { borderColor: colors.red, borderWidth: 2 }]}
                 />
                 )}
                 name="mobilePhone"
               />
+              {errors.mobilePhone && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
               <EText style={localStyles.labelStyle}>{translations['Enroller.telephoneOwner']}</EText>
               <Controller
                 control={control}
@@ -487,9 +473,6 @@ const RegisterUser = ({ route, navigation }) => {
 
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     onBlur={onBlur}
@@ -497,9 +480,6 @@ const RegisterUser = ({ route, navigation }) => {
                     onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
-                    {...register('govId', {
-                      required: translations['Field.required'],
-                    })}
                     error={!!errors.govId}
                     errorText={errors.govId && errors.govId.message}
                   />
@@ -707,7 +687,6 @@ const RegisterUser = ({ route, navigation }) => {
                   name="images"
                 />
               )}
-              {/* {errors.images && <EText>{translations['Field.required']}</EText>} */}
 
               <EButton
                 title={translations['Enroller.complete']}

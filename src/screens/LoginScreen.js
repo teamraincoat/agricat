@@ -3,7 +3,7 @@ import {
   View, StyleSheet, Pressable, Linking,
 } from 'react-native';
 
-import { signUp } from '../database/realmConfig';
+import { signIn } from '../database/realmConfig';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -53,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       if (checkValidation()) {
         setLoading(true);
-        await signUp(email.value, password.value, navigation, setLoading);
+        await signIn(email.value, password.value, navigation, setLoading);
       }
     } catch (error) {
       setLoading(false);

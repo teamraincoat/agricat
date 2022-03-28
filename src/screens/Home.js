@@ -40,10 +40,16 @@ const Home = ({ route, navigation }) => {
   const { users: enrollData, completionRate } = useUsers();
 
   let campaignInfo;
+  let campaignMetrics;
   if (route && route.params && route.params.campaignData) {
     campaignInfo = route.params.campaignData;
   } else if (campaignData) {
     campaignInfo = campaignData;
+  }
+  if (route && route.params && route.params.campaignMetrics) {
+    campaignMetrics = route.params.campaignMetrics;
+  } else if (completionRate) {
+    campaignMetrics = completionRate;
   }
 
   useEffect(() => {
@@ -131,7 +137,7 @@ const Home = ({ route, navigation }) => {
               <View style={localStyles.container}>
                 <FarmerDataBlock
                   title={`${translations['Campaign.completed']}`}
-                  value={completionRate ? `${completionRate}%` : 'loading'}
+                  value={campaignMetrics ? `${campaignMetrics}%` : 'loading'}
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}

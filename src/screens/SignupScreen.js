@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 import React, {
-  useContext, useEffect, useRef, useState,
+  useContext, useEffect, useState,
 } from 'react';
 import {
   View,
@@ -18,7 +18,7 @@ import { TextInputMask } from 'react-native-masked-text';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import { app } from '../database/realmConfig';
+import { app, checkCampaignMatrix } from '../database/realmConfig';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 import { colors, styles } from '../styles';
 import { hp, normalize, wp } from '../styles/metrics';
@@ -71,11 +71,17 @@ const SignupScreen = ({ navigation }) => {
       await app.emailPasswordAuth.callResetPasswordFunction(
         resetParams,
       );
+      const campaignMetrics = await checkCampaignMatrix(userData);
 
       setLoading(false);
       if (newUserData.modifiedCount === 1) {
         saveStorageData(Constants.STORAGE.IS_PENDING_REGISTRATION, false);
-        navigation.navigate('Main');
+        navigation.navigate('Main', {
+          screen: 'Home',
+          params: {
+            campaignMetrics,
+          },
+        });
       }
     } catch (error) {
       setLoading(false);
@@ -90,6 +96,13 @@ const SignupScreen = ({ navigation }) => {
       reset({ ...signUpData, languagesList: lList.length > 0 ? lList : [] });
     }
   }, [lList]);
+
+  useEffect(() => {
+    register('name', { required: translations['Message.nameRequired'] });
+    register('telephone', { required: translations['Message.telephoneRequired'] });
+    register('password', { required: translations['Message.passwordRequired'] });
+    register('confirmPassword', { required: translations['Message.confirmPasswordRequired'] });
+  }, []);
   const {
     control,
     getValues,
@@ -131,18 +144,14 @@ const SignupScreen = ({ navigation }) => {
               }}
               render={({
                 field: {
-                  onChange, onBlur, value, ref,
+                  onChange, onBlur, value,
                 },
               }) => (
                 <ETextInput
                   placeholder={translations['Placeholder.name']}
                   value={value}
                   onBlur={onBlur}
-                    refs={ref}
                   onChangeText={(value) => onChange(value)}
-                  {...register('name', {
-                    required: translations['Message.nameRequired'],
-                  })}
                   error={!!errors.name}
                   errorText={errors.name && errors.name.message}
                   label={<Text>{translations['Profile.name']}</Text>}
@@ -176,9 +185,6 @@ const SignupScreen = ({ navigation }) => {
                   placeholder={translations['Placeholder.telephone']}
                  value={value}
                  onChangeText={(value) => onChange(value)}
-                 {...register('telephone', {
-                   required: translations['Message.telephoneRequired'],
-                 })}
                  returnKeyType="next"
                  style={[localStyles.inputStyle,
                    errors.telephone && { borderColor: colors.red, borderWidth: 1 }]}
@@ -235,19 +241,15 @@ const SignupScreen = ({ navigation }) => {
               }}
               render={({
                 field: {
-                  onChange, onBlur, value, ref,
+                  onChange, onBlur, value,
                 },
               }) => (
                 <ETextInput
                   secure
                   placeholder={translations['Placeholder.password']}
                   value={value}
-                  refs={ref}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
-                  {...register('password', {
-                    required: translations['Message.passwordRequired'],
-                  })}
                   error={!!errors.password}
                   errorText={errors.password && errors.password.message}
                   label={<Text>{translations['Profile.newPassword']}</Text>}
@@ -267,19 +269,15 @@ const SignupScreen = ({ navigation }) => {
               }}
               render={({
                 field: {
-                  onChange, onBlur, value, ref,
+                  onChange, onBlur, value,
                 },
               }) => (
                 <ETextInput
                   secure
                   placeholder={translations['Placeholder.confirmPassword']}
                   value={value}
-                  refs={ref}
                   onBlur={onBlur}
                   onChangeText={(value) => onChange(value)}
-                  {...register('confirmPassword', {
-                    required: translations['Message.confirmPasswordRequired'],
-                  })}
                   error={!!errors.confirmPassword}
                   errorText={
                     errors.confirmPassword && errors.confirmPassword.message

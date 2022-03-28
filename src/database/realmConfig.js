@@ -163,6 +163,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
         },
       },
     );
+    const campaignMetrics = await checkCampaignMatrix(campaignData);
 
     saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
     saveStorageData(Constants.STORAGE.USER_DATA, userData);
@@ -189,6 +190,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
                 params: {
                   userData,
                   campaignData,
+                  campaignMetrics,
                 },
               });
             }

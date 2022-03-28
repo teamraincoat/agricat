@@ -35,15 +35,6 @@ const UsersProvider = ({ children }) => {
         console.log('error--->', error);
       });
 
-    getStorageData(Constants.STORAGE.CAMPAIGN_DATA).then(async (campaignData) => {
-      if (campaignData) {
-        const completeRate = await checkCampaignMatrix(campaignData);
-        if (completeRate) {
-          setCompletionRate(completeRate);
-        }
-      }
-    });
-
     return () => {
       const projectRealm = realmRef.current;
       if (projectRealm) {
@@ -53,6 +44,17 @@ const UsersProvider = ({ children }) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    getStorageData(Constants.STORAGE.CAMPAIGN_DATA).then(async (campaignData) => {
+      if (campaignData) {
+        const completeRate = await checkCampaignMatrix(campaignData);
+        if (completeRate) {
+          setCompletionRate(completeRate);
+        }
+      }
+    });
+  }, [completionRate]);
 
   const getTimeDifference = (startTime, endTime) => {
     const start = moment(startTime);
@@ -232,6 +234,7 @@ const UsersProvider = ({ children }) => {
     setUsers,
     enrollDataById,
     completionRate,
+    setCompletionRate,
     setEnrollData,
     setApplicationStartTime,
     setEnrollDataById,

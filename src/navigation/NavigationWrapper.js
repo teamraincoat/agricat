@@ -13,36 +13,42 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgotPassword from '../screens/ForgotPassword';
 import { LocalizeContext } from '../provider/LocalizeProvider';
+import { checkCampaignMatrix } from '../database/realmConfig';
 
 const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
 const NavigationWrapper = () => {
   const [userId, setUserId] = useState(null);
+  const [campaignCompletionRate, setCampaignCompletionRate] = useState(null);
   const [initializing, setInitializing] = useState(true);
   const { initializeAppLanguage } = useContext(LocalizeContext);
   useEffect(() => {
     initializeAppLanguage();
-    getStorageData(Constants.STORAGE.USER_ID)
-      .then((result) => {
-        if (result) {
-          setUserId(result);
-          if (initializing) setInitializing(false);
+    getStorageData(Constants.STORAGE.USER_DATA)
+      .then(async (userInfo) => {
+        if (userInfo) {
+          setUserId(userInfo._id);
+          const completeRate = await checkCampaignMatrix(userInfo);
+          if (completeRate) {
+            setCampaignCompletionRate(completeRate);
+            if (initializing) setInitializing(false);
+            SplashScreen.hide();
+          }
         } else {
-          console.log('No Result found');
+          console.log('No User Data found');
           setInitializing(false);
         }
       })
       .catch((e) => {
         console.log('error localStorage', e);
       });
-    SplashScreen.hide();
   }, [userId]);
   const MainStackNavigator = () => (
     <UsersProvider>
       <MainStack.Navigator
         initialRouteName="Home"
         screenOptions={{ headerShown: false }}>
-        <MainStack.Screen name="Home" component={Home} />
+        <MainStack.Screen name="Home" initialParams={{ campaignMetrics: campaignCompletionRate }} component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
         <MainStack.Screen name="Consent" component={ConsentScreen} />
         <MainStack.Screen name="ImpactReport" component={ImpactReport} />
@@ -64,7 +70,7 @@ const NavigationWrapper = () => {
 
   if (initializing) return null;
 
-  if (userId) return <MainStackNavigator />;
+  if (userId && campaignCompletionRate) return <MainStackNavigator />;
 
   return <AuthStackNavigator />;
 };
