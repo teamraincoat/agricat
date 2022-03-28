@@ -36,6 +36,7 @@ const Home = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isCampaignAssign, setIsCampaignAssign] = useState(false);
   const [campaignData, setCampaignData] = useState(null);
+  const [enrolledLocally, setEnrolledLocally] = useState(null);
 
   const { users: enrollData, completionRate } = useUsers();
 
@@ -60,6 +61,9 @@ const Home = ({ route, navigation }) => {
     checkUserData();
     checkCampaignData();
   }, []);
+  useEffect(() => {
+    setEnrolledLocally(enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active').length : 0);
+  }, [enrollData]);
   const checkUserData = async () => {
     const userData = await getStorageData(Constants.STORAGE.USER_DATA);
     if (userData && userData.memberOf && userData.memberOf.length > 0) {
@@ -152,7 +156,7 @@ const Home = ({ route, navigation }) => {
                 )}
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
-                  value={enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active').length : 0}
+                  value={enrolledLocally}
                 />
               </View>
               <EText style={[localStyles.title, { ...styles.ml15 }]}>
@@ -221,6 +225,7 @@ const Home = ({ route, navigation }) => {
       <UploadDataModal
         visible={uploadModalVisible}
         closeModal={setUploadModalVisible}
+        enrolledLocally={enrolledLocally || 0}
       />
       <ScanModal
         visible={modalVisible}

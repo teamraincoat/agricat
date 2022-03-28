@@ -19,8 +19,8 @@ import { useUsers } from '../../provider/UsersProvider';
 // import getRealm from '../../database/realmConfig';
 
 const UploadDataModal = (props) => {
-  const { visible, closeModal } = props;
-  const [startSync, setStartSync] = useState(false);
+  const { visible, closeModal, enrolledLocally } = props;
+  // const [startSync, setStartSync] = useState(false);
   const [remainFarmer, setRemainFarmer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
@@ -93,7 +93,7 @@ const UploadDataModal = (props) => {
 
           <EText style={localStyles.title}>{translations['Sync.title']}</EText>
           <EText style={localStyles.subTitle}>
-            {translations.formatString(translations['Sync.subTitle'], remainFarmer || 0)}
+            {translations.formatString(translations['Sync.subTitle'], enrolledLocally || remainFarmer || 0)}
           </EText>
           <EButton
             title={translations['Sync.confirm']}
@@ -103,35 +103,6 @@ const UploadDataModal = (props) => {
             loadingText={`${progressPercentage.toFixed(2)}%`}
           />
         </View>
-        {/* {loading ? (
-          <View style={localStyles.loaderContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <EText style={localStyles.loaderText}>
-                {progressPercentage}</EText>
-          </View>
-        ) : (
-          <>
-            <Pressable style={localStyles.iconContainer} onPress={onCloseModal}>
-              <CloseIcon />
-            </Pressable>
-            <View style={localStyles.uploadDataContainer}>
-              <UploadLargeIcon />
-
-              <EText style={localStyles.title}>
-                {translations['Sync.title']}
-              </EText>
-              <EText style={localStyles.subTitle}>
-                {`You are going to synchronize ${remainFarmer} farmers.`}
-              </EText>
-              <EButton
-                title={loading ? progressPercentage : translations['Sync.confirm']}
-                onClick={() => syncData()}
-                style={localStyles.syncButton}
-                loading={loading}
-              />
-            </View>
-          </>
-        )} */}
       </View>
     </Modal>
   );
