@@ -13,14 +13,13 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
-import ImagePicker from 'react-native-image-crop-picker';
+import { launchCamera } from 'react-native-image-picker';
 // import CheckBox from '@react-native-community/checkbox';
 import { Decimal128, ObjectId } from 'bson';
 
 import { TextInputMask } from 'react-native-masked-text';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
-import ScanModal from './ScanModal';
 import { colors, styles } from '../styles';
 import EText from '../atoms/EText';
 
@@ -87,7 +86,6 @@ const RegisterUser = ({ route, navigation }) => {
 
   // const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [qrInfo, setQrInfo] = React.useState('');
 
@@ -262,21 +260,24 @@ const RegisterUser = ({ route, navigation }) => {
 
   const onCameraPress = () => {
     const selectedImage = [];
-    ImagePicker.openCamera({
-      compressImageMaxWidth: 1200,
-      compressImageMaxHeight: 1200,
-      compressImageQuality: 0.8,
+    launchCamera({
+      mediaType: 'image',
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 0.8,
       includeBase64: true,
     })
-      .then((image) => {
+      .then((response) => {
+        if (response.didCancel) {
+          return;
+        }
         selectedImage.push({
-          name: image.path.substring(image.path.lastIndexOf('/') + 1),
-          size: image.size.toString(),
-          uri: image.data,
-          type: image.mime,
+          name: response.assets[0].fileName,
+          size: response.assets[0].fileSize.toString(),
+          uri: response.assets[0].base64,
+          type: response.assets[0].type,
         });
         setSelectedFiles(selectedFiles.concat(selectedImage));
-        return ImagePicker.clean();
       })
       .catch((err) => {
         if (err.code === 'E_PICKER_CANCELLED') return;
@@ -699,11 +700,6 @@ const RegisterUser = ({ route, navigation }) => {
           </KeyboardAvoidingView>
         </View>
       </View>
-      <ScanModal
-        visible={modalVisible}
-        closeModal={setModalVisible}
-        setQrInfo={setQrInfo}
-      />
     </SafeAreaView>
   );
 };
