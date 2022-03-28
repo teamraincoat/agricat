@@ -41,6 +41,7 @@ const Home = ({ route, navigation }) => {
 
   let campaignInfo;
   let campaignMetrics;
+  let deviceOffline = false;
   if (route && route.params && route.params.campaignData) {
     campaignInfo = route.params.campaignData;
   } else if (campaignData) {
@@ -50,6 +51,9 @@ const Home = ({ route, navigation }) => {
     campaignMetrics = route.params.campaignMetrics;
   } else if (completionRate) {
     campaignMetrics = completionRate;
+  }
+  if (route && route.params && route.params.deviceOffline) {
+    deviceOffline = route.params.deviceOffline;
   }
 
   useEffect(() => {
@@ -88,7 +92,7 @@ const Home = ({ route, navigation }) => {
     } = localStyles;
     return (
       <View style={itemStyle}>
-      {value === 'loading' ? <ActivityIndicator size="large" color={colors.primary} /> : <EText style={remainingPercentage}>{value}</EText> }
+        {value === 'loading' ? <ActivityIndicator size="large" color={colors.primary} /> : <EText style={remainingPercentage}>{value}</EText> }
         <EText numberOfLines={2} style={itemText}>
           {title}
         </EText>
@@ -135,10 +139,17 @@ const Home = ({ route, navigation }) => {
                 </EText>
               </View>
               <View style={localStyles.container}>
-                <FarmerDataBlock
-                  title={`${translations['Campaign.completed']}`}
-                  value={campaignMetrics ? `${campaignMetrics}%` : 'loading'}
-                />
+                {deviceOffline ? (
+                  <FarmerDataBlock
+                    title={`${translations['Campaign.completed']}`}
+                    value="n/a"
+                  />
+                ) : (
+                  <FarmerDataBlock
+                    title={`${translations['Campaign.completed']}`}
+                    value={campaignMetrics ? `${campaignMetrics}%` : 'loading'}
+                  />
+                )}
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
                   value={enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active').length : 0}

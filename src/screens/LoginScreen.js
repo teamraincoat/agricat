@@ -57,7 +57,6 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       setLoading(false);
-      console.log('error*****', error);
     }
   };
   return (

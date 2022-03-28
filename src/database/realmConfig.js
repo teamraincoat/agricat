@@ -69,9 +69,9 @@ const getRealm = async () => {
 
   const realm = await Realm.open(configuration);
   const { syncSession } = realm;
-  const isPendingEnrollment = await getStorageData(
-    Constants.STORAGE.ENROLL_USER_DATA,
-  );
+  // const isPendingEnrollment = await getStorageData(
+  //   Constants.STORAGE.ENROLL_USER_DATA,
+  // );
   //   if (isPendingEnrollment) {
   //     syncSession.pause();
   //   }
@@ -136,8 +136,6 @@ export const signIn = async (email, password, navigation, setLoading) => {
     const userData = await newUser.refreshCustomData();
     const mongo = newUser.mongoClient('mongodb-atlas');
     const campaigns = mongo.db('mexico').collection('Campaign');
-    const userList = mongo.db('mexico').collection('User');
-    const newUserData = await userList.findOne();
     // console.log('<--------newUserData----->', newUserData);
     if (userData && userData.isFirstLogin) {
       saveStorageData(
@@ -200,7 +198,6 @@ export const signIn = async (email, password, navigation, setLoading) => {
     });
     return newUser;
   } catch (error) {
-    console.log('SignIn Err', error);
     setLoading(false);
     if (error && error.code === 50) {
       Alert.alert('Error', 'Invalid email or password', [{ text: 'OK' }], {

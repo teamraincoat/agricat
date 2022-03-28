@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from 'react-native-splash-screen';
+import NetInfo from '@react-native-community/netinfo';
+
 import { getStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
 import { UsersProvider } from '../provider/UsersProvider';
@@ -20,28 +22,35 @@ const MainStack = createNativeStackNavigator();
 const NavigationWrapper = () => {
   const [userId, setUserId] = useState(null);
   const [campaignCompletionRate, setCampaignCompletionRate] = useState(null);
+  const [deviceOffline, setDeviceOffline] = useState(null);
   const [initializing, setInitializing] = useState(true);
   const { initializeAppLanguage } = useContext(LocalizeContext);
   useEffect(() => {
+    let _userInfo;
     initializeAppLanguage();
     getStorageData(Constants.STORAGE.USER_DATA)
-      .then(async (userInfo) => {
-        if (userInfo) {
-          setUserId(userInfo._id);
-          const completeRate = await checkCampaignMatrix(userInfo);
-          if (completeRate) {
-            setCampaignCompletionRate(completeRate);
-            if (initializing) setInitializing(false);
-            SplashScreen.hide();
-          }
-        } else {
-          console.log('No User Data found');
-          setInitializing(false);
-          SplashScreen.hide();
+      .then((userInfo) => {
+        _userInfo = userInfo;
+        setUserId(_userInfo._id);
+        return NetInfo.fetch();
+      })
+      .then((netState) => {
+        if (netState.isConnected && netState.isInternetReachable && _userInfo) {
+          return checkCampaignMatrix(_userInfo);
+        }
+        setDeviceOffline(true);
+      })
+      .then((completeRate) => {
+        if (completeRate) {
+          setCampaignCompletionRate(completeRate);
         }
       })
+      .finally(() => {
+        setInitializing(false);
+        SplashScreen.hide();
+      })
       .catch((e) => {
-        console.log('error localStorage', e);
+        console.error('LocalStorage', e);
       });
   }, [userId]);
   const MainStackNavigator = () => (
@@ -49,7 +58,7 @@ const NavigationWrapper = () => {
       <MainStack.Navigator
         initialRouteName="Home"
         screenOptions={{ headerShown: false }}>
-        <MainStack.Screen name="Home" initialParams={{ campaignMetrics: campaignCompletionRate }} component={Home} />
+        <MainStack.Screen name="Home" initialParams={{ deviceOffline, campaignMetrics: campaignCompletionRate }} component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
         <MainStack.Screen name="Consent" component={ConsentScreen} />
         <MainStack.Screen name="ImpactReport" component={ImpactReport} />
@@ -71,7 +80,7 @@ const NavigationWrapper = () => {
 
   if (initializing) return null;
 
-  if (userId && campaignCompletionRate) return <MainStackNavigator />;
+  if (userId) return <MainStackNavigator />;
 
   return <AuthStackNavigator />;
 };

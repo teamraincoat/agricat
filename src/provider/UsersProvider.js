@@ -2,8 +2,6 @@
 import React, {
   useContext, useState, useEffect, useRef,
 } from 'react';
-import { decode, encode } from 'base-64';
-import { Buffer } from 'buffer';
 import moment from 'moment';
 import getRealm, { checkCampaignMatrix } from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
@@ -32,7 +30,7 @@ const UsersProvider = ({ children }) => {
         });
       })
       .catch((error) => {
-        console.log('error--->', error);
+        console.error(error);
       });
 
     return () => {
@@ -65,7 +63,6 @@ const UsersProvider = ({ children }) => {
     const hours = Math.floor(day.asHours());
     const mins = Math.floor(day.asMinutes()) - hours * 60;
     const secs = Math.floor(day.asSeconds()) - mins * 60 - hours * 60 * 60;
-    console.log('Time****', `${hours}:${mins}:${secs}`);
     return `${hours}:${mins}:${secs}`;
   };
 
@@ -97,7 +94,7 @@ const UsersProvider = ({ children }) => {
         cipherEnrollmentData(newUser, campaignKey, navigation, isModify, setLoading);
       } catch (error) {
         setLoading(false);
-        console.log('submitAddUser error==>', error);
+        console.error('submitAddUser error==>', error);
       }
     }
   };
@@ -204,7 +201,7 @@ const UsersProvider = ({ children }) => {
           })
           .catch((error) => {
             setLoading(false);
-            console.log('error--->>', error);
+            console.error(error);
           });
       })
       .catch((err) => {

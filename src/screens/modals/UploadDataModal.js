@@ -75,7 +75,7 @@ const UploadDataModal = (props) => {
         }
       })
       .catch((error) => {
-        console.log('error--->', error);
+        console.error(error);
       });
   };
   return (
