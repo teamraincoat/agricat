@@ -31,7 +31,7 @@ const NavigationWrapper = () => {
     getStorageData(Constants.STORAGE.USER_DATA)
       .then((userInfo) => {
         _userInfo = userInfo;
-        setUserId(_userInfo._id);
+        if (_userInfo) setUserId(_userInfo._id);
         return NetInfo.fetch();
       })
       .then((netState) => {
