@@ -22,7 +22,7 @@ const ScanModal = (props) => {
   const {
     visible, closeModal, route,
   } = props;
-  const { setEnrollData, setApplicationStartTime, isQrScanData } = useUsers();
+  const { setEnrollData, setApplicationStartTime } = useUsers();
   const [id, setId] = useState('');
   const { translations } = useLocal();
   const currentRoute = useRoute();
@@ -85,11 +85,11 @@ const ScanModal = (props) => {
             defaultValue={id}
             onChangeText={(text) => setId(text)}
             autoCapitalize="none"
-            placeholder="enter id"
+            placeholder={translations['ScanQr.manualInputPlaceholder']}
             returnKeyType="done"
             blurOnSubmit={false}
             style={localStyles.input}
-            placeholderTextColor={colors.black}
+            placeholderTextColor={colors.grey}
             // keyboardShouldPersistTaps
           />
           </View>
@@ -101,9 +101,12 @@ const ScanModal = (props) => {
         <EButton
           title={translations['ScanQr.enterManually']}
           onClick={() => {
-            closeModal(false);
-            setEnrollData(id);
-            route.navigate('Consent');
+            if (id && id !== '') {
+              closeModal(false);
+              onSuccessScan({ data: id });
+              route.navigate('Consent');
+              setId('');
+            }
           }}
           style={localStyles.scanButton}
         />

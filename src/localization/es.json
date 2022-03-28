@@ -25,6 +25,7 @@
   "Campaign.locallyRolled": "Enrolados localmente",
   "Campaign.nodata": "¡No hay agricultores para subir!",
   "ScanQr.title": "Escanee el código QR del certificado",
+  "ScanQr.manualInputPlaceholder": "O entre el código manualmente",
   "ScanQr.enterManually": "Ingresar manualmente",
   "Consent.title": "Uso de datos",
   "Consent.description1": "AGROASEMEX, S.A. (AGROASEMEX), es el responsable del tratamiento de los datos personales que toda persona nos proporcione. Los datos personales recabados serán utilizados para integrar los datos necesarios para Seguro Paramétrico para Pequeños Agricultores del ciclo primavera verano 2022.",

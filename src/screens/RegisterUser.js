@@ -63,6 +63,8 @@ const questionTwoOptions = [
 const spokenLanguageItems = Constants.MX_INDIGENOUS_LANGUAGES.map(
   (lang) => ({ label: lang, value: lang.toLowerCase() }),
 );
+// Prepend Spanish
+spokenLanguageItems.unshift({ label: 'Español', value: 'es' });
 
 const RegisterUser = ({ route, navigation }) => {
   const { translations } = useContext(LocalizeContext);
@@ -110,7 +112,6 @@ const RegisterUser = ({ route, navigation }) => {
 
   useEffect(() => {
     if (enrollDataById) {
-      console.log('enrollDataById***********', enrollDataById);
       const {
         firstName,
         lastName,
@@ -159,7 +160,6 @@ const RegisterUser = ({ route, navigation }) => {
       isModify = true;
     }
     try {
-      console.log('removed Space mobile phone====>>>>', `+${data.mobilePhone.replace(/\s/g, '')}`);
       const payload = {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -234,7 +234,7 @@ const RegisterUser = ({ route, navigation }) => {
         resolve(base64String);
       })
       .catch((err) => {
-        console.log('image encode error', err);
+        console.error('image encode error', err);
         reject(err);
       });
   });
@@ -258,7 +258,7 @@ const RegisterUser = ({ route, navigation }) => {
         });
       })
       .catch((err) => {
-        console.log('error while choose image from Camera===>', err);
+        console.error('error while choose image from Camera===>', err);
       });
   };
 

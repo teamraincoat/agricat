@@ -26,6 +26,7 @@
   "Campaign.locallyRolled": "Locally rolled",
   "Campaign.nodata": "There are no farmers to climb!",
   "ScanQr.title": "Scan the QR code of the certificate",
+  "ScanQr.manualInputPlaceholder": "Or enter the key manually",
   "ScanQr.enterManually": "Enter manually",
   "Consent.title": "Data usage",
   "Consent.description1": "AGROASEMEX, S.A. (AGROASEMEX), is responsible for the processing of personal data that any person provides us. The personal data collected will be used to integrate the necessary data for Parametric Insurance for Small Farmers for the spring-summer 2022 cycle.",
