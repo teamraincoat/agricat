@@ -74,7 +74,7 @@ const UsersProvider = ({ children }) => {
         const userData = await getStorageData(Constants.STORAGE.USER_DATA);
         const newUser = {
           ...UserInfo,
-          _partition: userData && userData.memberOf && userData.memberOf[0], // `campaign=${ID}`, // userId ? userId : app.currentUser.id,
+          _partition: userData && userData.memberOf && userData.memberOf[0],
           _userId: userData && userData._id,
           applicationStartTime,
           applicationTime: moment(new Date()).toISOString(),
@@ -140,9 +140,9 @@ const UsersProvider = ({ children }) => {
   };
 
   const decipherEnrollmentData = (enrollment, key) => {
-    decryptFields(['firstName', 'lastName', 'surName', 'images'], enrollment, key)
+    decryptFields(['firstName', 'lastName', 'surName', 'govId', 'images'], enrollment, key)
       .then((decipheredEnrollment) => {
-        console.log('decipheredEnrollment==>', decipheredEnrollment);
+        // console.log('decipheredEnrollment==>', decipheredEnrollment);
         setEnrollDataById(decipheredEnrollment);
       })
       .catch((err) => {
@@ -178,7 +178,7 @@ const UsersProvider = ({ children }) => {
   };
 
   const cipherEnrollmentData = (enrollment, key, navigation, isModify, setLoading) => {
-    encryptFields(['firstName', 'lastName', 'surName', 'images'], enrollment, key)
+    encryptFields(['firstName', 'lastName', 'surName', 'govId', 'images'], enrollment, key)
       .then((cipheredEnrollment) => {
         getRealm()
           .then((projectRealm) => {

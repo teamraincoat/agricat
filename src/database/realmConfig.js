@@ -21,7 +21,7 @@ const getRealm = async () => {
     type: 'openImmediately',
   };
   const userData = await getStorageData(Constants.STORAGE.USER_DATA);
-  console.log('userData--->', userData);
+  // console.log('userData--->', userData);
   const campaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
   console.log('campaignData--->', campaignData);
 
@@ -47,7 +47,8 @@ const getRealm = async () => {
             const realmPath = realm.path;
             realm.close();
             console.log(`Error ${error.message}, need to reset ${realmPath}…`);
-            Realm.App.Sync.initiateClientReset(app, realmPath); // pass your realm app instance, and realm path to initiateClientReset()
+            // pass your realm app instance, and realm path to initiateClientReset()
+            Realm.App.Sync.initiateClientReset(app, realmPath);
             console.log(`Creating backup from ${error.config.path}…`);
             // Move backup file to a known location for a restore
             // fs.renameSync(error.config.path, realmPath + "~");
@@ -60,9 +61,9 @@ const getRealm = async () => {
       },
     },
     error: (_session, error) => {
-      (error) => {
-        console.log(error.name, error.message);
-      };
+      if (error) {
+        console.error(error.name, error.message);
+      }
     },
   };
 
@@ -137,7 +138,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
     const campaigns = mongo.db('mexico').collection('Campaign');
     const userList = mongo.db('mexico').collection('User');
     const newUserData = await userList.findOne();
-    console.log('<--------newUserData----->', newUserData);
+    // console.log('<--------newUserData----->', newUserData);
     if (userData && userData.isFirstLogin) {
       saveStorageData(
         Constants.STORAGE.IS_PENDING_REGISTRATION,

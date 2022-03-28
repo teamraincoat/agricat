@@ -14,9 +14,8 @@ import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-crop-picker';
-import ImgToBase64 from 'react-native-image-base64';
-import CheckBox from '@react-native-community/checkbox';
-import { Decimal128, ObjectId, EJSON } from 'bson';
+// import CheckBox from '@react-native-community/checkbox';
+import { Decimal128, ObjectId } from 'bson';
 
 import { TextInputMask } from 'react-native-masked-text';
 import ETextInput from '../atoms/ETextInput';
@@ -33,7 +32,7 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
-import checkEnrollInfo from '../utils/curp';
+// import checkEnrollInfo from '../utils/curp';
 
 const gender = [
   { label: 'Masculino', value: 'male' },
@@ -54,10 +53,19 @@ const marketingChannelItems = [
 ];
 
 const questionOneOptions = [
-  { label: 'No tuve perdida.', value: 'no-loss' },
+  { label: '0', value: '0' },
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
 ];
 const questionTwoOptions = [
-  { label: 'Ninguno', value: 'Neither' },
+  { label: 'Huracán', value: 'hurricane' },
+  { label: 'Sequía', value: 'drought' },
+  { label: 'Mucha lluvia', value: 'excess-rain' },
+  { label: 'Incendio', value: 'fire' },
+  { label: 'Granizada', value: 'hail' },
+  { label: 'Plagas', value: 'plague' },
+  { label: 'Otros', value: 'other' },
 ];
 
 const spokenLanguageItems = Constants.MX_INDIGENOUS_LANGUAGES.map(
@@ -72,10 +80,12 @@ const RegisterUser = ({ route, navigation }) => {
   const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
   const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
   const [openSpokenLangDropDown, setOpenSpokenLangDropDown] = useState(false);
+  // This question represents `loss_level`
   const [openQuestion1DropDown, setOpenQuestion1DropDown] = useState(false);
+  // This question represents `loss_type`
   const [openQuestion2DropDown, setOpenQuestion2DropDown] = useState(false);
 
-  const [isSelected, setSelection] = useState(false);
+  // const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   // eslint-disable-next-line no-unused-vars
@@ -127,6 +137,7 @@ const RegisterUser = ({ route, navigation }) => {
         spokenLanguage,
         notes,
         images,
+        _annotations,
       } = enrollDataById;
       reset({
         firstName: firstName || '',
@@ -145,6 +156,8 @@ const RegisterUser = ({ route, navigation }) => {
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
         images: images || [],
+        question1: _annotations.lossLevel ? _annotations.lossLevel : '',
+        question2: _annotations.lossType ? _annotations.lossType : '',
       });
       if (enrollDataById && enrollDataById.images
         && enrollDataById.images.length > 0 && selectedFiles && selectedFiles.length === 0) {
@@ -180,17 +193,20 @@ const RegisterUser = ({ route, navigation }) => {
         notes: data.notes,
         images: data.images,
         applicationTime: new Date(),
+        _annotations: { lossLevel: data.question1, lossType: data.question2 },
         _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
       };
 
-      const farmerInfo = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        dob: data.dob,
-        gender: data.gender,
-      };
-
-      const isVerifiedData = checkEnrollInfo(farmerInfo);
+      // For enrollment `govId` verification:
+      //
+      // const farmerInfo = {
+      //   firstName: data.firstName,
+      //   lastName: data.lastName,
+      //   dob: data.dob,
+      //   gender: data.gender,
+      // };
+      // const isVerifiedData = checkEnrollInfo(farmerInfo);
+      const isVerifiedData = true;
       if (isVerifiedData) {
         submitAddUser(payload, navigation, isModify, route?.params?.campaignKey, setLoading);
       } else {
@@ -228,34 +244,23 @@ const RegisterUser = ({ route, navigation }) => {
     reset({ ...values, images: selectedFiles });
   }, [selectedFiles]);
 
-  const formatImage = (sourceUri) => new Promise((resolve, reject) => {
-    ImgToBase64.getBase64String(sourceUri)
-      .then((base64String) => {
-        resolve(base64String);
-      })
-      .catch((err) => {
-        console.error('image encode error', err);
-        reject(err);
-      });
-  });
-
   const onCameraPress = () => {
+    const selectedImage = [];
     ImagePicker.openCamera({
-      width: 300,
-      height: 300,
-      cropping: true,
+      compressImageMaxWidth: 1200,
+      compressImageMaxHeight: 1200,
+      compressImageQuality: 0.8,
+      includeBase64: true,
     })
       .then((image) => {
-        const selectedImage = [];
-        formatImage(image.path).then((response) => {
-          selectedImage.push({
-            name: image.path.substring(image.path.lastIndexOf('/') + 1),
-            size: image.size.toString(),
-            uri: response,
-            type: image.mime,
-          });
-          setSelectedFiles(selectedFiles.concat(selectedImage));
+        selectedImage.push({
+          name: image.path.substring(image.path.lastIndexOf('/') + 1),
+          size: image.size.toString(),
+          uri: image.data,
+          type: image.mime,
         });
+        setSelectedFiles(selectedFiles.concat(selectedImage));
+        return ImagePicker.clean();
       })
       .catch((err) => {
         console.error('error while choose image from Camera===>', err);
@@ -613,7 +618,7 @@ const RegisterUser = ({ route, navigation }) => {
             <View style={[localStyles.enrollTextContainer, styles.mb20]}>
             <EText style={localStyles.title}>{translations['Enroller.questions']}</EText>
             <EText style={localStyles.subTitle}>
-                {translations['Enroller.questionInstruction']}
+              {translations['Enroller.questionInstruction']}
             </EText>
             </View>
             <EText style={localStyles.labelStyle}>{translations['Enroller.question1']}</EText>
