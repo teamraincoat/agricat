@@ -178,10 +178,10 @@ export const signIn = async (email, password, navigation, setLoading) => {
         (transferred, transferable) => {
           const progressPercentage = (100.0 * transferred) / transferable;
           if (progressPercentage === 100) {
-            console.log('<===userData userData====>>', userData);
+            // console.log('<===userData userData====>>', userData);
             setLoading(false);
             if (userData && userData.isFirstLogin) {
-              console.log('<===navigation navigation====>>', navigation);
+              // console.log('<===navigation navigation====>>', navigation);
               navigation.navigate('SignUp');
               // Linking.openURL('https://www.google.com/');
             } else {
