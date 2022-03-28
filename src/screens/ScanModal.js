@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  StyleSheet, TouchableOpacity, View, BackHandler,
+  StyleSheet, TouchableOpacity, View,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal';
@@ -57,7 +57,7 @@ const ScanModal = (props) => {
         style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}
         onRequestClose={onCloseModal}
         >
-            <View style={{ zIndex: 1 }}>
+          <View style={{ zIndex: 1 }}>
             <View
             style={[
               styles.rowSpaceBetween,
@@ -75,7 +75,7 @@ const ScanModal = (props) => {
                 styles.selfCenter,
                 styles.pb0,
                 styles.h3,
-                { color: colors.white },
+                { color: colors.black },
               ]}>
               {translations['ScanQr.title']}
             </EText>
@@ -92,7 +92,7 @@ const ScanModal = (props) => {
             placeholderTextColor={colors.grey}
             // keyboardShouldPersistTaps
           />
-          </View>
+        </View>
 
         <QRCodeScanner
           cameraStyle={[localStyles.cameraStyle, styles.selfCenter]}
