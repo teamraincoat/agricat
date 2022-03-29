@@ -106,6 +106,8 @@ const RegisterUser = ({ route, navigation }) => {
 
   const { submitAddUser, enrollDataById } = useUsers();
   const [loading, setLoading] = useState(false);
+  const [spokenLanguageList, setSpokenLanguageList] = useState([]);
+  const [lossTypeList, setLossTypeList] = useState([]);
 
   const {
     control,
@@ -127,9 +129,12 @@ const RegisterUser = ({ route, navigation }) => {
       applicationTime: '',
       coveredAreaHa: '',
       marketingChannel: '',
-      spokenLangauge: '',
       images: [],
       notes: '',
+      enrollmentPresence: '',
+      enrollmentLocation: '',
+      question1: '',
+      question2: '',
     },
   });
 
@@ -212,7 +217,7 @@ const RegisterUser = ({ route, navigation }) => {
           presence: data.enrollmentPresence,
           location: data.enrollmentLocation,
           lossLevel: data.question1,
-          lossType: data.question2,
+          lossType: data.question2.join(','),
         },
         _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
       };
@@ -248,37 +253,28 @@ const RegisterUser = ({ route, navigation }) => {
 
   const checkValidation = () => {
     const values = getValues();
-    if (values.firstName === '' || values.lastName === '' || values.surName === '' || values.gender === '' || values.dob === '' || values.mobilePhone === '' || values.govId === '' || values.coveredAreaHa === '') {
+    if (values.firstName === '' || values.lastName === '' || values.surName === '' || values.gender === '' || values.dob === '' || values.mobilePhone === '' || values.govId === '' || values.coveredAreaHa === '' || values.question1 === '' ) {
       return false;
     }
     return true;
   };
   const onSubmit = () => {
-    handleSubmit(register_user)();
     if (!checkValidation()) {
       Alert.alert(translations.Error, translations['Message.requireAlert']);
+    } else {
+      handleSubmit(register_user)();
     }
   };
   useEffect(() => {
     const values = getValues();
-    reset({ ...values, images: selectedFiles });
-  }, [selectedFiles]);
-
-  useEffect(() => {
-    register('firstName', { required: translations['Field.required'] });
-    register('lastName', { required: translations['Field.required'] });
-    register('surName', { required: translations['Field.required'] });
-    register('gender', { required: translations['Field.required'] });
-    register('dob', {
-      required: translations['Field.required'],
-      pattern: {
-        value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
-        message: 'invalid date',
-      },
+    reset({
+      ...values,
+      images: selectedFiles,
+      spokenLanguage: spokenLanguageList.length > 0 ? spokenLanguageList : [],
+      question2: lossTypeList.length > 0 ? lossTypeList : [],
     });
-    register('govId', { required: translations['Field.required'] });
-    register('mobilePhone', { required: translations['Field.required'] });
-  }, []);
+  }, [selectedFiles, spokenLanguageList, lossTypeList]);
+
 
   const onCameraPress = () => {
     const selectedImage = [];
@@ -331,6 +327,7 @@ const RegisterUser = ({ route, navigation }) => {
               showsVerticalScrollIndicator={false}>
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({
                   field: {
                     onChange, onBlur, value,
@@ -354,6 +351,7 @@ const RegisterUser = ({ route, navigation }) => {
               )} */}
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.lastName']}
@@ -370,6 +368,7 @@ const RegisterUser = ({ route, navigation }) => {
               />
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.surName']}
@@ -387,6 +386,7 @@ const RegisterUser = ({ route, navigation }) => {
               <EText style={localStyles.labelStyle}>{translations['Enroller.gender']}</EText>
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({ field: { value, onChange } }) => (
                   <DropDownPicker
                     placeholder={translations['Placeholder.gender']}
@@ -426,8 +426,13 @@ const RegisterUser = ({ route, navigation }) => {
               <Controller
                 control={control}
                 rules={{
-                  required: true,
+                  required: translations['Field.required'],
+                  pattern: {
+                    value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
+                    message: 'invalid date',
+                  },
                 }}
+
                 render={({ field: { onChange, value } }) => (
                   <TextInputMask
                     type={'datetime'}
@@ -447,6 +452,7 @@ const RegisterUser = ({ route, navigation }) => {
               <EText style={localStyles.labelStyle}>{translations['Enroller.telephone']}</EText>
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({ field: { onChange, value } }) => (
                   <TextInputMask
                   type={'custom'}
@@ -497,6 +503,7 @@ const RegisterUser = ({ route, navigation }) => {
 
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     onBlur={onBlur}
@@ -571,13 +578,15 @@ const RegisterUser = ({ route, navigation }) => {
                   <DropDownPicker
                     placeholder={translations['Placeholder.selectItem']}
                     open={openSpokenLangDropDown}
-                    value={value}
+                    multiple={true}
+                     value={[...spokenLanguageList]}
                     items={spokenLanguageItems}
                     setOpen={setOpenSpokenLangDropDown}
-                    setValue={onChange}
-                    onChangeValue={(value) => {
-                      onChange(value);
+                    setValue={(value) => {
+                      setSpokenLanguageList(value);
+                      setOpenSpokenLangDropDown(!openSpokenLangDropDown);
                     }}
+
                     style={[
                       localStyles.dropDownStyle,
                       { ...styles.mt10 },
@@ -690,6 +699,7 @@ const RegisterUser = ({ route, navigation }) => {
             <EText style={localStyles.labelStyle}>{translations['Enroller.question1']}</EText>
               <Controller
                 control={control}
+                rules={{ required: translations['Field.required'] }}
                 render={({ field: { value, onChange } }) => (
                   <DropDownPicker
                     placeholder={translations['Placeholder.selectItem']}
@@ -700,12 +710,17 @@ const RegisterUser = ({ route, navigation }) => {
                     setValue={onChange}
                     onChangeValue={(value) => {
                       onChange(value);
+                      const values = getValues();
+                      reset({
+                        ...values,
+                        question1: value,
+                      });
                     }}
                     style={[
                       localStyles.dropDownStyle,
                       { ...styles.mt10 },
                       {
-                        borderColor: colors.transparent,
+                        borderColor: errors.question1 ? colors.red : colors.transparent,
                       },
                     ]}
                     disableBorderRadius={true}
@@ -717,25 +732,30 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="question1"
               />
+              {errors.question1 && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
               <EText style={localStyles.labelStyle}>{translations['Enroller.question2']}</EText>
               <Controller
                 control={control}
-                render={({ field: { value, onChange } }) => (
+                rules={{
+                  required: !(getValues().question1 === '0' || getValues().question1 === ''),
+                }}
+                render={() => (
                   <DropDownPicker
                     placeholder={translations['Placeholder.selectItem']}
                     open={openQuestion2DropDown}
-                    value={value}
                     items={questionTwoOptions}
                     setOpen={setOpenQuestion2DropDown}
-                    setValue={onChange}
-                    onChangeValue={(value) => {
-                      onChange(value);
+                     multiple={true}
+                     value={[...lossTypeList]}
+                    setValue={(value) => {
+                      setLossTypeList(value);
+                      setOpenQuestion2DropDown(!openQuestion2DropDown);
                     }}
                     style={[
                       localStyles.dropDownStyle,
                       { ...styles.mt10 },
                       {
-                        borderColor: colors.transparent,
+                        borderColor: errors.question2 ? colors.red : colors.transparent,
                       },
                     ]}
                     disableBorderRadius={true}
@@ -747,6 +767,7 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="question2"
               />
+              {errors.question2 && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
 
               <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
               {selectedFiles && selectedFiles.length > 0 ? (
