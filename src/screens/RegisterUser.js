@@ -52,13 +52,14 @@ const marketingChannelItems = [
 ];
 
 const enrollmentPresenceItems = [
-  { label: 'Titular', value: 'person' },
-  { label: 'Representante', value: 'representative' },
-  { label: 'Otro', value: 'other' },
+  { label: 'Titular', value: 'self' },
+  { label: 'Familiar del/la titular', value: 'family' },
 ];
 
 const enrollmentLocationItems = [
   { label: 'CADER', value: 'cader' },
+  { label: 'Ejido', value: 'common-land' },
+  { label: 'Hogar del asegurado', value: 'home' },
   { label: 'Otro', value: 'other' },
 ];
 
@@ -152,7 +153,7 @@ const RegisterUser = ({ route, navigation }) => {
         applicationTime,
         coveredAreaHa,
         marketingChannel,
-        spokenLanguage,
+        spokenLanguages,
         notes,
         images,
         _annotations,
@@ -168,7 +169,7 @@ const RegisterUser = ({ route, navigation }) => {
         govId: govId || '',
         coveredAreaHa: coveredAreaHa || '0',
         marketingChannel: marketingChannel || '',
-        spokenLanguage: spokenLanguage || '',
+        spokenLanguages: spokenLanguages || [],
         notes: notes || '',
         applicationTime: applicationTime
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
@@ -209,7 +210,7 @@ const RegisterUser = ({ route, navigation }) => {
         ),
         govId: data.govId,
         marketingChannel: data.marketingChannel,
-        spokenLanguage: data.spokenLanguage,
+        spokenLanguages: data.spokenLanguages,
         notes: data.notes,
         images: data.images,
         applicationTime: new Date(),
@@ -270,7 +271,7 @@ const RegisterUser = ({ route, navigation }) => {
     reset({
       ...values,
       images: selectedFiles,
-      spokenLanguage: spokenLanguageList.length > 0 ? spokenLanguageList : [],
+      spokenLanguages: spokenLanguageList.length > 0 ? spokenLanguageList : [],
       question2: lossTypeList.length > 0 ? lossTypeList : [],
     });
   }, [selectedFiles, spokenLanguageList, lossTypeList]);
@@ -605,7 +606,7 @@ const RegisterUser = ({ route, navigation }) => {
                     listMode="SCROLLVIEW"
                   />
                 )}
-                name="spokenLanguage"
+                name="spokenLanguages"
               />
 
               <EText style={localStyles.labelStyle}>{translations['Enroller.presence']}</EText>
@@ -758,6 +759,10 @@ const RegisterUser = ({ route, navigation }) => {
                         borderColor: errors.question2 ? colors.red : colors.transparent,
                       },
                     ]}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
                     disableBorderRadius={true}
                     dropDownContainerStyle={
                       localStyles.dropDownContainerStyle
