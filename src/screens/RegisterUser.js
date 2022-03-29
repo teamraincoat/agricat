@@ -51,6 +51,17 @@ const marketingChannelItems = [
   { label: 'Otro', value: 'other' },
 ];
 
+const enrollmentPresenceItems = [
+  { label: 'Titular', value: 'person' },
+  { label: 'Representante', value: 'representative' },
+  { label: 'Otro', value: 'other' },
+];
+
+const enrollmentLocationItems = [
+  { label: 'CADER', value: 'cader' },
+  { label: 'Otro', value: 'other' },
+];
+
 const questionOneOptions = [
   { label: '0', value: '0' },
   { label: '1', value: '1' },
@@ -79,9 +90,13 @@ const RegisterUser = ({ route, navigation }) => {
   const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
   const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
   const [openSpokenLangDropDown, setOpenSpokenLangDropDown] = useState(false);
-  // This question represents `loss_level`
+  // This question represents `enrollmentPresence`
+  const [openEnrollmentPresence, setOpenEnrollmentPresence] = useState(false);
+  // This question represents `enrollmentLocation`
+  const [openEnrollmentLocation, setOpenEnrollmentLocation] = useState(false);
+  // This question represents `lossLevel`
   const [openQuestion1DropDown, setOpenQuestion1DropDown] = useState(false);
-  // This question represents `loss_type`
+  // This question represents `lossType`
   const [openQuestion2DropDown, setOpenQuestion2DropDown] = useState(false);
 
   // const [isSelected, setSelection] = useState(false);
@@ -154,6 +169,8 @@ const RegisterUser = ({ route, navigation }) => {
           ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
         images: images || [],
+        enrollmentPresence: _annotations.presence ? _annotations.presence : '',
+        enrollmentLocation: _annotations.location ? _annotations.location : '',
         question1: _annotations.lossLevel ? _annotations.lossLevel : '',
         question2: _annotations.lossType ? _annotations.lossType : '',
       });
@@ -191,7 +208,12 @@ const RegisterUser = ({ route, navigation }) => {
         notes: data.notes,
         images: data.images,
         applicationTime: new Date(),
-        _annotations: { lossLevel: data.question1, lossType: data.question2 },
+        _annotations: {
+          presence: data.enrollmentPresence,
+          location: data.enrollmentLocation,
+          lossLevel: data.question1,
+          lossType: data.question2,
+        },
         _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
       };
 
@@ -577,6 +599,68 @@ const RegisterUser = ({ route, navigation }) => {
                 name="spokenLanguage"
               />
 
+              <EText style={localStyles.labelStyle}>{translations['Enroller.presence']}</EText>
+              <Controller
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openEnrollmentPresence}
+                    value={value}
+                    items={enrollmentPresenceItems}
+                    setOpen={setOpenEnrollmentPresence}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="enrollmentPresence"
+              />
+
+              <EText style={localStyles.labelStyle}>{translations['Enroller.location']}</EText>
+              <Controller
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openEnrollmentLocation}
+                    value={value}
+                    items={enrollmentLocationItems}
+                    setOpen={setOpenEnrollmentLocation}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="enrollmentLocation"
+              />
+
               <Controller
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -633,7 +717,7 @@ const RegisterUser = ({ route, navigation }) => {
                 )}
                 name="question1"
               />
-               <EText style={localStyles.labelStyle}>{translations['Enroller.question2']}</EText>
+              <EText style={localStyles.labelStyle}>{translations['Enroller.question2']}</EText>
               <Controller
                 control={control}
                 render={({ field: { value, onChange } }) => (

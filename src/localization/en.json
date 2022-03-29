@@ -55,6 +55,8 @@
   "Enroller.waterRegime": "water regime",
   "Enroller.Surface": "Surface",
   "Enroller.marketingChannel": "How did you hear about the program?",
+  "Enroller.presence": "Who is present at the enrollment location?",
+  "Enroller.location": "Where did the farmer enroll?",
   "Enroller.notes": "Additional Notes (Optional)",
   "Enroller.questions": "Questions about 2021",
   "Enroller.questionInstruction": "Complete and verify the farmer's information.",

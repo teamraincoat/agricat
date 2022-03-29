@@ -55,6 +55,8 @@
   "Enroller.waterRegime": "Régimen hídrico",
   "Enroller.Surface": "Superficie",
   "Enroller.marketingChannel": "¿Cómo se enteró del programa?",
+  "Enroller.presence": "¿Quien se presentó al enrolamiento?",
+  "Enroller.location": "¿En donde se enroló al productor?",
   "Enroller.notes": "Notas sobre el enrolamiento (Opcional)",
   "Enroller.questions": "Preguntas sobre 2021",
   "Enroller.questionInstruction": "Complete y verifique la informacion del agricultor.",
