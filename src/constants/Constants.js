@@ -1,4 +1,5 @@
 const Constants = {
+  REALM_APP_ID: 'agricat-jcpwf',
   STORAGE: {
     APP_LANGUAGE: 'appLanguage',
     USER_ID: 'userId',

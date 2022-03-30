@@ -15,7 +15,7 @@ import {
   getStorageData,
 } from '../utils/localStorage';
 
-export const app = new Realm.App({ id: 'enrollmentappxi-hmgnf', timeout: 10000 });
+export const app = new Realm.App({ id: Constants.REALM_APP_ID, timeout: 10000 });
 const getRealm = async () => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
@@ -118,7 +118,8 @@ export const checkCampaignMatrix = async (campaignData) => {
   if (partitionInfo) {
     const campaignId = partitionInfo.replace('campaign=', '');
     try {
-      const response = await fetch(`https://data.mongodb-api.com/app/enrollmentappxi-hmgnf/endpoint/campaign/metrics?campaignId=${campaignId}`);
+      // eslint-disable-next-line no-undef
+      const response = await fetch(`https://data.mongodb-api.com/app/${Constants.REALM_APP_ID}/endpoint/campaign/metrics?campaignId=${campaignId}`);
       const res = await response.json();
       if (res.metrics && res.metrics.finishedPercent) {
         return res.metrics.finishedPercent;
