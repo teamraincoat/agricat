@@ -16,7 +16,6 @@ import { getStorageData, saveStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
 import getRealm from '../../database/realmConfig';
 import { useUsers } from '../../provider/UsersProvider';
-// import getRealm from '../../database/realmConfig';
 
 const UploadDataModal = (props) => {
   const { visible, closeModal, enrolledLocally } = props;

@@ -173,7 +173,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
       syncSession.resume();
       syncSession.addProgressNotification(
         'download',
-        'reportIndefinitely',
+        'forCurrentlyOutstandingWork',
         (transferred, transferable) => {
           const progressPercentage = (100.0 * transferred) / transferable;
           if (progressPercentage === 100) {
@@ -184,7 +184,6 @@ export const signIn = async (email, password, navigation, setLoading) => {
               navigation.navigate('Main', {
                 screen: 'SignUp',
               });
-              // Linking.openURL('https://www.google.com/');
             } else {
               navigation.navigate('Main', {
                 screen: 'Home',
