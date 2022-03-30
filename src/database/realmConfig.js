@@ -181,7 +181,9 @@ export const signIn = async (email, password, navigation, setLoading) => {
             setLoading(false);
             if (userData && userData.isFirstLogin) {
               // console.log('<===navigation navigation====>>', navigation);
-              navigation.navigate('SignUp');
+              navigation.navigate('Main', {
+                screen: 'SignUp',
+              });
               // Linking.openURL('https://www.google.com/');
             } else {
               navigation.navigate('Main', {

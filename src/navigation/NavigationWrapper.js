@@ -63,6 +63,7 @@ const NavigationWrapper = () => {
         <MainStack.Screen name="Consent" component={ConsentScreen} />
         <MainStack.Screen name="ImpactReport" component={ImpactReport} />
         <MainStack.Screen name="Complete" component={CompleteScreen} />
+        <MainStack.Screen name="SignUp" component={SignupScreen} />
         <MainStack.Screen name="Auth" component={AuthStackNavigator} />
       </MainStack.Navigator>
     </UsersProvider>
@@ -72,7 +73,6 @@ const NavigationWrapper = () => {
       initialRouteName="Login"
       screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="SignUp" component={SignupScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
       <Stack.Screen name="Main" component={MainStackNavigator} />
     </Stack.Navigator>
