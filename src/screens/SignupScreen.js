@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  Pressable,
 } from 'react-native';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -26,6 +27,7 @@ import BackgroundImage from '../atoms/BackgroundImage';
 import { saveStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
 import { checkUserInfo } from '../utils/curp';
+import PrivacyPolicyModal from './modals/PrivacyPolicyModal';
 
 DropDownPicker.setMode('BADGE');
 const Image = require('../assets/Profile.png');
@@ -37,6 +39,8 @@ const SignupScreen = ({ navigation }) => {
   // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [lList, setLList] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [privacyData, setPrivacyData] = useState(null);
   // const userCredential = route && route.params && route.params.userCredential;
 
   const Items = Constants.MX_INDIGENOUS_LANGUAGES.map(
@@ -297,6 +301,27 @@ const SignupScreen = ({ navigation }) => {
                 <EText style={localStyles.subTitle}>
                   {translations['Profile.Term']}
                 </EText>
+                <View style={localStyles.linkContainer}>
+                <Pressable onPress={() => {
+                  setPrivacyData('Term');
+                  setModalVisible(!modalVisible);
+                }}>
+                <EText style={[localStyles.subTitle, localStyles.link]}>
+                  {translations['Profile.TermLink']}
+                </EText>
+                </Pressable>
+                <EText style={localStyles.subTitle}>
+                  {translations['Profile.and']}
+                </EText>
+                <Pressable onPress={() => {
+                  setPrivacyData('Privacy');
+                  setModalVisible(!modalVisible);
+                }}>
+                <EText style={[localStyles.subTitle, localStyles.link]}>
+                  {translations['Profile.PrivacyLink']}
+                </EText>
+                </Pressable>
+                </View>
               </View>
             </View>
             <EButton
@@ -308,6 +333,11 @@ const SignupScreen = ({ navigation }) => {
           </ScrollView>
         </View>
       </BackgroundImage>
+      <PrivacyPolicyModal
+      visible={modalVisible}
+      isFrom={privacyData}
+      closeModal={setModalVisible}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -391,6 +421,14 @@ const localStyles = StyleSheet.create({
     ...styles.selfCenter,
     backgroundColor: colors.white,
     ...styles.radius5,
+  },
+  linkContainer: {
+    ...styles.flexRow,
+  },
+  link: {
+    color: colors.black,
+    textDecorationLine: 'underline',
+    marginHorizontal: 5,
   },
 });
 export default SignupScreen;

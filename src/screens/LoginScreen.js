@@ -14,8 +14,8 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 
 const LoginScreen = ({ navigation }) => {
   const { translations } = useContext(LocalizeContext);
-  // tushali024+realmappxi@gmail.com
-  // enrollmenttest011
+  // tushali024@gmail.com
+  // @jYb9E2iQ
   const [email, setEmail] = useState({
     value: '',
     error: '',
