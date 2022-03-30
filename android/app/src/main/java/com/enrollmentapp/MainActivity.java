@@ -1,4 +1,4 @@
-package com.enrollmentapp;
+package com.agricat.app;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "enrollmentApp";
+    return "agricatApp";
   }
   @Override
   protected void onCreate(Bundle savedInstanceState) {
