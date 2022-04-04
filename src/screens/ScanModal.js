@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   StyleSheet, TouchableOpacity, View,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -30,13 +31,26 @@ const ScanModal = (props) => {
     try {
       const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
       const applicationStartTime = moment(new Date()).toISOString();
-      setApplicationStartTime(applicationStartTime);
       // const newQrData = e && e.data && (e.data).split('|');
       const enrollmentId = qrData[1];
       const campaignKey = qrData[0];
-      setEnrollData(enrollmentId, campaignKey);
-      route.navigate('Consent', { campaignKey });
-      closeModal(false);
+      const scanResult = setEnrollData(enrollmentId, campaignKey);
+      if (scanResult && scanResult.length > 0) {
+        setApplicationStartTime(applicationStartTime);
+        route.navigate('Consent', { campaignKey });
+        closeModal(false);
+      } else {
+        Alert.alert(
+          'Error',
+          translations['ScanQr.error'],
+          [
+            {
+              text: 'OK',
+            },
+          ],
+          { cancelable: false },
+        );
+      }
     } catch (err) {
       console.error('An error occurred', err);
     }
@@ -97,6 +111,8 @@ const ScanModal = (props) => {
         <QRCodeScanner
           cameraStyle={[localStyles.cameraStyle, styles.selfCenter]}
           onRead={onSuccessScan}
+          reactivate={true}
+          reactivateTimeout={3000}
         />
         <EButton
           title={translations['ScanQr.enterManually']}

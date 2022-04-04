@@ -783,9 +783,7 @@ const RegisterUser = ({ route, navigation }) => {
               ) : (
                 <Controller
                   control={control}
-                  rules={{
-                    required: false,
-                  }}
+                  rules={{ required: translations['Field.required'] }}
                   render={() => (
                     <EButton
                     title={translations['Enroller.imageButton']}
@@ -799,6 +797,7 @@ const RegisterUser = ({ route, navigation }) => {
                   name="images"
                 />
               )}
+              {errors.images && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
 
               <EButton
                 title={translations['Enroller.complete']}

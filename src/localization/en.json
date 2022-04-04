@@ -31,6 +31,7 @@
   "ScanQr.title": "Scan the QR code of the certificate",
   "ScanQr.manualInputPlaceholder": "Or enter the key manually",
   "ScanQr.enterManually": "Enter manually",
+  "ScanQr.error": "The QR code is not valid Try again.",
   "Consent.title": "Data usage",
   "Consent.description1": "AGROASEMEX, S.A. (AGROASEMEX), is responsible for the processing of personal data that any person provides us. The personal data collected will be used to integrate the necessary data for Parametric Insurance for Small Farmers for the spring-summer 2022 cycle.",
   "Consent.description2": "AGROASEMEX may transfer personal data to any authority in order for them to comply with their legal and/or regulatory powers. In the event that personal data that requires your consent is transferred, AGROASEMEX will inform you:",

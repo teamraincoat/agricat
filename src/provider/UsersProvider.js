@@ -215,14 +215,17 @@ const UsersProvider = ({ children }) => {
     // console.log('setEnrollData--Key==>', key);
     if (users && users.length > 0) {
       // eslint-disable-next-line array-callback-return
-      users.filter((item) => {
+      const filteredEnroll = users.filter((item) => {
         // eslint-disable-next-line
         // console.log('item.id==>', item._id);
         // eslint-disable-next-line eqeqeq
         if (item._id == id) {
           decipherEnrollmentData(item, key);
+          return item;
         }
+        return null;
       });
+      return filteredEnroll;
     }
   };
 
