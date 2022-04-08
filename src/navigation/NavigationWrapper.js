@@ -16,6 +16,8 @@ import SignupScreen from '../screens/SignupScreen';
 import ForgotPassword from '../screens/ForgotPassword';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 import { checkCampaignMatrix } from '../database/realmConfig';
+import Section12Screen from '../screens/ImpactReportScreen/Section12Screen';
+import Section3Screen from '../screens/ImpactReportScreen/Section3Screen';
 
 const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -56,7 +58,7 @@ const NavigationWrapper = () => {
   const MainStackNavigator = () => (
     <UsersProvider>
       <MainStack.Navigator
-        initialRouteName="Home"
+        initialRouteName="Section12Screen"
         screenOptions={{ headerShown: false }}>
         <MainStack.Screen name="Home" initialParams={{ deviceOffline, campaignMetrics: campaignCompletionRate }} component={Home} />
         <MainStack.Screen name="Register" component={RegisterUser} />
@@ -65,6 +67,8 @@ const NavigationWrapper = () => {
         <MainStack.Screen name="Complete" component={CompleteScreen} />
         <MainStack.Screen name="SignUp" component={SignupScreen} />
         <MainStack.Screen name="Auth" component={AuthStackNavigator} />
+        <MainStack.Screen name="Section12Screen" component={Section12Screen} />
+        <MainStack.Screen name="Section3Screen" component={Section3Screen} />
       </MainStack.Navigator>
     </UsersProvider>
   );

@@ -10,6 +10,7 @@ export const colors = {
   cream: '#F1ECE4',
   darkCharcoal: '#333333',
   grey: '#818181',
+  lightBrown: '#F9DFBB',
 };
 
 export default colors;

@@ -4,7 +4,7 @@ import {
   View, Text, TextInput, StyleSheet,
 } from 'react-native';
 import { colors, styles } from '../styles';
-import { hp, normalize } from '../styles/metrics';
+import { hp, normalize, wp } from '../styles/metrics';
 
 const ETextInput = ({
   email,
@@ -16,15 +16,16 @@ const ETextInput = ({
   errorText,
   style,
   label,
+  leftLabel,
   ...props
 }) => {
   const renderLabel = () => (
     <View>
-      {label ? <Text style={localStyles.labelStyle}>{label}</Text> : null}
+      {label ? <Text style={[localStyles.labelStyle, leftLabel && localStyles.leftLabelStyle]}>{label}</Text> : null}
     </View>
   );
 
-  const inputStyles = [localStyles.input, error && { borderColor: 'red' }, style];
+  const inputStyles = [localStyles.input, leftLabel && localStyles.leftLabelInput, error && { borderColor: 'red' }, style];
   const inputType = email
     ? 'email-address'
     : number
@@ -34,7 +35,7 @@ const ETextInput = ({
         : 'default';
 
   return (
-    <View style={[localStyles.container, styles.mt10]}>
+    <View style={[localStyles.container, styles.mt10, leftLabel && localStyles.leftLabelContainerStyle]}>
       {renderLabel()}
       <TextInput
         style={inputStyles}
@@ -68,12 +69,27 @@ const localStyles = StyleSheet.create({
     ...styles.pv10,
     ...styles.ph15,
   },
+  leftLabelInput: {
+    width: wp(60),
+    ...styles.selfStart,
+  },
   labelStyle: {
     color: colors.black,
-    marginHorizontal: 20,
     ...styles.mh25,
     ...styles.h2,
     fontSize: normalize(12),
+  },
+  leftLabelStyle: {
+    color: colors.black,
+    ...styles.h3,
+    marginHorizontal: 0,
+    width: wp(25),
+    textAlign: 'right',
+  },
+  leftLabelContainerStyle: {
+    ...styles.rowSpaceBetween,
+    marginHorizontal: wp(5),
+    marginTop: 0,
   },
   error: {
     color: colors.red,
