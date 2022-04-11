@@ -17,6 +17,7 @@ const ETextInput = ({
   style,
   label,
   leftLabel,
+  disabled,
   ...props
 }) => {
   const renderLabel = () => (
@@ -25,7 +26,7 @@ const ETextInput = ({
     </View>
   );
 
-  const inputStyles = [localStyles.input, leftLabel && localStyles.leftLabelInput, error && { borderColor: 'red' }, style];
+  const inputStyles = [localStyles.input, leftLabel && localStyles.leftLabelInput, error && { borderColor: 'red' }, disabled && { backgroundColor: colors.cream }, style];
   const inputType = email
     ? 'email-address'
     : number
@@ -35,7 +36,11 @@ const ETextInput = ({
         : 'default';
 
   return (
-    <View style={[localStyles.container, styles.mt10, leftLabel && localStyles.leftLabelContainerStyle]}>
+    <View style={[
+      localStyles.container,
+      styles.mt10, leftLabel
+      && localStyles.leftLabelContainerStyle,
+    ]}>
       {renderLabel()}
       <TextInput
         style={inputStyles}
@@ -46,6 +51,7 @@ const ETextInput = ({
         underlineColorAndroid="transparent"
         placeholderTextColor={colors.grey}
         blurOnSubmit={false}
+        editable={!disabled}
         {...props}
       />
       {errorText ? <Text style={localStyles.error}>{errorText}</Text> : null}

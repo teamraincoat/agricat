@@ -11,6 +11,7 @@ export const colors = {
   darkCharcoal: '#333333',
   grey: '#818181',
   lightBrown: '#F9DFBB',
+  lightGrey2 : '#E5E5E5',
 };
 
 export default colors;

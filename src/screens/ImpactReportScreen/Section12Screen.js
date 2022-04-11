@@ -15,6 +15,7 @@ import { wp } from '../../styles/metrics';
 import SectionOne from '../../componets/sections/SectionOne';
 import SectionTwo from '../../componets/sections/SectionTwo';
 import EButton from '../../atoms/EButton';
+import { RESPONDER_LIST } from '../../config/StaticData';
 
 const Section12Screen = ({ navigation }) => {
   const phoneOwnerItems = [
@@ -103,20 +104,21 @@ const Section12Screen = ({ navigation }) => {
     register,
   } = useForm({
     defaultValues: {
-      firstName: '',
-      mobilePhoneOwner: '',
-      seeds: '',
-      field1: '',
-      field2: '',
-      field3: '',
+      liftingDate: '',
+      folioNumber: '',
+      sex: '',
+      speakingLanguage: '',
+      hectareArea: '',
+      respondToSurvey: '',
       maizeCultivation: [...SELECTION],
       workOfExperience: '',
     },
   });
   const maizeCultivationData = getValues('maizeCultivation');
-  console.log('maizeCultivation--->', maizeCultivationData);
+  //   console.log('maizeCultivation--->', maizeCultivationData);
 
   const newForm = getValues();
+  console.log('newForm--->', newForm);
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
@@ -135,20 +137,16 @@ const Section12Screen = ({ navigation }) => {
             <SectionOne
               control={control}
               errors={errors}
-              fields={SectionOneFields}
               reset={reset}
               getValues={getValues}
-              dropDownItems={phoneOwnerItems}
+              dropDownItems={RESPONDER_LIST}
             />
             <SectionTwo
               control={control}
               errors={errors}
-              maizeCultivation={maizeCultivationData}
               MaizeCultivationList={SELECTION}
-              fields={SectionOneFields}
               reset={reset}
               getValues={getValues}
-              dropDownItems={phoneOwnerItems}
             />
             <EButton
               title={translations['Complete.continue']}

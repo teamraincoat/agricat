@@ -17,6 +17,12 @@ import { colors, styles } from '../../styles';
 import { normalize, wp } from '../../styles/metrics';
 import DropDown from '../../atoms/DropDown';
 import EButton from '../../atoms/EButton';
+import {
+  CORN_HARVEST_CONSUMPTION_LIST,
+  MONTH_LIST,
+  SECTION_THREE_QUESTIONS,
+} from '../../config/StaticData';
+import MultiFieldDropDown from '../../atoms/Section/MultiFieldDropDown';
 
 const Section3Screen = ({ navigation }) => {
   const {
@@ -33,38 +39,11 @@ const Section3Screen = ({ navigation }) => {
     },
   });
   const [cornHarvestedAtHomeDropDown, setCornHarvestedAtHomeDropDown] = useState(false);
-  const phoneOwnerItems = [
-    { label: 'Propio', value: 'self' },
-    { label: 'Vecinos/Familiares', value: 'friend-family' },
-  ];
-
-  const SectionThreeDropDown = [
-    {
-      fieldName: 'causedEvent',
-      label: 'Section.Section3.causedEvent',
-      dropDownData: [{ label: 'Si', value: 'yes' }],
-    },
-    {
-      fieldName: 'makeupLoss',
-      label: 'Section.Section3.makeupLoss',
-      dropDownData: [{ label: 'Si', value: 'yes' }],
-    },
-    {
-      fieldName: 'selectRisk',
-      label: 'Section.Section3.cropLoss.selectRisk',
-      dropDownData: [{ label: 'Si', value: 'yes' }],
-    },
-    {
-      fieldName: 'riskHouseholdIncome',
-      label: 'Section.Section3.cropLoss.riskHouseholdIncome',
-      dropDownData: [{ label: 'Si', value: 'yes' }],
-    },
-  ];
-
+  const [cropLossMonthDropDown, setCropLossMonthDropDown] = useState(false);
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
-        title="Sección 3"
+        title="Section 3"
         isMain
         onBack={() => navigation.goBack()}
         description="Datos de identificacion del asegurado"
@@ -76,11 +55,9 @@ const Section3Screen = ({ navigation }) => {
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
-            <SectionCard>
-              <EText style={localStyles.sectionCardDescription}>
-                {translations['Section.Section3.ThankyouMsg']}
-              </EText>
-            </SectionCard>
+            <SectionCard
+            title={'Section.Section3.ThankyouMsg'}
+            />
             <EText style={localStyles.labelText}>
               {' '}
               {translations['Section.Section3.cornHarvestedInKilo']}
@@ -113,13 +90,12 @@ const Section3Screen = ({ navigation }) => {
               placeholder={translations['Placeholder.selectItem']}
               openDropDown={cornHarvestedAtHomeDropDown}
               setOpenDropDown={setCornHarvestedAtHomeDropDown}
-              dropDownItems={phoneOwnerItems}
+              dropDownItems={CORN_HARVEST_CONSUMPTION_LIST}
               fieldName="cornHarvestedAtHome"
               resetValue={reset}
               formData={getValues()}
             />
             <EText style={localStyles.labelText}>
-              {' '}
               {translations['Section.Section3.cropLoss']}
             </EText>
             <Controller
@@ -135,28 +111,24 @@ const Section3Screen = ({ navigation }) => {
                   label={translations['Section.Section3.Year']}
                   onChangeText={(value) => onChange(value)}
                   value={value}
-                  error={!!errors.cornHarvestedInKilo}
-                  errorText={
-                    errors.cornHarvestedInKilo
-                    && errors.cornHarvestedInKilo.message
-                  }
+                  error={!!errors.cropLossYear}
+                  errorText={errors.cropLossYear && errors.cropLossYear.message}
                 />
               )}
-              name={'cornHarvestedInKilo'}
+              name={'cropLossYear'}
             />
             <View style={localStyles.monthDropDownContainer}>
               <EText style={[localStyles.labelText, localStyles.dropDownLabel]}>
-                {' '}
                 {translations['Section.Section3.Month']}
               </EText>
               <DropDown
                 control={control}
                 //   label={translations['Section.Section3.cornHarvestedAtHome']}
                 placeholder={translations['Placeholder.selectItem']}
-                openDropDown={cornHarvestedAtHomeDropDown}
-                setOpenDropDown={setCornHarvestedAtHomeDropDown}
-                dropDownItems={phoneOwnerItems}
-                fieldName="cornHarvestedAtHome"
+                openDropDown={cropLossMonthDropDown}
+                setOpenDropDown={setCropLossMonthDropDown}
+                dropDownItems={MONTH_LIST}
+                fieldName="cropLossMonth"
                 resetValue={reset}
                 medium
                 formData={getValues()}
@@ -176,35 +148,32 @@ const Section3Screen = ({ navigation }) => {
                   label={translations['Section.Section3.lostHarvestAmount']}
                   onChangeText={(value) => onChange(value)}
                   value={value}
-                  error={!!errors.cornHarvestedInKilo}
+                  error={!!errors.LostHarvestAmount}
                   errorText={
-                    errors.cornHarvestedInKilo
-                    && errors.cornHarvestedInKilo.message
+                    errors.LostHarvestAmount && errors.LostHarvestAmount.message
                   }
                 />
               )}
-              name={'cornHarvestedInKilo'}
+              name={'LostHarvestAmount'}
             />
 
-            {SectionThreeDropDown.map((item, index) => (
-              <>
-                <DropDown
+            {SECTION_THREE_QUESTIONS.map((question, index) => (
+              <View key={index}>
+                <MultiFieldDropDown
                   control={control}
-                  key={index}
-                  label={translations[item.label]}
-                  placeholder={translations['Placeholder.selectItem']}
-                  openDropDown={cornHarvestedAtHomeDropDown}
-                  setOpenDropDown={setCornHarvestedAtHomeDropDown}
-                  dropDownItems={item.dropDownData}
-                  fieldName={item.fieldName}
-                  resetValue={reset}
+                  type={question.type}
+                  errors={errors}
+                  label={question.label}
+                  DropDownData={question?.dropDownList}
+                  field={question.field}
+                  reset={reset}
                   formData={getValues()}
                 />
-              </>
+              </View>
             ))}
             <EButton
               title={translations['Complete.continue']}
-              onClick={() => console.log('click')}
+              onClick={() => navigation.navigate('Section4Screen')}
               style={localStyles.button}
             />
           </ScrollView>

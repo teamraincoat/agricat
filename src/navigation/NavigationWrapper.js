@@ -18,6 +18,8 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 import { checkCampaignMatrix } from '../database/realmConfig';
 import Section12Screen from '../screens/ImpactReportScreen/Section12Screen';
 import Section3Screen from '../screens/ImpactReportScreen/Section3Screen';
+import Section4Screen from '../screens/ImpactReportScreen/Section4Screen';
+import Section5Screen from '../screens/ImpactReportScreen/Section5Screen';
 
 const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -69,6 +71,8 @@ const NavigationWrapper = () => {
         <MainStack.Screen name="Auth" component={AuthStackNavigator} />
         <MainStack.Screen name="Section12Screen" component={Section12Screen} />
         <MainStack.Screen name="Section3Screen" component={Section3Screen} />
+        <MainStack.Screen name="Section4Screen" component={Section4Screen} />
+        <MainStack.Screen name="Section5Screen" component={Section5Screen} />
       </MainStack.Navigator>
     </UsersProvider>
   );

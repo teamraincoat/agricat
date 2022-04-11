@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Controller } from 'react-hook-form';
+import { Controller, useFieldArray } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import DropDown from '../../atoms/DropDown';
 import EText from '../../atoms/EText';
 import ETextInput from '../../atoms/ETextInput';
 import MonthWeekDropDown from '../../atoms/Section/MonthWeekDropDown';
+import MultiFieldDropDown from '../../atoms/Section/MultiFieldDropDown';
 import SectionCard from '../../atoms/Section/SectionCard';
 import SectionHeader from '../../atoms/Section/SectionHeader';
-import { MONTH_LIST, TOTAL_COST_LIST, WEEK_LIST } from '../../config/StaticData';
+import {
+  MONTH_LIST, PRODUCT_EXPENSE_LIST, SECTION_TWO_QUESTIONS, TOTAL_COST_LIST, WEEK_LIST,
+} from '../../config/StaticData';
 import { translations } from '../../provider/LocalizeProvider';
 import { colors, styles } from '../../styles';
 import { normalize, wp } from '../../styles/metrics';
@@ -18,11 +21,16 @@ const SectionTwo = ({
   reset,
   errors,
   MaizeCultivationList,
-  maizeCultivation,
 }) => {
   const [workOnLandDropDown, setWorkOnLandDropDown] = useState(false);
-  const [openCropDropDown, setOpenCropDropDown] = useState(false);
+  const [openProductionExpense, setOpenProductionExpense] = useState(false);
   const [openCropTypeDropDown, setOpenCropTypeDropDown] = useState(false);
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'maizeCultivation',
+  });
+
+  //   console.log('fields++++++', fields);
 
   return (
     <>
@@ -30,80 +38,23 @@ const SectionTwo = ({
         title="Sección 2"
         description="Datos de identificacion del asegurado"
       />
-      <SectionCard>
-        <EText style={localStyles.sectionCardDescription}>
-          {translations['Section.Section2.ThankyouMsg']}
-        </EText>
-      </SectionCard>
-      <Controller
-        control={control}
-        rules={{ required: translations['Field.required'] }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <ETextInput
-            //   placeholder={translations[`Enroller.${field.name}`]}
-            style={[styles.p10]}
-            onBlur={onBlur}
-            label={translations['Section.Section2.workOfExperience']}
-            onChangeText={(value) => onChange(value)}
-            value={value}
-            error={!!errors.workOfExperience}
-            errorText={
-              errors.workOfExperience && errors.workOfExperience.message
-            }
-          />
-        )}
-        name={'workOfExperience'}
+      <SectionCard
+      title={'Section.Section2.ThankyouMsg'}
       />
-      <DropDown
+  {SECTION_TWO_QUESTIONS.map((question, index) => (
+      <View key={index}>
+      <MultiFieldDropDown
         control={control}
-        label={translations['Section.Section2.workOnLand']}
-        placeholder={translations['Placeholder.selectItem']}
-        openDropDown={workOnLandDropDown}
-        setOpenDropDown={setWorkOnLandDropDown}
-        dropDownItems={MONTH_LIST}
-        fieldName="workOnLand"
-        resetValue={reset}
+        type={question.type}
+        errors={errors}
+        label={question.label}
+        DropDownData={question?.dropDownList}
+        field={question.field}
+        reset={reset}
         formData={getValues()}
-      />
-      <Controller
-        control={control}
-        rules={{ required: translations['Field.required'] }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <ETextInput
-            //   placeholder={translations[`Enroller.${field.name}`]}
-            style={[styles.p10]}
-            onBlur={onBlur}
-            label={translations['Section.Section2.farmLand']}
-            onChangeText={(value) => onChange(value)}
-            value={value}
-            error={!!errors.farmLand}
-            errorText={errors.farmLand && errors.farmLand.message}
-          />
-        )}
-        name={'farmLand'}
-      />
-      <DropDown
-        control={control}
-        label={translations['Section.Section2.crop']}
-        placeholder={translations['Placeholder.selectItem']}
-        openDropDown={openCropDropDown}
-        setOpenDropDown={setOpenCropDropDown}
-        dropDownItems={MONTH_LIST}
-        fieldName="crop"
-        resetValue={reset}
-        formData={getValues()}
-      />
-      <DropDown
-        control={control}
-        label={translations['Section.Section2.sameCrop']}
-        placeholder={translations['Placeholder.selectItem']}
-        openDropDown={openCropTypeDropDown}
-        setOpenDropDown={setOpenCropTypeDropDown}
-        dropDownItems={MONTH_LIST}
-        fieldName="sameCrop"
-        resetValue={reset}
-        formData={getValues()}
-      />
+        />
+        </View>
+  ))}
       <EText style={localStyles.description}>
         {translations['Section.Section2.springSummerMaize']}
       </EText>
@@ -125,7 +76,8 @@ const SectionTwo = ({
                 control={control}
                 getValues={getValues}
                 reset={reset}
-                maizeCultivation={maizeCultivation}
+                index={index}
+                maizeCultivation={fields}
                 name={`${item.title}Month`}
                 fieldName={item}
                 errors={errors}
@@ -143,7 +95,7 @@ const SectionTwo = ({
         </EText>
       </View>
       {TOTAL_COST_LIST.map((item, index) => (
-        <>
+        <View key={index}>
           <Controller
             control={control}
             key={index}
@@ -158,24 +110,24 @@ const SectionTwo = ({
                 label={item.label}
                 onChangeText={(value) => onChange(value)}
                 value={value}
-                error={errors.item && !!errors.item.label}
+                error={!!errors.field}
                 errorText={
-                  errors.item && errors.item.label && errors.item.label.message
+                  errors.field && errors.field.message
                 }
               />
             )}
-            name={item.label}
+            name={item.field}
           />
-        </>
+        </View>
       ))}
       <DropDown
         control={control}
         label={translations['Section.Section2.productionExpense']}
         placeholder={translations['Placeholder.selectItem']}
-        openDropDown={workOnLandDropDown}
-        setOpenDropDown={setWorkOnLandDropDown}
-        dropDownItems={MONTH_LIST}
-        fieldName="workOnLand"
+        openDropDown={openProductionExpense}
+        setOpenDropDown={setOpenProductionExpense}
+        dropDownItems={PRODUCT_EXPENSE_LIST}
+        fieldName="productionExpense"
         resetValue={reset}
         formData={getValues()}
       />

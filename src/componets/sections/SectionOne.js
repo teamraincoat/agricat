@@ -3,19 +3,18 @@ import { Controller } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import DropDown from '../../atoms/DropDown';
 import ETextInput from '../../atoms/ETextInput';
+import { SECTION_ONE_FIELDS } from '../../config/StaticData';
 import { translations } from '../../provider/LocalizeProvider';
 
 const SectionOne = ({
-  control, errors, fields, reset, getValues, dropDownItems,
+  control, errors, reset, getValues, dropDownItems,
 }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
 
   return (
      <View style={styles.container}>
-         {fields.map((field, index) => {
-           console.log('field', field);
-           return (
-            <>
+         {SECTION_ONE_FIELDS.map((field, index) => (
+            <View key={index}>
             <Controller
               control={control}
               key={index}
@@ -25,6 +24,7 @@ const SectionOne = ({
                   placeholder={translations[`Enroller.${field.name}`]}
                   style={[styles.p10]}
                   onBlur={onBlur}
+                  disabled
                   label={translations[`${field.label}`]}
                   onChangeText={(value) => onChange(value)}
                   value={value}
@@ -34,9 +34,8 @@ const SectionOne = ({
               )}
               name={field.name}
             />
-            </>
-           );
-         })}
+            </View>
+         ))}
 
         <DropDown
               control={control}
@@ -45,7 +44,7 @@ const SectionOne = ({
               openDropDown={openDropDown}
               setOpenDropDown={setOpenDropDown}
               dropDownItems={dropDownItems}
-              fieldName="mobilePhoneOwner"
+              fieldName="respondToSurvey"
               resetValue={reset}
               formData={getValues()}
             />
