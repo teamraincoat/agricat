@@ -50,6 +50,50 @@ export const MONTH_LIST = [
     value: 'Dec',
   },
 ];
+export const SPRING_SUMMER_CORN_CROP_LIST = [
+  {
+    title: `${translations['Section.Section2.cornCrop.option1']}`,
+    field: 'landPreparation',
+    month: '',
+    week: '',
+  },
+  {
+    title: `${translations['Section.Section2.cornCrop.option2']}`,
+    field: 'planting',
+    month: '',
+    week: '',
+  },
+  {
+    title: `${translations['Section.Section2.cornCrop.option3']}`,
+    field: 'germination',
+    month: '',
+    week: '',
+  },
+  {
+    title: `${translations['Section.Section2.cornCrop.option4']}`,
+    field: 'growth',
+    month: '',
+    week: '',
+  },
+  {
+    title: `${translations['Section.Section2.cornCrop.option5']}`,
+    field: 'ripening',
+    month: '',
+    week: '',
+  },
+  {
+    title: `${translations['Section.Section2.cornCrop.option6']}`,
+    field: 'cornCropHarvest',
+    month: '',
+    week: '',
+  },
+  {
+    title: `${translations['Section.Section2.cornCrop.option7']}`,
+    field: 'salesHarvest',
+    month: '',
+    week: '',
+  },
+];
 export const WEEK_LIST = [
   { label: '1', value: '1' },
   { label: '2', value: '2' },
@@ -116,12 +160,13 @@ export const SECTION_TWO_QUESTIONS = [
   {
     label: 'Section.Section2.workOfExperience',
     field: 'workOfExperience',
-    type: 'text',
+    type: 'number',
   },
   {
     label: 'Section.Section2.workOnLand',
     field: 'workOnLand',
     type: 'dropDown',
+    multipleItems: true,
     dropDownList: [
       {
         label: `${translations['Section.Section2.workOnLand.option1']}`,
@@ -156,7 +201,7 @@ export const SECTION_TWO_QUESTIONS = [
   {
     label: 'Section.Section2.farmLand',
     field: 'farmLand',
-    type: 'text',
+    type: 'number',
   },
   {
     label: 'Section.Section2.crop',
@@ -279,6 +324,7 @@ export const SECTION_THREE_QUESTIONS = [
     label: 'Section.Section3.causedEvent',
     field: 'causedEvent',
     type: 'dropDown',
+    multipleItems: true,
     dropDownList: [
       {
         label: `${translations['Section.Section3.causedEvent.option1']}`,
@@ -314,6 +360,7 @@ export const SECTION_THREE_QUESTIONS = [
     label: 'Section.Section3.makeupLoss',
     field: 'makeupLoss',
     type: 'dropDown',
+    multipleItems: true,
     dropDownList: [
       {
         label: `${translations['Section.Section3.makeupLoss.option1']}`,
@@ -369,6 +416,7 @@ export const SECTION_THREE_QUESTIONS = [
     label: 'Section.Section3.cropLoss.selectRisk',
     field: 'selectRisk',
     type: 'dropDown',
+    multipleItems: true,
     dropDownList: [
       {
         label: `${translations['Section.Section3.cropLoss.option1']}`,
@@ -460,7 +508,7 @@ export const SECTION_FOUR_QUESTIONS = [
   {
     label: 'Section.Section4.noOfPeopleInHousehold',
     field: 'noOfPeopleInHousehold',
-    type: 'text',
+    type: 'number',
   },
   {
     label: 'Section.Section4.familyIncome',
@@ -535,6 +583,7 @@ export const SECTION_FOUR_QUESTIONS = [
     label: 'SectionSection4.governmentProgramsSupport',
     field: 'governmentProgramsSupport',
     type: 'dropDown',
+    multipleItems: true,
     dropDownList: [
       {
         label: `${translations['Section.Section4.governmentProgramsSupport.option1']}`,
@@ -561,6 +610,7 @@ export const SECTION_FIVE_QUESTIONS = [
     field: 'receivePaymentFromInsurance',
     label: 'Section.Section5.receivePaymentFromInsurance',
     type: 'dropDown',
+    multipleItems: true,
     dropDownList: [
       {
         label: `${translations['Section.Section5.receivePaymentFromInsurance.option1']}`,
@@ -646,7 +696,8 @@ export const SECTION_FIVE_QUESTIONS = [
   {
     field: 'howMuchPayForOtherInsurance',
     label: 'Section.Section5.howMuch',
-    type: 'text',
+    type: 'number',
+    placeholder: 'Section.Section5.howMuchPlaceholder',
   },
 ];
 

@@ -43,10 +43,10 @@ const Section3Screen = ({ navigation }) => {
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
-        title="Section 3"
+        title="Section.Section3.title"
+        description="Section.Section3.description"
         isMain
         onBack={() => navigation.goBack()}
-        description="Datos de identificacion del asegurado"
       />
       <View style={styles.flex}>
         <KeyboardAvoidingView
@@ -64,7 +64,7 @@ const Section3Screen = ({ navigation }) => {
             </EText>
             <Controller
               control={control}
-              rules={{ required: translations['Field.required'] }}
+              rules={{ required: false }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   // placeholder={translations['Placeholder.firstName']}
@@ -73,6 +73,7 @@ const Section3Screen = ({ navigation }) => {
                   leftLabel
                   style={localStyles.smallInput}
                   label={'Kilos'}
+                  number
                   onChangeText={(value) => onChange(value)}
                   value={value}
                   error={!!errors.cornHarvestedInKilo}
@@ -100,7 +101,7 @@ const Section3Screen = ({ navigation }) => {
             </EText>
             <Controller
               control={control}
-              rules={{ required: translations['Field.required'] }}
+              rules={{ required: false }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   // placeholder={translations['Placeholder.firstName']}
@@ -111,6 +112,7 @@ const Section3Screen = ({ navigation }) => {
                   label={translations['Section.Section3.Year']}
                   onChangeText={(value) => onChange(value)}
                   value={value}
+                  number
                   error={!!errors.cropLossYear}
                   errorText={errors.cropLossYear && errors.cropLossYear.message}
                 />
@@ -137,7 +139,7 @@ const Section3Screen = ({ navigation }) => {
 
             <Controller
               control={control}
-              rules={{ required: translations['Field.required'] }}
+              rules={{ required: false }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   // placeholder={translations['Section.Section3.lostHarvestAmount']}
@@ -148,6 +150,7 @@ const Section3Screen = ({ navigation }) => {
                   label={translations['Section.Section3.lostHarvestAmount']}
                   onChangeText={(value) => onChange(value)}
                   value={value}
+                  number
                   error={!!errors.LostHarvestAmount}
                   errorText={
                     errors.LostHarvestAmount && errors.LostHarvestAmount.message
@@ -168,6 +171,7 @@ const Section3Screen = ({ navigation }) => {
                   field={question.field}
                   reset={reset}
                   formData={getValues()}
+                  multipleItems={question.multipleItems}
                 />
               </View>
             ))}

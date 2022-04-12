@@ -16,20 +16,23 @@ const MultiFieldDropDown = ({
   DropDownData,
   formData,
   label,
+  placeholder,
+  multipleItems,
 }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
 
   return (
     <View style={localStyles.container}>
-      {type === 'text' ? (
+      {type === 'text' || type === 'number' ? (
         <Controller
           control={control}
-          rules={{ required: translations['Field.required'] }}
+          rules={{ required: false }}
           render={({ field: { onChange, onBlur, value } }) => (
             <ETextInput
-              //   placeholder={translations[`Enroller.${field.name}`]}
+               placeholder={placeholder &&  translations[placeholder]}
               style={[styles.p10]}
               onBlur={onBlur}
+              number={type === 'number'}
               label={translations[label]}
               onChangeText={(value) => onChange(value)}
               value={value}
@@ -50,6 +53,7 @@ const MultiFieldDropDown = ({
           fieldName={field}
           resetValue={reset}
           formData={formData}
+          multipleItems={!!multipleItems}
         />
       )}
     </View>

@@ -4,6 +4,7 @@ import BackIcon from '../../assets/icons/BackIcon';
 import EText from '../EText';
 import { colors, styles } from '../../styles';
 import { wp } from '../../styles/metrics';
+import { translations } from '../../provider/LocalizeProvider';
 
 const SectionHeader = ({
   title, onBack, description, isMain,
@@ -16,9 +17,9 @@ const SectionHeader = ({
             {isMain && <Pressable onPress={onBack}>
             <BackIcon />
             </Pressable> }
-        <EText style={[localStyles.title, !isMain && { marginRight: 0 }]}>{title}</EText>
+        <EText style={[localStyles.title, !isMain && { marginRight: 0 }]}>{translations[title]}</EText>
          </View>
-        <EText style={localStyles.description}>{description}</EText>
+        <EText style={localStyles.description}>{translations[description]}</EText>
         </View>
      </View>
 );

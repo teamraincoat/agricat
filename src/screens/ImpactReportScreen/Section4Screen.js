@@ -40,10 +40,10 @@ const Section4Screen = ({ navigation }) => {
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
-        title="Sección 4"
+        title="Section.Section4.title"
+        description="Section.Section4.description"
         isMain
         onBack={() => navigation.goBack()}
-        description="Contexto familiar"
       />
       <View style={styles.flex}>
         <KeyboardAvoidingView
@@ -66,6 +66,7 @@ const Section4Screen = ({ navigation }) => {
                   field={question.field}
                   reset={reset}
                   formData={getValues()}
+                  multipleItems={question.multipleItems}
                 />
               </View>
             ))}

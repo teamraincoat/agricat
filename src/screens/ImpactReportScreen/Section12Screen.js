@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import SectionHeader from '../../atoms/Section/SectionHeader';
 import { translations } from '../../provider/LocalizeProvider';
 import { colors, styles } from '../../styles';
@@ -15,86 +15,9 @@ import { wp } from '../../styles/metrics';
 import SectionOne from '../../componets/sections/SectionOne';
 import SectionTwo from '../../componets/sections/SectionTwo';
 import EButton from '../../atoms/EButton';
-import { RESPONDER_LIST } from '../../config/StaticData';
+import { SPRING_SUMMER_CORN_CROP_LIST, RESPONDER_LIST } from '../../config/StaticData';
 
 const Section12Screen = ({ navigation }) => {
-  const phoneOwnerItems = [
-    { label: 'Propio', value: 'self' },
-    { label: 'Vecinos/Familiares', value: 'friend-family' },
-  ];
-  const SectionOneFields = [
-    {
-      name: 'field1',
-      label: 'Section.Section1.liftDate',
-      placeholder: 'Propietario del teléfono',
-    },
-    {
-      name: 'field2',
-      label: 'Section.Section1.FolioNumber',
-      placeholder: 'Número de teléfono',
-    },
-    {
-      name: 'field3',
-      label: 'Section.Section1.sex',
-      placeholder: 'Modelo de teléfono',
-    },
-    {
-      name: 'field4',
-      label: 'Section.Section1.languageSpeak',
-      placeholder: 'Modelo de teléfono',
-    },
-    {
-      name: 'field5',
-      label: 'Section.Section1.hectareArea',
-      placeholder: 'Modelo de teléfono',
-    },
-  ];
-
-  const SELECTION = [
-    {
-      title: 'ground preparation',
-      field: 'groundPreparation',
-      month: '',
-      week: '',
-    },
-    {
-      title: 'Sowing',
-      field: 'sowing',
-      month: '',
-      week: '',
-    },
-    {
-      title: 'Germination',
-      field: 'germination',
-      month: '',
-      week: '',
-    },
-    {
-      title: 'Growth',
-      field: 'growth',
-      month: '',
-      week: '',
-    },
-    {
-      title: 'Maturation',
-      field: 'maturation',
-      month: '',
-      week: '',
-    },
-    {
-      title: 'Harvest',
-      field: 'harvest',
-      month: '',
-      week: '',
-    },
-    {
-      title: 'Sales harvest',
-      field: 'salesHarvest',
-      month: '',
-      week: '',
-    },
-  ];
-
   const {
     control,
     getValues,
@@ -109,8 +32,8 @@ const Section12Screen = ({ navigation }) => {
       sex: '',
       speakingLanguage: '',
       hectareArea: '',
-      respondToSurvey: '',
-      maizeCultivation: [...SELECTION],
+    //   respondToSurvey: '',
+      maizeCultivation: [...SPRING_SUMMER_CORN_CROP_LIST],
       workOfExperience: '',
     },
   });
@@ -122,10 +45,10 @@ const Section12Screen = ({ navigation }) => {
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
-        title="Sección 1"
+        title="Section.Section1.title"
+        description="Section.Section1.description"
         isMain
         onBack={() => navigation.goBack()}
-        description="Datos de identificacion del asegurado"
       />
       <View style={styles.flex}>
         <KeyboardAvoidingView
@@ -144,8 +67,9 @@ const Section12Screen = ({ navigation }) => {
             <SectionTwo
               control={control}
               errors={errors}
-              MaizeCultivationList={SELECTION}
+              MaizeCultivationList={SPRING_SUMMER_CORN_CROP_LIST}
               reset={reset}
+              registerField={register}
               getValues={getValues}
             />
             <EButton

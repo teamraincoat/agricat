@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import DropDown from '../../atoms/DropDown';
@@ -21,6 +21,7 @@ const SectionTwo = ({
   reset,
   errors,
   MaizeCultivationList,
+  registerField,
 }) => {
   const [workOnLandDropDown, setWorkOnLandDropDown] = useState(false);
   const [openProductionExpense, setOpenProductionExpense] = useState(false);
@@ -30,13 +31,11 @@ const SectionTwo = ({
     name: 'maizeCultivation',
   });
 
-  //   console.log('fields++++++', fields);
-
   return (
     <>
       <SectionHeader
-        title="Sección 2"
-        description="Datos de identificacion del asegurado"
+        title="Section.Section2.title"
+        description="Section.Section2.description"
       />
       <SectionCard
       title={'Section.Section2.ThankyouMsg'}
@@ -52,6 +51,7 @@ const SectionTwo = ({
         field={question.field}
         reset={reset}
         formData={getValues()}
+        multipleItems={question.multipleItems}
         />
         </View>
   ))}
@@ -61,8 +61,8 @@ const SectionTwo = ({
       <View style={[localStyles.tableContainer, { ...styles.mv10 }]}>
         <View style={localStyles.emptyView} />
         <View style={localStyles.tableHeaderContainer}>
-          <EText style={localStyles.tableHeader}>{'Mes'}</EText>
-          <EText style={localStyles.tableHeader}>{'Semana'}</EText>
+          <EText style={localStyles.tableHeader}>{translations['Section.Section3.Month']}</EText>
+          <EText style={localStyles.tableHeader}>{translations['Section.Section3.Week']}</EText>
         </View>
       </View>
       <>
@@ -74,6 +74,7 @@ const SectionTwo = ({
             <View style={localStyles.dropDownContainer}>
               <MonthWeekDropDown
                 control={control}
+                register={registerField}
                 getValues={getValues}
                 reset={reset}
                 index={index}
@@ -99,14 +100,14 @@ const SectionTwo = ({
           <Controller
             control={control}
             key={index}
-            rules={{ required: translations['Field.required'] }}
+            rules={{ required: false }}
             render={({ field: { onChange, onBlur, value } }) => (
               <ETextInput
-                placeholder={translations['Placeholder.firstName']}
                 style={[styles.p10]}
                 onBlur={onBlur}
+                placeholder={translations['Section.Section2.perHectareUnit']}
                 leftLabel
-                // label={translations['Enroller.firstName']}
+                number
                 label={item.label}
                 onChangeText={(value) => onChange(value)}
                 value={value}
@@ -147,8 +148,8 @@ const localStyles = StyleSheet.create({
   tableHeaderContainer: {
     ...styles.rowSpaceBetween,
     width: wp(60),
-
     paddingHorizontal: wp(8),
+    paddingRight: wp(12),
   },
   tableHeader: {
     color: colors.black,

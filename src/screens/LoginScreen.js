@@ -17,11 +17,11 @@ const LoginScreen = ({ navigation }) => {
   // tushali024@gmail.com
   // @jYb9E2iQ
   const [email, setEmail] = useState({
-    value: '',
+    value: 'tushali024@gmail.com',
     error: '',
   });
   const [password, setPassword] = useState({
-    value: '',
+    value: '@jYb9E2iQ',
     error: '',
   });
   const [loading, setLoading] = useState(false);

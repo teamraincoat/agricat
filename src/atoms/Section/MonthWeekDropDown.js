@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import { MONTH_LIST, WEEK_LIST } from '../../config/StaticData';
@@ -10,17 +10,30 @@ const MonthWeekDropDown = ({
   reset,
   fieldName,
   index,
-  maizeCultivation,
+  register,
+//   maizeCultivation,
 }) => {
   const [openMonthDropDown, setOpenMonthDropDown] = useState(false);
   const [openWeekDropDown, setOpenWeekDropDown] = useState(false);
-  const dropDownRef = React.useRef();
-//   console.log('***field name--->', fieldName);
-    // console.log('<----maizeCultivation--->', maizeCultivation);
-    // name={`test[${index}].nestedArray[0].firstNested`}
-    const singleField =  maizeCultivation[index].month; //getValues(`maizeCultivation[${index}].month`);
-    // console.log('singleField', singleField);
-  //   console.log('useFieldArray--fields--->', fields);
+
+  const maizeCultivation = getValues('maizeCultivation');
+  const [newList, setNewList] = useState(maizeCultivation);
+  const [isValueChanged, setIsValueChanged] = useState(false);
+
+  useEffect(() => {
+    if (newList) {
+      const formData = getValues();
+      console.log('formData@@@@', formData);
+      reset({
+        ...formData,
+        maizeCultivation: [...newList],
+      });
+    //   setIsValueChanged(!isValueChanged);
+    }
+  }, [isValueChanged]);
+
+  const latestForm = getValues();
+
   return (
     <>
       <DropDown
@@ -29,26 +42,17 @@ const MonthWeekDropDown = ({
         openDropDown={openMonthDropDown}
         setOpenDropDown={setOpenMonthDropDown}
         dropDownItems={MONTH_LIST}
-        fieldName={singleField}
-        resetValue={reset}
+        fieldName={Object.keys(newList[index])[2]}
         onSelectItem={(value) => {
           console.log('nnnnnnvalue++++++', value);
           console.log('nnnnnfieldName++++++', fieldName);
-        //   const index = maizeCultivation.findIndex(
-        //     (item) => item.field === fieldName.field,
-        //   );
-        //   console.log('index++++++', index);
-
-        //   console.log('fields++++++', fields);
-          console.log('hehe', Object.keys(maizeCultivation[index])[2]);
-          const newFormData = { [`${maizeCultivation[index].month}`]: 'mj' };
-          console.log('newFormData', newFormData);
-          const formData = getValues();
-        //   `test[${index}].nestedArray[0].firstNested`
-          reset({
-            ...formData,
-            [`${maizeCultivation[index].month}`]: value.value,
+          setNewList((prevState) => {
+            const new1List = [...prevState];
+            // console.log('new1List', new1List[index]);
+            new1List[index].month = value.value;
+            return new1List;
           });
+          setIsValueChanged(!isValueChanged);
           setOpenMonthDropDown(!openMonthDropDown);
         }}
         formData={getValues()}
@@ -61,7 +65,7 @@ const MonthWeekDropDown = ({
         setOpenDropDown={setOpenWeekDropDown}
         dropDownItems={WEEK_LIST}
         fieldName={fieldName.week}
-        resetValue={reset}
+        //  resetValue={reset}
         onSelectItem={(value) => {
           const index = maizeCultivation.findIndex(
             (item) => item.field === fieldName.field,
@@ -71,10 +75,10 @@ const MonthWeekDropDown = ({
           const newFormData = { [Object.keys(maizeCultivation[index])[2]]: 'mj' };
           const formData = getValues();
 
-          reset({
-            ...formData,
-            [Object.keys(fieldName)[3]]: value.value,
-          });
+          //   reset({
+          //     ...formData,
+          //     [Object.keys(fieldName)[3]]: value.value,
+          //   });
           setOpenWeekDropDown(!openWeekDropDown);
         }}
         small

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -19,24 +19,45 @@ const DropDown = ({
   formData,
   small,
   medium,
+  multipleItems,
   ...rest
-}) => (
+}) => {
+  const [multipleItem, setMultipleItem] = useState([]);
+  useEffect(() => {
+    if (multipleItems && multipleItem) {
+      resetValue({ ...formData, [fieldName]: multipleItem.length > 0 ? multipleItem : [] });
+    }
+  }, [multipleItems]);
+  return (
   <View style={localStyles.container}>
     {label && <EText style={localStyles.labelStyle}>{label}</EText>}
     <Controller
       control={control}
       render={({ field: { value, onChange } }) => (
         <DropDownPicker
+          multiple={!!multipleItems}
           placeholder={placeholder || translations['Placeholder.selectItem']}
           open={openDropDown}
-          value={value}
+          value={multipleItems ? [...multipleItem] : value}
+          showArrowIcon={true}
+         showBadgeDot={true}
           items={dropDownItems}
+          showTickIcon={true}
           setOpen={setOpenDropDown}
+          setValue={(value) => {
+            if (multipleItems) {
+              setMultipleItem(value);
+              setOpenDropDown(!openDropDown);
+            }
+          }}
           onSelectItem={(value) => {
-            resetValue({
-              ...formData,
-              [fieldName]: value.value,
-            });
+            console.log('onSelectItem', value, multipleItems);
+            if (!multipleItems) {
+              resetValue({
+                ...formData,
+                [fieldName]: value.value,
+              });
+            }
           }}
           style={[
             localStyles.dropDownStyle,
@@ -56,7 +77,8 @@ const DropDown = ({
       name={fieldName}
     />
   </View>
-);
+  );
+};
 
 const localStyles = StyleSheet.create({
   labelStyle: {
@@ -95,6 +117,8 @@ const localStyles = StyleSheet.create({
   },
   mediumDropDownContainerStyle: {
     width: wp(40),
+    alignSelf: 'flex-start',
+    marginLeft: wp(3),
   },
   mediumDropDownStyle: {
     width: wp(40),

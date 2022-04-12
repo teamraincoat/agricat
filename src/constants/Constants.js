@@ -9,7 +9,7 @@ const Constants = {
     CAMPAIGN_DATA: 'campaignData',
     IS_PENDING_REGISTRATION: 'isPendingRegistration',
   },
-  DEFAULT_LANGUAGE: 'es',
+  DEFAULT_LANGUAGE: 'en',
   MX_INDIGENOUS_LANGUAGES: [
     'Ch´ol',
     'Huave',

@@ -220,9 +220,18 @@
     "Section.Section2.crop.option11": "Cocoa",
     "Section.Section2.crop.option12": "Other fruit trees",
     "Section.Section2.crop.option13": "Others",
-  "Section.Section2.sameCrop": "Has it always been the same crop or each year decide if it will be this crop or another?",
+    "Section.Section2.sameCrop": "Has it always been the same crop or each year decide if it will be this crop or another?",
     "Section.Section2.sameCrop.option1": "Most of it has been this crop",
     "Section.Section2.sameCrop.option2": "Every year I decide what to grow",
+    "Section.Section2.cornCrop.option1": "Land preparation",
+    "Section.Section2.cornCrop.option2": "Planting",
+    "Section.Section2.cornCrop.option3": "Germination",
+    "Section.Section2.cornCrop.option4": "Growth",
+    "Section.Section2.cornCrop.option5": "Ripening",
+    "Section.Section2.cornCrop.option6": "Harvest",
+    "Section.Section2.cornCrop.option7": "Sale of harvest",
+
+
   "Section.Section2.springSummerMaize": "In a normal year, what are the dates of the next steps for spring-summer maize cultivation?",
   "Section.Section2.hectareOnItem": "In the cycle that we just talked about (spring-summer), how much do you spend per hectare on each of the following items for growing corn?",
   "Section.Section2.totalCostPerCycle": "For each input, it helps the producer calculate the total cost per cycle per hectare.",
@@ -233,6 +242,7 @@
     "Section.Section2.productionExpense.option4": "remittances",
     "Section.Section2.productionExpense.option5": "Financial help from relatives and/or acquaintances",
     "Section.Section2.productionExpense.option6": "Other sources",
+    "Section.Section2.perHectareUnit": "MXN$/hectare",
 
   "Section.Section3.title": "Section 3",
   "Section.Section3.description": "Facts about the risks in your crop.",
@@ -245,7 +255,8 @@
     "Section.Section3.cropLoss": "From what you remember, what has been the worst year for his crop and roughly how much of his crop did he lose?",
     "Section.Section3.Year": "Year",
     "Section.Section3.Month": "Month",
-    "Section.Section3.lostHarvestAmount": "Amount of lost harvest",
+    "Section.Section3.Week": "Week",
+    "Section.Section3.lostHarvestAmount": "Amount of crop lost",
     "Section.Section3.causedEvent": "What event or events caused it?",
     "Section.Section3.causedEvent.option1": "Hurricane",
     "Section.Section3.causedEvent.option2": "A lot of rain",
@@ -266,7 +277,7 @@
     "Section.Section3.makeupLoss.option9": "Migrate or look for work outside the locality and/or ejido",
     "Section.Section3.makeupLoss.option10": "use savings",
     "Section.Section3.makeupLoss.option11": "Sell livestock or other assets",
-    "Section.Section3.makeupLoss.option12": "make up Loss Others",
+    "Section.Section3.makeupLoss.option12": "Others",
     "Section.Section3.cropLoss.selectRisk": "Have any of these risks caused you losses? of more than half of their harvests in the last 10 years?",
     "Section.Section3.cropLoss.option1": "Hurricane",
     "Section.Section3.cropLoss.option2": "A lot of rain",
@@ -274,7 +285,7 @@
     "Section.Section3.cropLoss.option4": "Drought",
     "Section.Section3.cropLoss.option5": "Fire",
     "Section.Section3.cropLoss.option6": "Plague",
-    "Section.Section3.cropLoss.option7": "cropLossOthers",
+    "Section.Section3.cropLoss.option7": "Others",
     "Section.Section3.cropLoss.riskHouseholdIncome": "In your daily life, what do you think is the risk that more impact it would have on your household income if it were to happen?",
     "Section.Section3.riskHouseholdIncome.option1": "If you or someone in your family becomes seriously ill",
     "Section.Section3.riskHouseholdIncome.option2": "If I had an accident working",
@@ -361,5 +372,6 @@
     "Section.Section5.PayForOtherInsurance": "Do you pay for this other agricultural insurance?",
     "Section.Section5.PayForOtherInsurance.option1": "Yes",
     "Section.Section5.PayForOtherInsurance.option2": "Do not",
-    "Section.Section5.howMuch": "If yes, how much?"
+    "Section.Section5.howMuch": "If yes, how much?",
+    "Section.Section5.howMuchPlaceholder": "MXN$"
 }
