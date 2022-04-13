@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import {
   View,
   StyleSheet,
@@ -26,22 +25,89 @@ import {
 } from '../../config/StaticData';
 import SectionFiveDropDown from '../../atoms/Section/SectionFiveDropDown';
 import MultiFieldDropDown from '../../atoms/Section/MultiFieldDropDown';
+import { useReports } from '../../provider/ImpactReportProvider';
+import getRealm from '../../database/realmConfig';
 
 const Section5Screen = ({ navigation }) => {
   const {
     control,
     getValues,
-    handleSubmit,
-    formState: { errors },
     reset,
-    register,
-  } = useForm({
-    defaultValues: {
-      highestSchooling: '',
-      noOfPeopleInHousehold: '',
-    },
-  });
+    errors,
+    enrollerId,
+  } = useReports();
+  const submitReport = () => {
+    const reportData = getValues();
+    const payload = {
+      _id: enrollerId,
+      _annotations: {
+        liftingDate: reportData.liftingDate ?? '',
+        folioNumber: reportData.folioNumber ?? '',
+        sex: reportData.sex ?? '',
+        speakingLanguage: reportData?.speakingLanguage?.join(',') ?? '',
+        hectareArea: reportData.hectareArea ?? '',
+        respondToSurvey: reportData.respondToSurvey ?? '',
+        workOfExperience: reportData.workOfExperience ?? '',
+        workOnLand: reportData.workOnLand.join(',') ?? [],
+        farmLand: reportData.farmLand ?? '',
+        largestPartLandCrop: reportData.largestPartLandCrop ?? '',
+        sameCrop: reportData.sameCrop ?? '',
+        maizeCultivation: JSON.stringify(reportData.maizeCultivation) ?? [],
+        seeds: reportData.Seeds ?? '',
+        machinery: reportData.Machinery ?? '',
+        salaries: reportData.Salaries ?? '',
+        fertilizers: reportData.Fertilizers ?? '',
+        OtherCost: reportData.OtherCost ?? '',
+        productionExpense: reportData.productionExpense ?? '',
+        cornHarvestedInKilo: reportData.cornHarvestedInKilo ?? '',
+        cornHarvestedAtHome: reportData.cornHarvestedAtHome ?? '',
+        cropLossYear: reportData.cropLossYear ?? '',
+        cropLossMonth: reportData.cropLossMonth ?? '',
+        LostHarvestAmount: reportData.LostHarvestAmount ?? '',
+        causedEvent: reportData.causedEvent.join(',') ?? '',
+        makeupLoss: reportData.makeupLoss.join(',') ?? '',
+        riskCauseLost: reportData.selectRisk.join(',') ?? '',
+        riskHouseholdIncome: reportData.riskHouseholdIncome ?? '',
+        highestSchooling: reportData.highestSchooling ?? '',
+        noOfPeopleInHousehold: reportData.noOfPeopleInHousehold ?? '',
+        familyIncome: reportData.familyIncome ?? '',
+        provideMostFamilyIncome: reportData.provideMostFamilyIncome ?? '',
+        representIncome: reportData.representIncome ?? '',
+        governmentProgramsSupport: reportData.governmentProgramsSupport.join(',') ?? '',
+        mentionedDrought: reportData.mentionedDrought ?? '',
+        mentionedRain: reportData.mentionedRain ?? '',
+        mentionedDroughtRain: reportData.mentionedDroughtRain ?? '',
+        dontRemember: reportData.dontRemember ?? '',
+        mentionedDroughtBetween: reportData.mentionedDroughtBetween ?? '',
+        mentionedRainBetween: reportData.mentionedRainBetween ?? '',
+        dontRememberCompensation: reportData.dontRememberCompensation ?? '',
+        mentionedSatellite: reportData.mentionedSatellite ?? '',
+        mentionedFieldEvaluation: reportData.mentionedFieldEvaluation ?? '',
+        mentionedOthers: reportData.mentionedOthers ?? '',
+        dontRememberDamageCrop: reportData.dontRememberDamageCrop ?? '',
+        mentionedPossible: reportData.mentionedPossible ?? '',
+        dontRememberReceivedPayment: reportData.dontRememberReceivedPayment ?? '',
+        receivePaymentFromInsurance: reportData.receivePaymentFromInsurance.join(',') ?? '',
+        askInsuranceType: reportData.askInsuranceType ?? '',
+        agriculturalInsurance: reportData.agriculturalInsurance ?? '',
+        haveOtherInsurance: reportData.haveOtherInsurance ?? '',
+        PayForOtherInsurance: reportData.PayForOtherInsurance ?? '',
+        howMuchPayForOtherInsurance: reportData.howMuchPayForOtherInsurance ?? '',
 
+      },
+
+    };
+    getRealm()
+      .then((projectRealm) => {
+        projectRealm.write(() => {
+          projectRealm.create('Enrollment', payload, 'modified');
+        });
+        const userListUpdated = projectRealm.objects('Enrollment');
+        console.log('userListUpdated', JSON.stringify(userListUpdated));
+      }).catch((error) => {
+        console.log('error', error);
+      });
+  };
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
@@ -168,14 +234,10 @@ const Section5Screen = ({ navigation }) => {
             {SECTION_FIVE_QUESTIONS.map((question, index) => (
               <View key={index}>
                 <MultiFieldDropDown
-                  control={control}
                   type={question.type}
-                  errors={errors}
                   label={question.label}
                   DropDownData={question?.dropDownList}
                   field={question.field}
-                  reset={reset}
-                  formData={getValues()}
                   multipleItems={question.multipleItems}
                   placeholder={question.placeholder}
                 />
@@ -183,7 +245,7 @@ const Section5Screen = ({ navigation }) => {
             ))}
             <EButton
               title={translations['Complete.continue']}
-              onClick={() => console.log('click')}
+              onClick={() => submitReport()}
               style={localStyles.button}
             />
           </ScrollView>

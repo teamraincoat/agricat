@@ -197,7 +197,18 @@ const UsersProvider = ({ children }) => {
           })
           .then((campaignData) => {
             setLoading(false);
-            navigation.navigate('Complete', { campaignData });
+            console.log('******cipheredEnrollment*******', cipheredEnrollment);
+            const surveyEnables = true;
+            if (surveyEnables) {
+              navigation.navigate('ImpactReportScreens', {
+                screen: 'Section12Screen',
+                params: {
+                  id: cipheredEnrollment._id,
+                },
+              });
+            } else {
+              navigation.navigate('Complete', { campaignData });
+            }
           })
           .catch((error) => {
             setLoading(false);

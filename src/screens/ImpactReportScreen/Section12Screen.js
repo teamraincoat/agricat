@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm } from 'react-hook-form';
+
 import SectionHeader from '../../atoms/Section/SectionHeader';
 import { translations } from '../../provider/LocalizeProvider';
 import { colors, styles } from '../../styles';
@@ -16,32 +16,23 @@ import SectionOne from '../../componets/sections/SectionOne';
 import SectionTwo from '../../componets/sections/SectionTwo';
 import EButton from '../../atoms/EButton';
 import { SPRING_SUMMER_CORN_CROP_LIST, RESPONDER_LIST } from '../../config/StaticData';
+import { useReports } from '../../provider/ImpactReportProvider';
 
-const Section12Screen = ({ navigation }) => {
+const Section12Screen = ({ navigation, route }) => {
   const {
     control,
     getValues,
-    handleSubmit,
-    formState: { errors },
     reset,
     register,
-  } = useForm({
-    defaultValues: {
-      liftingDate: '',
-      folioNumber: '',
-      sex: '',
-      speakingLanguage: '',
-      hectareArea: '',
-    //   respondToSurvey: '',
-      maizeCultivation: [...SPRING_SUMMER_CORN_CROP_LIST],
-      workOfExperience: '',
-    },
-  });
-  const maizeCultivationData = getValues('maizeCultivation');
-  //   console.log('maizeCultivation--->', maizeCultivationData);
+    errors,
+    enrollerId,
+    setEnrollerId,
+  } = useReports();
 
-  const newForm = getValues();
-  console.log('newForm--->', newForm);
+  const id = route.params?.id ?? '';
+  if (enrollerId === null && id !== '') {
+    setEnrollerId(id);
+  }
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader

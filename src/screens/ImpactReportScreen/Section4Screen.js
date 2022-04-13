@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import {
   View,
   StyleSheet,
@@ -19,22 +18,15 @@ import DropDown from '../../atoms/DropDown';
 import EButton from '../../atoms/EButton';
 import { MONTH_LIST, SECTION_FOUR_QUESTIONS } from '../../config/StaticData';
 import MultiFieldDropDown from '../../atoms/Section/MultiFieldDropDown';
+import { useReports } from '../../provider/ImpactReportProvider';
 
 const Section4Screen = ({ navigation }) => {
   const {
     control,
     getValues,
-    handleSubmit,
-    formState: { errors },
     reset,
-    register,
-  } = useForm({
-    defaultValues: {
-      highestSchooling: '',
-      noOfPeopleInHousehold: '',
-    },
-  });
-
+    errors,
+  } = useReports();
   const [highestSchoolingDropDown, setHighestSchoolingDropDown] = useState(false);
 
   return (
@@ -58,14 +50,10 @@ const Section4Screen = ({ navigation }) => {
             {SECTION_FOUR_QUESTIONS.map((question, index) => (
               <View key={index}>
                 <MultiFieldDropDown
-                  control={control}
                   type={question.type}
-                  errors={errors}
                   label={question.label}
                   DropDownData={question?.dropDownList}
                   field={question.field}
-                  reset={reset}
-                  formData={getValues()}
                   multipleItems={question.multipleItems}
                 />
               </View>

@@ -205,7 +205,7 @@ export const SECTION_TWO_QUESTIONS = [
   },
   {
     label: 'Section.Section2.crop',
-    field: 'crop',
+    field: 'largestPartLandCrop',
     type: 'dropDown',
     dropDownList: [
       {
@@ -706,36 +706,36 @@ export const WEATHER_EVENT_LIST = [
     fieldName: 'mentionedDrought',
     label: 'Section.Section5.mentionedDrought',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedDroughtYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedDroughtNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedDrought' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'mentionedRain',
     label: 'Section.Section5.mentionedRain',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedRainYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedRainNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedRain' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'mentionedDroughtRain',
     label: 'Section.Section5.mentionedDroughtRain',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedDroughtRainYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedDroughtRainNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedDroughtRain' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'dontRemember',
     label: 'Section.Section5.dontRemember',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'dontRememberYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'dontRememberNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableDontRemember' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
 ];
@@ -745,27 +745,27 @@ export const COMPENSATION_LIST = [
     fieldName: 'mentionedDroughtBetween',
     label: 'Section.Section5.mentionedDroughtBetween',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedDroughtBetweenYes' },
-      { label: `${translations['Section.Section5.option.other']}`, value: 'mentionedDroughtBetweenOther' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedDroughtBetween' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.other']}`, value: 'other' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'mentionedRainBetween',
     label: 'Section.Section5.mentionedRainBetween',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedRainBetweenYes' },
-      { label: `${translations['Section.Section5.option.other']}`, value: 'mentionedRainBetweenOther' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedRainBetween' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.other']}`, value: 'other' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'dontRememberCompensation',
     label: 'Section.Section5.dontRemember',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'dontRememberCompensationYes' },
-      { label: `${translations['Section.Section5.option.other']}`, value: 'dontRememberCompensationOther' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableDontRememberCompensation' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.other']}`, value: 'other' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
 ];
@@ -775,36 +775,36 @@ export const DAMAGE_CROP_EVALUATED_LIST = [
     fieldName: 'mentionedSatellite',
     label: 'Section.Section5.mentionedSatellite',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedSatelliteYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedSatelliteNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedSatellite' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'mentionedFieldEvaluation',
     label: 'Section.Section5.mentionedFieldEvaluation',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedFieldEvaluationYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedFieldEvaluationNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedFieldEvaluation' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'mentionedOthers',
     label: 'Section.Section5.mentionedOthers',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedFieldEvaluationYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedFieldEvaluationNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedFieldEvaluation' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'dontRememberDamageCrop',
     label: 'Section.Section5.dontRemember',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedFieldEvaluationYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedFieldEvaluationNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedFieldEvaluation' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
 ];
@@ -813,18 +813,18 @@ export const DO_NOT_RECEIVED_PAYMENT_LIST = [
     fieldName: 'mentionedPossible',
     label: 'Section.Section5.mentionedPossible',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'mentionedPossibleYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'mentionedPossibleNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableMentionedPossible' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
   {
     fieldName: 'dontRememberReceivedPayment',
     label: 'Section.Section5.dontRemember',
     dropDownData: [
-      { label: `${translations['Section.Section5.option.yes']}`, value: 'dontRememberReceivedPaymentYes' },
-      { label: `${translations['Section.Section5.option.no']}`, value: 'dontRememberReceivedPaymentNo' },
-      { label: `${translations['Section.Section5.option.na']}`, value: 'notApplicableDontRememberReceivedPayment' },
+      { label: `${translations['Section.Section5.option.yes']}`, value: 'Yes' },
+      { label: `${translations['Section.Section5.option.no']}`, value: 'No' },
+      { label: `${translations['Section.Section5.option.na']}`, value: 'N/A' },
     ],
   },
 ];

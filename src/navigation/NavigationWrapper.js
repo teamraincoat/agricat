@@ -20,6 +20,7 @@ import Section12Screen from '../screens/ImpactReportScreen/Section12Screen';
 import Section3Screen from '../screens/ImpactReportScreen/Section3Screen';
 import Section4Screen from '../screens/ImpactReportScreen/Section4Screen';
 import Section5Screen from '../screens/ImpactReportScreen/Section5Screen';
+import { ImpactReportProvider } from '../provider/ImpactReportProvider';
 
 const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -57,22 +58,43 @@ const NavigationWrapper = () => {
         console.error('LocalStorage', e);
       });
   }, [userId]);
-  const MainStackNavigator = () => (
-    <UsersProvider>
+
+  const ImpactReportNavigator = () => (
+    <ImpactReportProvider>
       <MainStack.Navigator
         initialRouteName="Section12Screen"
         screenOptions={{ headerShown: false }}>
-        <MainStack.Screen name="Home" initialParams={{ deviceOffline, campaignMetrics: campaignCompletionRate }} component={Home} />
+        <MainStack.Screen name="Section12Screen" component={Section12Screen} />
+        <MainStack.Screen name="Section3Screen" component={Section3Screen} />
+        <MainStack.Screen name="Section4Screen" component={Section4Screen} />
+        <MainStack.Screen name="Section5Screen" component={Section5Screen} />
+      </MainStack.Navigator>
+    </ImpactReportProvider>
+  );
+
+  const MainStackNavigator = () => (
+    <UsersProvider>
+      <MainStack.Navigator
+        initialRouteName="Home"
+        screenOptions={{ headerShown: false }}>
+        <MainStack.Screen
+          name="Home"
+          initialParams={{
+            deviceOffline,
+            campaignMetrics: campaignCompletionRate,
+          }}
+          component={Home}
+        />
         <MainStack.Screen name="Register" component={RegisterUser} />
         <MainStack.Screen name="Consent" component={ConsentScreen} />
         <MainStack.Screen name="ImpactReport" component={ImpactReport} />
         <MainStack.Screen name="Complete" component={CompleteScreen} />
         <MainStack.Screen name="SignUp" component={SignupScreen} />
         <MainStack.Screen name="Auth" component={AuthStackNavigator} />
-        <MainStack.Screen name="Section12Screen" component={Section12Screen} />
-        <MainStack.Screen name="Section3Screen" component={Section3Screen} />
-        <MainStack.Screen name="Section4Screen" component={Section4Screen} />
-        <MainStack.Screen name="Section5Screen" component={Section5Screen} />
+        <MainStack.Screen
+          name="ImpactReportScreens"
+          component={ImpactReportNavigator}
+        />
       </MainStack.Navigator>
     </UsersProvider>
   );

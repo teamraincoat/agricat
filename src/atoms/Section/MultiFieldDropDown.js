@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
+import { useReports } from '../../provider/ImpactReportProvider';
 
 import { translations } from '../../provider/LocalizeProvider';
 import { styles } from '../../styles';
@@ -9,17 +10,19 @@ import ETextInput from '../ETextInput';
 
 const MultiFieldDropDown = ({
   type,
-  control,
-  errors,
-  reset,
   field,
   DropDownData,
-  formData,
   label,
   placeholder,
   multipleItems,
 }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
+  const {
+    control,
+    getValues,
+    reset,
+    errors,
+  } = useReports();
 
   return (
     <View style={localStyles.container}>
@@ -29,7 +32,7 @@ const MultiFieldDropDown = ({
           rules={{ required: false }}
           render={({ field: { onChange, onBlur, value } }) => (
             <ETextInput
-               placeholder={placeholder &&  translations[placeholder]}
+               placeholder={placeholder && translations[placeholder]}
               style={[styles.p10]}
               onBlur={onBlur}
               number={type === 'number'}
@@ -52,7 +55,7 @@ const MultiFieldDropDown = ({
           dropDownItems={DropDownData}
           fieldName={field}
           resetValue={reset}
-          formData={formData}
+          formData={getValues()}
           multipleItems={!!multipleItems}
         />
       )}

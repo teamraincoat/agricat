@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useReports } from '../provider/ImpactReportProvider';
 import { translations } from '../provider/LocalizeProvider';
 import { colors, styles } from '../styles';
 import { hp, normalize, wp } from '../styles/metrics';
@@ -16,18 +17,20 @@ const DropDown = ({
   dropDownItems,
   fieldName,
   resetValue,
-  formData,
   small,
   medium,
   multipleItems,
+  defaultValue,
   ...rest
 }) => {
   const [multipleItem, setMultipleItem] = useState([]);
+  const { getValues } = useReports();
   useEffect(() => {
-    if (multipleItems && multipleItem) {
-      resetValue({ ...formData, [fieldName]: multipleItem.length > 0 ? multipleItem : [] });
+    if (multipleItems && multipleItem.length > 0) {
+      const currentFormData = getValues();
+      resetValue({ ...currentFormData, [fieldName]: multipleItem.length > 0 ? multipleItem : [] });
     }
-  }, [multipleItems]);
+  }, [multipleItems, multipleItem]);
   return (
   <View style={localStyles.container}>
     {label && <EText style={localStyles.labelStyle}>{label}</EText>}
@@ -38,23 +41,25 @@ const DropDown = ({
           multiple={!!multipleItems}
           placeholder={placeholder || translations['Placeholder.selectItem']}
           open={openDropDown}
-          value={multipleItems ? [...multipleItem] : value}
+          value={multipleItems ? [...multipleItem] : defaultValue || value}
           showArrowIcon={true}
          showBadgeDot={true}
           items={dropDownItems}
           showTickIcon={true}
           setOpen={setOpenDropDown}
-          setValue={(value) => {
-            if (multipleItems) {
-              setMultipleItem(value);
-              setOpenDropDown(!openDropDown);
-            }
-          }}
           onSelectItem={(value) => {
-            console.log('onSelectItem', value, multipleItems);
-            if (!multipleItems) {
+            if (multipleItems) {
+              setMultipleItem(() => {
+                if (value.length > 0) {
+                  const itemArray = value.map((item) => item.value);
+                  return [...itemArray];
+                }
+              });
+              setOpenDropDown(!openDropDown);
+            } else {
+              const currentFormData = getValues();
               resetValue({
-                ...formData,
+                ...currentFormData,
                 [fieldName]: value.value,
               });
             }

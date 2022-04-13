@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
 import { MONTH_LIST, WEEK_LIST } from '../../config/StaticData';
 import DropDown from '../DropDown';
@@ -15,24 +15,33 @@ const MonthWeekDropDown = ({
 }) => {
   const [openMonthDropDown, setOpenMonthDropDown] = useState(false);
   const [openWeekDropDown, setOpenWeekDropDown] = useState(false);
-
-  const maizeCultivation = getValues('maizeCultivation');
-  const [newList, setNewList] = useState(maizeCultivation);
   const [isValueChanged, setIsValueChanged] = useState(false);
+  const maizeCultivation = getValues('maizeCultivation');
+  const [newMaizeCultivation, setNewMaizeCultivation] = useState(maizeCultivation);
+  const [weekList, setWeekList] = useState([]);
+  const [defaultMonth, setDefaultMonth] = useState('');
+  const [defaultWeek, setDefaultWeek] = useState('');
+
+  const { unregister } = useForm();
 
   useEffect(() => {
-    if (newList) {
+    if (newMaizeCultivation) {
       const formData = getValues();
-      console.log('formData@@@@', formData);
       reset({
         ...formData,
-        maizeCultivation: [...newList],
+        maizeCultivation: [...newMaizeCultivation],
       });
-    //   setIsValueChanged(!isValueChanged);
+      unregister(`${Object.keys(newMaizeCultivation[index])[2]}`);
+    }
+    if (weekList && weekList.length > 0) {
+      const formData = getValues();
+      reset({
+        ...formData,
+        maizeCultivation: [...weekList],
+      });
     }
   }, [isValueChanged]);
 
-  const latestForm = getValues();
 
   return (
     <>
@@ -42,16 +51,16 @@ const MonthWeekDropDown = ({
         openDropDown={openMonthDropDown}
         setOpenDropDown={setOpenMonthDropDown}
         dropDownItems={MONTH_LIST}
-        fieldName={Object.keys(newList[index])[2]}
+        fieldName={Object.keys(newMaizeCultivation[index])[2]}
+        defaultValue={defaultMonth}
         onSelectItem={(value) => {
-          console.log('nnnnnnvalue++++++', value);
-          console.log('nnnnnfieldName++++++', fieldName);
-          setNewList((prevState) => {
-            const new1List = [...prevState];
-            // console.log('new1List', new1List[index]);
-            new1List[index].month = value.value;
-            return new1List;
+          setNewMaizeCultivation((prevState) => {
+            const copyMaizeCultivation = [...prevState];
+            copyMaizeCultivation[index].month = value.value;
+            return copyMaizeCultivation;
           });
+          setDefaultMonth(value.value);
+          unregister(`${Object.keys(newMaizeCultivation[index])[2]}`);
           setIsValueChanged(!isValueChanged);
           setOpenMonthDropDown(!openMonthDropDown);
         }}
@@ -64,23 +73,21 @@ const MonthWeekDropDown = ({
         openDropDown={openWeekDropDown}
         setOpenDropDown={setOpenWeekDropDown}
         dropDownItems={WEEK_LIST}
-        fieldName={fieldName.week}
+        defaultValue={defaultWeek}
+        fieldName={Object.keys(newMaizeCultivation[index])[3]}
         //  resetValue={reset}
         onSelectItem={(value) => {
-          const index = maizeCultivation.findIndex(
-            (item) => item.field === fieldName.field,
-          );
-          console.log('index++++++', index);
-          console.log('hehe', Object.keys(maizeCultivation[index])[2]);
-          const newFormData = { [Object.keys(maizeCultivation[index])[2]]: 'mj' };
-          const formData = getValues();
-
-          //   reset({
-          //     ...formData,
-          //     [Object.keys(fieldName)[3]]: value.value,
-          //   });
+          setWeekList(() => {
+            const copyMaizeCultivation = [...maizeCultivation];
+            copyMaizeCultivation[index].week = value.value;
+            return copyMaizeCultivation;
+          });
+          setDefaultWeek(value.value);
+          unregister(`${Object.keys(newMaizeCultivation[index])[3]}`);
+          setIsValueChanged(!isValueChanged);
           setOpenWeekDropDown(!openWeekDropDown);
         }}
+
         small
         formData={getValues()}
       />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import {
   View,
   StyleSheet,
@@ -23,21 +23,15 @@ import {
   SECTION_THREE_QUESTIONS,
 } from '../../config/StaticData';
 import MultiFieldDropDown from '../../atoms/Section/MultiFieldDropDown';
+import { useReports } from '../../provider/ImpactReportProvider';
 
 const Section3Screen = ({ navigation }) => {
   const {
     control,
     getValues,
-    handleSubmit,
-    formState: { errors },
     reset,
-    register,
-  } = useForm({
-    defaultValues: {
-      cornHarvestedInKilo: '',
-      cornHarvestedAtHome: '',
-    },
-  });
+    errors,
+  } = useReports();
   const [cornHarvestedAtHomeDropDown, setCornHarvestedAtHomeDropDown] = useState(false);
   const [cropLossMonthDropDown, setCropLossMonthDropDown] = useState(false);
   return (
@@ -163,14 +157,10 @@ const Section3Screen = ({ navigation }) => {
             {SECTION_THREE_QUESTIONS.map((question, index) => (
               <View key={index}>
                 <MultiFieldDropDown
-                  control={control}
                   type={question.type}
-                  errors={errors}
                   label={question.label}
                   DropDownData={question?.dropDownList}
                   field={question.field}
-                  reset={reset}
-                  formData={getValues()}
                   multipleItems={question.multipleItems}
                 />
               </View>

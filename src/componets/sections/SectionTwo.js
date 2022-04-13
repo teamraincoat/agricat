@@ -43,14 +43,10 @@ const SectionTwo = ({
   {SECTION_TWO_QUESTIONS.map((question, index) => (
       <View key={index}>
       <MultiFieldDropDown
-        control={control}
         type={question.type}
-        errors={errors}
         label={question.label}
         DropDownData={question?.dropDownList}
         field={question.field}
-        reset={reset}
-        formData={getValues()}
         multipleItems={question.multipleItems}
         />
         </View>
