@@ -14,14 +14,12 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 
 const LoginScreen = ({ navigation }) => {
   const { translations } = useContext(LocalizeContext);
-  // tushali024@gmail.com
-  // @jYb9E2iQ
   const [email, setEmail] = useState({
-    value: 'tushali024@gmail.com',
+    value: '',
     error: '',
   });
   const [password, setPassword] = useState({
-    value: '@jYb9E2iQ',
+    value: '',
     error: '',
   });
   const [loading, setLoading] = useState(false);

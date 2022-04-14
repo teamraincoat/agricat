@@ -56,7 +56,7 @@ const SignupScreen = ({ navigation }) => {
       setLoading(true);
       const userData = await app.currentUser.refreshCustomData();
       const mongo = app.currentUser.mongoClient('mongodb-atlas');
-      const userList = mongo.db('mexico').collection('User');
+      const userList = mongo.db(Constants.REALM.DB_NAME).collection('User');
       const newUserData = await userList.updateOne(
         { _id: userData && userData._id },
         {

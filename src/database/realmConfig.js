@@ -15,7 +15,7 @@ import {
   getStorageData,
 } from '../utils/localStorage';
 
-export const app = new Realm.App({ id: Constants.REALM_APP_ID, timeout: 10000 });
+export const app = new Realm.App({ id: Constants.REALM.APP_ID, timeout: 10000 });
 const getRealm = async () => {
   const OpenRealmBehaviorConfiguration = {
     type: 'openImmediately',
@@ -119,7 +119,7 @@ export const checkCampaignMatrix = async (campaignData) => {
     const campaignId = partitionInfo.replace('campaign=', '');
     try {
       // eslint-disable-next-line no-undef
-      const response = await fetch(`https://data.mongodb-api.com/app/${Constants.REALM_APP_ID}/endpoint/campaign/metrics?campaignId=${campaignId}`);
+      const response = await fetch(`https://data.mongodb-api.com/app/${Constants.REALM.APP_ID}/endpoint/campaign/metrics?campaignId=${campaignId}`);
       const res = await response.json();
       if (res.metrics && res.metrics.finishedPercent) {
         return res.metrics.finishedPercent;
@@ -136,7 +136,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
     const newUser = await app.logIn(credential);
     const userData = await newUser.refreshCustomData();
     const mongo = newUser.mongoClient('mongodb-atlas');
-    const campaigns = mongo.db('mexico').collection('Campaign');
+    const campaigns = mongo.db(Constants.REALM.DB_NAME).collection('Campaign');
     // console.log('<--------newUserData----->', newUserData);
     if (userData && userData.isFirstLogin) {
       saveStorageData(

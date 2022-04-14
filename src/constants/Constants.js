@@ -1,5 +1,8 @@
 const Constants = {
-  REALM_APP_ID: 'agricat-jcpwf',
+  REALM: {
+    APP_ID: 'agricat-dyvoy',
+    DB_NAME: 'mexico-prod',
+  },
   STORAGE: {
     APP_LANGUAGE: 'appLanguage',
     USER_ID: 'userId',
