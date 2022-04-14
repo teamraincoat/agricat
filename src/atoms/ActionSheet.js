@@ -1,9 +1,9 @@
 import React from 'react';
-import {View} from 'react-native';
+import { View } from 'react-native';
 import ActionSheet from 'react-native-actionsheet';
 
-const ActionSheetBox = props => {
-  const {ActionRef, captureFromCamera, onImageLibraryPress} = props;
+const ActionSheetBox = (props) => {
+  const { ActionRef, captureFromCamera, onImageLibraryPress } = props;
 
   return (
     <View>
@@ -12,10 +12,10 @@ const ActionSheetBox = props => {
         options={['Camera', 'Camera Roll', 'Cancel']}
         cancelButtonIndex={2}
         destructiveButtonIndex={2}
-        onPress={index => {
+        onPress={(index) => {
           if (index === 2) {
             return null;
-          } else if (index === 0) {
+          }else if (index === 0) {
             captureFromCamera();
             console.log('Camera Roll');
           } else {

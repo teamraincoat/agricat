@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native'
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   m0: {
@@ -64,6 +64,9 @@ export default StyleSheet.create({
   ml20: {
     marginLeft: 20,
   },
+  ml27: {
+    marginLeft: 27,
+  },
   ml30: {
     marginLeft: 30,
   },
@@ -124,8 +127,14 @@ export default StyleSheet.create({
   mt50: {
     marginTop: 50,
   },
+  mv8: {
+    marginVertical: 8,
+  },
   mv10: {
     marginVertical: 10,
+  },
+  mv15: {
+    marginVertical: 15,
   },
   mv20: {
     marginVertical: 20,
@@ -139,4 +148,4 @@ export default StyleSheet.create({
   mv5: {
     marginVertical: 5,
   },
-})
+});

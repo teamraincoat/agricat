@@ -1,52 +1,130 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-
+import React, { useState } from 'react';
+import {
+  Alert,
+  StyleSheet, TouchableOpacity, View,
+} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal';
-import CloseIcon from '../assets/icons/CloseIcon';
-import {colors, styles} from '../styles';
-import {useLocal} from '../contex/index';
+import { Buffer } from 'buffer';
+import { useRoute } from '@react-navigation/native';
 
-const ScanModal = props => {
-  const {visible, closeModal, setQrInfo} = props;
-  const {translations} = useLocal();
-  const onSuccessScan = e => {
+import moment from 'moment';
+import { colors, styles } from '../styles';
+import { useLocal } from '../contex/index';
+import { hp, wp } from '../styles/metrics';
+import EText from '../atoms/EText';
+import EButton from '../atoms/EButton';
+import ETextInput from '../atoms/ETextInput';
+import BackIcon from '../assets/icons/BackIcon';
+
+import { useUsers } from '../provider/UsersProvider';
+
+const ScanModal = (props) => {
+  const {
+    visible, closeModal, route,
+  } = props;
+  const { setEnrollData, setApplicationStartTime } = useUsers();
+  const [id, setId] = useState('');
+  const { translations } = useLocal();
+  const currentRoute = useRoute();
+  const onSuccessScan = (e) => {
     try {
-      setQrInfo(JSON.parse(e.data));
-      closeModal(false);
+      const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
+      const applicationStartTime = moment(new Date()).toISOString();
+      // const newQrData = e && e.data && (e.data).split('|');
+      const enrollmentId = qrData[1];
+      const campaignKey = qrData[0];
+      const scanResult = setEnrollData(enrollmentId, campaignKey);
+      if (scanResult && scanResult.length > 0) {
+        setApplicationStartTime(applicationStartTime);
+        route.navigate('Consent', { campaignKey });
+        closeModal(false);
+      } else {
+        Alert.alert(
+          'Error',
+          translations['ScanQr.error'],
+          [
+            {
+              text: 'OK',
+            },
+          ],
+          { cancelable: false },
+        );
+      }
     } catch (err) {
       console.error('An error occurred', err);
     }
   };
 
   const onCloseModal = () => {
-    closeModal(false);
+    if (currentRoute && currentRoute.name !== 'Home') {
+      route.navigate('Home');
+      closeModal(false);
+    } else {
+      closeModal(false);
+    }
   };
-
   return (
     <>
       <Modal
         isVisible={visible}
-        style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}>
+        style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}
+        onRequestClose={onCloseModal}
+        >
+          <View style={{ zIndex: 1 }}>
+            <View
+            style={[
+              styles.rowSpaceBetween,
+              styles.selfStart,
+              styles.mt25,
+              styles.mb15,
+              localStyles.headerContainer,
+            ]}>
+            <TouchableOpacity onPress={onCloseModal}>
+              <BackIcon />
+            </TouchableOpacity>
+            <EText
+              style={[
+                localStyles.centerText,
+                styles.selfCenter,
+                styles.pb0,
+                styles.h3,
+                { color: colors.black },
+              ]}>
+              {translations['ScanQr.title']}
+            </EText>
+            <View />
+          </View>
+          <ETextInput
+            defaultValue={id}
+            onChangeText={(text) => setId(text)}
+            autoCapitalize="none"
+            placeholder={translations['ScanQr.manualInputPlaceholder']}
+            returnKeyType="done"
+            blurOnSubmit={false}
+            style={localStyles.input}
+            placeholderTextColor={colors.grey}
+            // keyboardShouldPersistTaps
+          />
+        </View>
+
         <QRCodeScanner
           cameraStyle={[localStyles.cameraStyle, styles.selfCenter]}
           onRead={onSuccessScan}
-          topContent={
-            <View style={[styles.rowCenter, styles.p30]}>
-              <Text
-                style={[
-                  localStyles.centerText,
-                  styles.flex,
-                  styles.selfCenter,
-                  styles.pb0,
-                ]}>
-                {translations['ScanQrCode']}
-              </Text>
-              <TouchableOpacity onPress={onCloseModal}>
-                <CloseIcon />
-              </TouchableOpacity>
-            </View>
-          }
+          reactivate={true}
+          reactivateTimeout={3000}
+        />
+        <EButton
+          title={translations['ScanQr.enterManually']}
+          onClick={() => {
+            if (id && id !== '') {
+              closeModal(false);
+              onSuccessScan({ data: id });
+              route.navigate('Consent');
+              setId('');
+            }
+          }}
+          style={localStyles.scanButton}
         />
       </Modal>
     </>
@@ -55,13 +133,16 @@ const ScanModal = props => {
 
 const localStyles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: colors.black,
+    backgroundColor: colors.lightGrey,
   },
+  headerContainer: { width: wp(90), alignSelf: 'center' },
   cameraStyle: {
-    width: 200,
-    height: 200,
-    borderRadius: 4,
-    borderWidth: 4,
+    width: hp(100),
+  },
+  input: {
+    color: colors.black,
+    width: wp(90),
+    alignSelf: 'center',
   },
   centerText: {
     fontSize: 18,
@@ -70,6 +151,9 @@ const localStyles = StyleSheet.create({
   textBold: {
     fontWeight: '500',
     color: colors.white,
+  },
+  scanButton: {
+    ...styles.mv15,
   },
 });
 

@@ -1,5 +1,5 @@
-import {Platform, StyleSheet} from 'react-native'
-import {colors} from './colors'
+import { Platform, StyleSheet } from 'react-native';
+import { colors } from './colors';
 
 export default StyleSheet.create({
   absolute: {
@@ -38,4 +38,4 @@ export default StyleSheet.create({
   wfull: {
     width: '100%',
   },
-})
+});

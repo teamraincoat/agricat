@@ -1,3 +1,7 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "workbench.colorCustomizations": {
+        "terminal.background": "#3c4043",
+        "terminal.foreground": "#ffffff"
+    }
 }

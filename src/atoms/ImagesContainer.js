@@ -1,51 +1,38 @@
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   TouchableOpacity,
   PixelRatio,
   StyleSheet,
   Image,
-  FlatList,
 } from 'react-native';
 import DeleteIcon from '../assets/icons/DeleteIcon';
 
-const ImagesContainer = props => {
-  const {selectedFileImages, setSelectedImages} = props;
+const ImagesContainer = (props) => {
+  const { selectedFileImages, setSelectedImages } = props;
 
   const removeImage = useCallback(
-    imageName => {
-      let newImages = selectedFileImages.filter(
-        item => item.name !== imageName,
+    (imageName) => {
+      const newImages = selectedFileImages.filter(
+        (item) => item.name !== imageName,
       );
       setSelectedImages(newImages);
     },
     [selectedFileImages],
   );
-
-  const ImagesViewContainer = React.memo(({item}) => {
-    return (
-      <View style={localStyles.imageInnerContainer}>
-          <Image source={{ uri: `data:image/png;base64,${item.uri}`}} style={localStyles.imageStyle}  />
-        <TouchableOpacity
-          style={localStyles.deleteIcon}
-          onPress={() => removeImage(item.name)}>
-          <DeleteIcon />
-        </TouchableOpacity>
-      </View>
-    );
-  });
-
-  const renderImageView = ({item}) => <ImagesViewContainer item={item} />;
   return (
     <View style={localStyles.imageContainer}>
-      <FlatList
-        data={selectedFileImages}
-        keyExtractor={(item, index) => item.name}
-        extraData={selectedFileImages}
-        renderItem={renderImageView}
-        horizontal
-        showsHorizontalScrollIndicator={false}
+      <View style={localStyles.imageInnerContainer}>
+      <Image
+        source={{ uri: `data:image/png;base64,${selectedFileImages[0].uri}` }}
+        style={localStyles.imageStyle}
       />
+      <TouchableOpacity
+        style={localStyles.deleteIcon}
+        onPress={() => removeImage(selectedFileImages[0].name)}>
+        <DeleteIcon />
+      </TouchableOpacity>
+    </View>
     </View>
   );
 };
@@ -66,6 +53,7 @@ const localStyles = StyleSheet.create({
   imageInnerContainer: {
     position: 'relative',
     margin: 5,
+    marginLeft: 20,
   },
   deleteIcon: {
     position: 'absolute',

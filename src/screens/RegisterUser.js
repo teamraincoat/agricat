@@ -1,289 +1,323 @@
-import React, {useEffect, useRef, useState} from 'react';
+/* eslint-disable no-shadow */
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
   KeyboardAvoidingView,
-  Alert,
   SafeAreaView,
   StyleSheet,
   Platform,
+  Pressable,
+  Alert,
 } from 'react-native';
-import ETextInput from '../atoms/ETextInput';
-import EButton from '../atoms/EButton';
-import ScanModal from './ScanModal';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {colors, styles} from '../styles';
-import {useForm, Controller} from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {connect} from 'react-redux';
-import {useLocal} from '../contex/index';
+import { launchCamera } from 'react-native-image-picker';
+// import CheckBox from '@react-native-community/checkbox';
+import { Decimal128, ObjectId } from 'bson';
+
+import { TextInputMask } from 'react-native-masked-text';
+import ETextInput from '../atoms/ETextInput';
+import EButton from '../atoms/EButton';
+import { colors, styles } from '../styles';
 import EText from '../atoms/EText';
-import ActionSheetBox from '../atoms/ActionSheet';
-import ImagePicker from 'react-native-image-crop-picker';
+
+import Constants from '../constants/Constants';
+
 import ImagesContainer from '../atoms/ImagesContainer';
-import {useUsers} from '../provider/UsersProvider';
-import uuid from 'react-native-uuid';
-import ImgToBase64 from 'react-native-image-base64';
+import { useUsers } from '../provider/UsersProvider';
+import { LocalizeContext } from '../provider/LocalizeProvider';
+import { hp, normalize, wp } from '../styles/metrics';
+import CameraIcon from '../assets/icons/CameraIcon';
+import CloseIcon from '../assets/icons/CloseIcon';
+// import checkEnrollInfo from '../utils/curp';
+
 const gender = [
-  {label: 'Male', value: 'male'},
-  {label: 'Female', value: 'female'},
-  {label: 'Other', value: 'other'},
+  { label: 'Masculino', value: 'male' },
+  { label: 'Femenino', value: 'female' },
 ];
 
-const RegisterUser = ({navigation, enrollData}) => {
-  const [dateState, setDateState] = useState(true);
-  const [openDropDown, setOpenDropDown] = useState(false);
+const phoneOwnerItems = [
+  { label: 'Propio', value: 'self' },
+  { label: 'Vecinos/Familiares', value: 'friend-family' },
+];
+
+const marketingChannelItems = [
+  { label: 'CADER', value: 'cader' },
+  { label: 'Vecinos/Familiares', value: 'friends-family' },
+  { label: 'Líderes o Comisarios ejidales', value: 'community-leaders' },
+  { label: 'Folleto, manta, cartel, radio, etc.', value: 'trad-media' },
+  { label: 'Otro', value: 'other' },
+];
+
+const enrollmentPresenceItems = [
+  { label: 'Titular', value: 'self' },
+  { label: 'Familiar del/la titular', value: 'family' },
+];
+
+const enrollmentLocationItems = [
+  { label: 'CADER', value: 'cader' },
+  { label: 'Ejido', value: 'common-land' },
+  { label: 'Hogar del asegurado', value: 'home' },
+  { label: 'Otro', value: 'other' },
+];
+
+const questionOneOptions = [
+  { label: '0', value: '0' },
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+];
+const questionTwoOptions = [
+  { label: 'Huracán', value: 'hurricane' },
+  { label: 'Sequía', value: 'drought' },
+  { label: 'Mucha lluvia', value: 'excess-rain' },
+  { label: 'Incendio', value: 'fire' },
+  { label: 'Granizada', value: 'hail' },
+  { label: 'Plagas', value: 'plague' },
+  { label: 'Otros', value: 'other' },
+];
+
+const spokenLanguageItems = Constants.MX_INDIGENOUS_LANGUAGES.map(
+  (lang) => ({ label: lang, value: lang.toLowerCase() }),
+);
+// Prepend Spanish
+spokenLanguageItems.unshift({ label: 'Español', value: 'es' });
+
+const RegisterUser = ({ route, navigation }) => {
+  const { translations } = useContext(LocalizeContext);
+  const [openGenderDropDown, setOpenGenderDropDown] = useState(false);
+  const [openPhoneOwnerDropDown, setOpenPhoneOwnerDropDown] = useState(false);
+  const [openMarketingChannelDropDown, setOpenMarketingChannelDropDown] = useState(false);
+  const [openSpokenLangDropDown, setOpenSpokenLangDropDown] = useState(false);
+  // This question represents `enrollmentPresence`
+  const [openEnrollmentPresence, setOpenEnrollmentPresence] = useState(false);
+  // This question represents `enrollmentLocation`
+  const [openEnrollmentLocation, setOpenEnrollmentLocation] = useState(false);
+  // This question represents `lossLevel`
+  const [openQuestion1DropDown, setOpenQuestion1DropDown] = useState(false);
+  // This question represents `lossType`
+  const [openQuestion2DropDown, setOpenQuestion2DropDown] = useState(false);
+
+  // const [isSelected, setSelection] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const {translations} = useLocal();
-  const sheetRef = useRef();
+  // eslint-disable-next-line no-unused-vars
+  const [qrInfo, setQrInfo] = React.useState('');
+
+  const { submitAddUser, enrollDataById } = useUsers();
+  const [loading, setLoading] = useState(false);
+  const [spokenLanguageList, setSpokenLanguageList] = useState([]);
+  const [lossTypeList, setLossTypeList] = useState([]);
 
   const {
     control,
     getValues,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     reset,
+    register,
   } = useForm({
     defaultValues: {
-      firstName: 'testF',
-      lastName: 'TestL',
-      surName: 'TestS',
-      dateOfBirth: '',
-      enrollId: '222',
+      firstName: '',
+      lastName: '',
+      surName: '',
+      dob: '',
       gender: '',
-      contactNo: '855',
-      address: '842,grihi',
-      locality: 'ggreg',
-      municipality: 'gergr',
-      dateOfApplication: '',
-      policyPublicId: 'ger',
-      policyActiveId: 'geg',
-      geoJson: 'feggg',
-      coveredArea: '223',
-      crop: '222',
-      cropType: 'khkh',
-      cropCycle: 'iiih',
+      mobilePhone: '',
+      mobilePhoneOwner: '',
+      govId: '',
+      applicationTime: '',
+      coveredAreaHa: '',
+      marketingChannel: '',
       images: [],
+      notes: '',
+      enrollmentPresence: '',
+      enrollmentLocation: '',
+      question1: '',
+      question2: '',
     },
   });
-  const [modalVisible, setModalVisible] = useState(false);
-  const [qrInfo, setQrInfo] = React.useState('');
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const {submitAddUser} = useUsers();
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = date => {
-    const values = getValues();
-    if (dateState) {
-      reset({...values, dateOfBirth: date});
-    } else {
-      reset({...values, dateOfApplication: date});
-    }
-    hideDatePicker();
-  };
-
-  const showActionSheet = () => {
-    sheetRef.current.show();
-  };
 
   useEffect(() => {
-    if (qrInfo) {
+    if (enrollDataById) {
       const {
         firstName,
         lastName,
         surName,
         dob,
-        _id,
         gender,
         mobilePhone,
-        locality,
-        sublocality,
+        mobilePhoneOwner,
+        govId,
         applicationTime,
-        geoJson,
-        coveredArea,
-        crop,
-        cropType,
-        cropCycle,
-        policyPublicId,
-        policyActiveId,
-      } = qrInfo;
+        coveredAreaHa,
+        marketingChannel,
+        spokenLanguages,
+        notes,
+        images,
+        _annotations,
+      } = enrollDataById;
       reset({
-        firstName: firstName ? firstName : '',
-        lastName: lastName ? lastName : '',
-        surName: surName ? surName : '',
-        dateOfBirth: dob ? moment(dob).format('DD/MM/YYYY') : '',
-        enrollId: _id,
-        gender: gender ? gender : '',
-        contactNo: mobilePhone ? mobilePhone : '',
-        address: `${locality ? locality : ''}${sublocality ? sublocality : ''}`,
-        locality: locality ? locality : '',
-        municipality: sublocality ? sublocality : '',
-        dateOfApplication: applicationTime
-          ? moment(applicationTime).format('DD/MM/YYYY')
+        firstName: firstName || '',
+        lastName: lastName || '',
+        surName: surName || '',
+        dob: dob ? moment(new Date(dob)).format('DD-MM-YYYY') : '',
+        gender: gender || '',
+        mobilePhone: mobilePhone || '',
+        mobilePhoneOwner: mobilePhoneOwner || '',
+        govId: govId || '',
+        coveredAreaHa: coveredAreaHa || '0',
+        marketingChannel: marketingChannel || '',
+        spokenLanguages: spokenLanguages || [],
+        notes: notes || '',
+        applicationTime: applicationTime
+          ? moment(new Date(applicationTime)).format('DD/MM/YYYY')
           : '',
-        policyPublicId: policyPublicId ? policyPublicId : '',
-        policyActiveId: policyActiveId ? policyActiveId : '',
-        geoJson: geoJson ? geoJson : '',
-        coveredArea: coveredArea ? coveredArea : '',
-        crop: crop ? crop : '',
-        cropType: cropType ? cropType : '',
-        cropCycle: cropCycle ? cropCycle : '',
+        images: images || [],
+        enrollmentPresence: _annotations.presence ? _annotations.presence : '',
+        enrollmentLocation: _annotations.location ? _annotations.location : '',
+        question1: _annotations.lossLevel ? _annotations.lossLevel : '',
+        question2: _annotations.lossType ? _annotations.lossType : '',
       });
+      if (enrollDataById && enrollDataById.images
+        && enrollDataById.images.length > 0 && selectedFiles && selectedFiles.length === 0) {
+        setSelectedFiles([...enrollDataById.images]);
+      }
     }
-  }, [qrInfo]);
+  }, [enrollDataById]);
 
-  let register_user = data => {
-    submitAddUser({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      surName: data.surName,
-      gender: data.gender,
-      mobilePhone: data.contactNo,
-      address1: data.address,
-      dob: new Date(data.dateOfBirth),
-      locality: data.locality,
-      TBD: data.municipality,
-      municipality: data.municipality,
-      policyPublicId: data.policyPublicId,
-      policyActiveId: data.policyActiveId,
-      geoJson: data.geoJson,
-      coveredArea: data.coveredArea,
-      crop: data.crop,
-      cropType: data.cropType,
-      cropCycle: data.cropCycle,
-      dateOfApplication: data.dateOfApplication,
-      enrollId: 'rewrwerwer',
-      images: data.images,
-      _id: uuid.v4(),
-    });
-
-    Alert.alert(
-      translations['Success'],
-      translations['Registration.success'],
-      [
-        {
-          text: 'Ok',
-          onPress: () => navigation.navigate('Home'),
+  // eslint-disable-next-line camelcase
+  const register_user = (data) => {
+    let isModify = false;
+    if (enrollDataById && enrollDataById._id) {
+      isModify = true;
+    }
+    try {
+      const payload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        surName: data.surName,
+        gender: data.gender,
+        dob: moment(data.dob.replace(/-/g, '/'), 'DD-MM-YYYY'),
+        mobilePhone: data.mobilePhone.replace(/\s/g, ''),
+        mobilePhoneOwner: data.mobilePhoneOwner,
+        coveredAreaHa: Decimal128.fromString(
+          // If the covered area was already saved as
+          // Decimal, then we check the EJSON or
+          // use the plain text
+          typeof data.coveredAreaHa === 'object' ? data.coveredAreaHa.$numberDecimal : data.coveredAreaHa,
+        ),
+        govId: data.govId,
+        marketingChannel: data.marketingChannel,
+        spokenLanguages: data.spokenLanguages,
+        notes: data.notes,
+        images: data.images,
+        applicationTime: new Date(),
+        _annotations: {
+          presence: data.enrollmentPresence,
+          location: data.enrollmentLocation,
+          lossLevel: data.question1,
+          lossType: data.question2.join(','),
         },
-      ],
-      {cancelable: false},
-    );
+        _id: enrollDataById && enrollDataById._id ? enrollDataById._id : new ObjectId(),
+      };
+
+      // For enrollment `govId` verification:
+      //
+      // const farmerInfo = {
+      //   firstName: data.firstName,
+      //   lastName: data.lastName,
+      //   dob: data.dob,
+      //   gender: data.gender,
+      // };
+      // const isVerifiedData = checkEnrollInfo(farmerInfo);
+      const isVerifiedData = true;
+      if (isVerifiedData) {
+        submitAddUser(payload, navigation, isModify, route?.params?.campaignKey, setLoading);
+      } else {
+        Alert.alert(
+          'Error',
+          'Por favor verifique los datos ingresados',
+          [
+            {
+              text: 'OK',
+            },
+          ],
+          { cancelable: false },
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const onHandleScan = () => {
-    setModalVisible(true);
+  const checkValidation = () => {
+    const values = getValues();
+    if (values.firstName === '' || values.lastName === '' || values.surName === '' || values.gender === '' || values.dob === '' || values.mobilePhone === '' || values.govId === '' || values.coveredAreaHa === '' || values.question1 === '' ) {
+      return false;
+    }
+    return true;
   };
-
+  const onSubmit = () => {
+    if (!checkValidation()) {
+      Alert.alert(translations.Error, translations['Message.requireAlert']);
+    } else {
+      handleSubmit(register_user)();
+    }
+  };
   useEffect(() => {
     const values = getValues();
-    reset({...values, images: selectedFiles});
-  }, [selectedFiles]);
-
-  const formatImage = sourceUri => {
-    return new Promise(function (resolve, reject) {
-      ImgToBase64.getBase64String(sourceUri)
-        .then(base64String => {
-          resolve(base64String);
-        })
-        .catch(err => {
-          console.log('image encode error', err);
-          reject(err);
-        });
+    reset({
+      ...values,
+      images: selectedFiles,
+      spokenLanguages: spokenLanguageList.length > 0 ? spokenLanguageList : [],
+      question2: lossTypeList.length > 0 ? lossTypeList : [],
     });
-  };
-  const onImageLibraryPress = async () => {
-    ImagePicker.openPicker({
-      cropping: false,
-      multiple: true,
-      maxFiles: 5,
-    })
-      .then(images => {
-        if (images.didCancel) {
-          console.log('User cancelled photo picker');
-        } else if (images.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (images.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-        } else {
-          let listOfImages = [];
-          images.map(item => {
-            let sourceUri = Platform.OS === 'ios' ? item.sourceURL : item.path;
-            formatImage(sourceUri).then(response => {
-              listOfImages.push({
-                name:
-                  Platform.OS === 'ios'
-                    ? item.filename
-                    : item.path.substring(item.path.lastIndexOf('/') + 1),
-                size: item.size.toString(),
-                uri: response,
-                type: item.mime,
-              });
-              if (selectedFiles && selectedFiles.length > 0) {
-                function getUniqueListBy(arr, key) {
-                  return [
-                    ...new Map(arr.map(item => [item[key], item])).values(),
-                  ];
-                }
-                const finalFilesList = [...listOfImages, ...selectedFiles];
-                const uniqueFilesList = getUniqueListBy(finalFilesList, 'name');
-                setSelectedFiles(uniqueFilesList);
-              } else {
-                setSelectedFiles([...listOfImages]);
-              }
-            });
-          });
-        }
-      })
-      .catch(err => {
-        console.log('error while choose image from Library===>', err);
-      });
-  };
+  }, [selectedFiles, spokenLanguageList, lossTypeList]);
+
 
   const onCameraPress = () => {
-    ImagePicker.openCamera({
-      width: 300,
-      height: 300,
-      cropping: true,
+    const selectedImage = [];
+    launchCamera({
+      mediaType: 'image',
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 0.8,
+      includeBase64: true,
     })
-      .then(image => {
-        let selectedImage = [];
-        formatImage(image.path).then(response => {
-          selectedImage.push({
-            name: image.path.substring(image.path.lastIndexOf('/') + 1),
-            size: image.size.toString(),
-            uri: response,
-            type: image.mime,
-          });
-          setSelectedFiles(selectedFiles.concat(selectedImage));
+      .then((response) => {
+        if (response.didCancel) {
+          return;
+        }
+        selectedImage.push({
+          name: response.assets[0].fileName,
+          size: response.assets[0].fileSize.toString(),
+          uri: response.assets[0].base64,
+          type: response.assets[0].type,
         });
+        setSelectedFiles(selectedFiles.concat(selectedImage));
       })
-      .catch(err => {
-        console.log('error while choose image from Camera===>', err);
+      .catch((err) => {
+        if (err.code === 'E_PICKER_CANCELLED') return;
+        console.error('Error while choosing image from camera:', err);
       });
   };
 
   return (
     <SafeAreaView style={styles.flex}>
-      <ActionSheetBox
-        ActionRef={sheetRef}
-        captureFromCamera={onCameraPress}
-        onImageLibraryPress={onImageLibraryPress}
-      />
-      <View style={[localStyles.mainContainer, styles.flex, styles.p15]}>
-        <View style={[styles.rowSpaceBetween, styles.mb20]}>
-          <EButton
-            title={translations['Back']}
-            onClick={() => navigation.goBack(null)}
-          />
-          <EButton title={translations['Scan']} onClick={onHandleScan} />
+      <View style={[localStyles.mainContainer, styles.flex]}>
+        <View style={localStyles.enrollTextContainer}>
+          <View style={localStyles.headerContent}>
+            <Pressable onPress={() => navigation.goBack()}>
+              <CloseIcon />
+            </Pressable>
+            <EText style={localStyles.title}>{translations['Enroller.title']}</EText>
+            <View></View>
+          </View>
+          <EText style={localStyles.subTitle}>
+            {translations['Enroller.subTitle']}
+          </EText>
         </View>
         <View style={styles.flex}>
           <KeyboardAvoidingView
@@ -294,460 +328,589 @@ const RegisterUser = ({navigation, enrollData}) => {
               showsVerticalScrollIndicator={false}>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
+                rules={{ required: translations['Field.required'] }}
+                render={({
+                  field: {
+                    onChange, onBlur, value,
+                  },
+                }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.firstName']}
-                    style={styles.p10}
+                    style={[styles.p10]}
                     onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                    label={<EText>{translations['Enroller.firstName']}</EText>}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
+                    error={!!errors.firstName}
+                    errorText={errors.firstName && errors.firstName.message}
                   />
                 )}
                 name="firstName"
               />
-              {errors.firstName && (
+              {/* {errors.firstName && (
                 <EText>{translations['Field.required']}</EText>
-              )}
+              )} */}
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
+                rules={{ required: translations['Field.required'] }}
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.lastName']}
-                    style={styles.p10}
+                    style={[styles.p10]}
                     onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                    label={<EText>{translations['Enroller.lastName']}</EText>}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
+                    error={!!errors.lastName}
+                    errorText={errors.lastName && errors.lastName.message}
                   />
                 )}
                 name="lastName"
               />
-              {errors.lastName && (
-                <EText>{translations['Field.required']}</EText>
-              )}
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
+                rules={{ required: translations['Field.required'] }}
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.surName']}
-                    style={styles.p10}
+                    style={[styles.p10]}
                     onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                    label={<EText>{translations['Enroller.surName']}</EText>}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
+                    error={!!errors.surName}
+                    errorText={errors.surName && errors.surName.message}
                   />
                 )}
                 name="surName"
               />
-              {errors.surName && (
-                <EText>{translations['Field.required']}</EText>
-              )}
+              <EText style={localStyles.labelStyle}>{translations['Enroller.gender']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {value}}) => (
-                  <EButton
-                    title={
-                      value
-                        ? moment(value).format('DD/MM/YYYY')
-                        : translations['Placeholder.birthDate']
-                    }
-                    onClick={() => {
-                      setDateState(true);
-                      showDatePicker();
+                rules={{ required: translations['Field.required'] }}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.gender']}
+                    open={openGenderDropDown}
+                    value={value}
+                    items={gender}
+                    setOpen={setOpenGenderDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
                     }}
-                    style={localStyles.datePicker}
-                    textStyle={[
-                      styles.selfStart,
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
                       {
-                        color: !value ? colors.grey : colors.black,
-                        fontWeight: 'normal',
+                        borderColor: errors.gender
+                          ? colors.red
+                          : colors.transparent,
                       },
                     ]}
+                    disableBorderRadius={true}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="dateOfBirth"
-              />
-              {errors.dateOfBirth && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.enrollId']}
-                    keyboardType="numeric"
-                    style={styles.p10}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                  />
-                )}
-                name="enrollId"
-              />
-              {errors.enrollId && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {value, onChange}}) => {
-                  return (
-                    <DropDownPicker
-                      placeholder={translations['Placeholder.gender']}
-                      open={openDropDown}
-                      value={value}
-                      items={gender}
-                      setOpen={setOpenDropDown}
-                      setValue={onChange}
-                      onChangeValue={value => {
-                        onChange(value);
-                      }}
-                      style={[localStyles.dropDownStyle, styles.mt10]}
-                      disableBorderRadius={true}
-                      textStyle={{
-                        color: !value ? colors.grey : colors.black,
-                      }}
-                      listMode="SCROLLVIEW"
-                    />
-                  );
-                }}
                 name="gender"
               />
-              {errors.gender && <EText>{translations['Field.required']}</EText>}
+              {errors.gender && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
+
+              <EText style={localStyles.labelStyle}>{translations['Enroller.dob']}</EText>
               <Controller
                 control={control}
                 rules={{
-                  required: true,
+                  required: translations['Field.required'],
+                  pattern: {
+                    value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
+                    message: 'invalid date',
+                  },
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.contactNo']}
-                    style={styles.p10}
-                    onBlur={onBlur}
-                    keyboardType="numeric"
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    maxLength={10}
-                  />
-                )}
-                name="contactNo"
-              />
-              {errors.contactNo && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.address']}
-                    maxLength={225}
-                    onBlur={onBlur}
-                    multiline={true}
-                    numberOfLines={5}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={[{textAlignVertical: 'top'}, styles.p10]}
-                  />
-                )}
-                name="address"
-              />
-              {errors.address && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.locality']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="locality"
-              />
-              {errors.locality && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.municipality']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="municipality"
-              />
-              {errors.municipality && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {value}}) => (
-                  <EButton
-                    title={
-                      value
-                        ? moment(value).format('DD/MM/YYYY')
-                        : translations['Placeholder.applicationDate']
-                    }
-                    onClick={() => {
-                      setDateState(false);
-                      showDatePicker();
+
+                render={({ field: { onChange, value } }) => (
+                  <TextInputMask
+                    type={'datetime'}
+                    options={{
+                      format: 'DD-MM-YYYY',
                     }}
-                    style={localStyles.datePicker}
-                    textStyle={[
-                      styles.selfStart,
+                    placeholder={translations['Placeholder.birthDate']}
+                    style={[localStyles.datePicker,
+                      errors.dob && { borderColor: colors.red, borderWidth: 2 }]}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                    />
+                )}
+                name="dob"
+              />
+              {errors.dob && <EText style={localStyles.errorText}>{errors.dob.message}</EText>}
+              <EText style={localStyles.labelStyle}>{translations['Enroller.telephone']}</EText>
+              <Controller
+                control={control}
+                rules={{ required: translations['Field.required'] }}
+                render={({ field: { onChange, value } }) => (
+                  <TextInputMask
+                  type={'custom'}
+                  options={{
+                    mask: '+52 999 999 9999',
+                  }}
+                 placeholder={translations['Placeholder.contactNo']}
+                 value={value}
+                 keyboardType="number-pad"
+                 onChangeText={(value) => onChange(value)}
+                    style={[localStyles.inputStyle,
+                      errors.mobilePhone && { borderColor: colors.red, borderWidth: 2 }]}
+                />
+                )}
+                name="mobilePhone"
+              />
+              {errors.mobilePhone && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
+              <EText style={localStyles.labelStyle}>{translations['Enroller.telephoneOwner']}</EText>
+              <Controller
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openPhoneOwnerDropDown}
+                    value={value}
+                    items={phoneOwnerItems}
+                    setOpen={setOpenPhoneOwnerDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
                       {
-                        color: !value ? colors.grey : colors.black,
-                        fontWeight: 'normal',
+                        borderColor: colors.transparent,
                       },
                     ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="dateOfApplication"
+                name="mobilePhoneOwner"
               />
-              {errors.dateOfApplication && (
-                <EText>{translations['Field.required']}</EText>
-              )}
+
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
+                rules={{ required: translations['Field.required'] }}
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
-                    placeholder={translations['Placeholder.policyId']}
                     onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                    label={<EText>CURP</EText>}
+                    onChangeText={(value) => onChange(value)}
                     value={value}
                     style={styles.p10}
+                    error={!!errors.govId}
+                    errorText={errors.govId && errors.govId.message}
                   />
                 )}
-                name="policyPublicId"
+                name="govId"
               />
-              {errors.policyPublicId && (
-                <EText>{translations['Field.required']}</EText>
-              )}
               <Controller
                 control={control}
                 rules={{
-                  required: true,
+                  required: false,
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.policyActiveId']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="policyActiveId"
-              />
-              {errors.policyActiveId && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.enrolleeCoordinate']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={styles.p10}
-                  />
-                )}
-                name="geoJson"
-              />
-              {errors.geoJson && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <Controller
-                control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
+                render={({ field: { onChange, onBlur, value } }) => (
                   <ETextInput
                     placeholder={translations['Placeholder.coveredCropArea']}
                     onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
-                    value={value}
-                    style={styles.p10}
+                    label={<EText>{translations['Enroller.coveredCropArea']}</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={typeof value === 'object' ? value.$numberDecimal : value}
+                    style={[styles.p10, localStyles.readOnly]}
                     keyboardType="numeric"
+                    editable={false}
                   />
                 )}
-                name="coveredArea"
+                name="coveredAreaHa"
               />
-              {errors.coveredArea && (
-                <EText>{translations['Field.required']}</EText>
-              )}
+              <EText style={localStyles.labelStyle}>{translations['Enroller.marketingChannel']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.coveredCrop']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openMarketingChannelDropDown}
                     value={value}
-                    style={styles.p10}
+                    items={marketingChannelItems}
+                    setOpen={setOpenMarketingChannelDropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="crop"
+                name="marketingChannel"
               />
-              {errors.crop && <EText>{translations['Field.required']}</EText>}
+
+            <EText style={localStyles.labelStyle}>{translations['Enroller.spokenLanguage']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.cropType']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openSpokenLangDropDown}
+                    multiple={true}
+                     value={[...spokenLanguageList]}
+                    items={spokenLanguageItems}
+                    setOpen={setOpenSpokenLangDropDown}
+                    setValue={(value) => {
+                      setSpokenLanguageList(value);
+                      setOpenSpokenLangDropDown(!openSpokenLangDropDown);
+                    }}
+
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="spokenLanguages"
+              />
+
+              <EText style={localStyles.labelStyle}>{translations['Enroller.presence']}</EText>
+              <Controller
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openEnrollmentPresence}
                     value={value}
-                    style={styles.p10}
+                    items={enrollmentPresenceItems}
+                    setOpen={setOpenEnrollmentPresence}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="cropType"
+                name="enrollmentPresence"
               />
-              {errors.cropType && (
-                <EText>{translations['Field.required']}</EText>
-              )}
+
+              <EText style={localStyles.labelStyle}>{translations['Enroller.location']}</EText>
               <Controller
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <ETextInput
-                    placeholder={translations['Placeholder.enrollCoveredCrop']}
-                    onBlur={onBlur}
-                    onChangeText={value => onChange(value)}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openEnrollmentLocation}
                     value={value}
-                    style={styles.p10}
+                    items={enrollmentLocationItems}
+                    setOpen={setOpenEnrollmentLocation}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="cropCycle"
+                name="enrollmentLocation"
               />
-              {errors.cropCycle && (
-                <EText>{translations['Field.required']}</EText>
-              )}
-              <ImagesContainer
-                selectedFileImages={selectedFiles}
-                setSelectedImages={setSelectedFiles}
+
+              <Controller
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <ETextInput
+                    placeholder={translations['Placeholder.notes']}
+                    onBlur={onBlur}
+                    label={<EText>{translations['Enroller.notes']}</EText>}
+                    onChangeText={(value) => onChange(value)}
+                    value={value}
+                    maxLength={225}
+                    multiline={true}
+                    numberOfLines={5}
+                    style={[
+                      styles.p10,
+                      { textAlignVertical: 'top', height: hp(12) },
+                    ]}
+                  />
+                )}
+                name="notes"
               />
+            <View style={[localStyles.enrollTextContainer, styles.mb20]}>
+            <EText style={localStyles.title}>{translations['Enroller.questions']}</EText>
+            <EText style={localStyles.subTitle}>
+              {translations['Enroller.questionInstruction']}
+            </EText>
+            </View>
+            <EText style={localStyles.labelStyle}>{translations['Enroller.question1']}</EText>
+              <Controller
+                control={control}
+                rules={{ required: translations['Field.required'] }}
+                render={({ field: { value, onChange } }) => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openQuestion1DropDown}
+                    value={value}
+                    items={questionOneOptions}
+                    setOpen={setOpenQuestion1DropDown}
+                    setValue={onChange}
+                    onChangeValue={(value) => {
+                      onChange(value);
+                      const values = getValues();
+                      reset({
+                        ...values,
+                        question1: value,
+                      });
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: errors.question1 ? colors.red : colors.transparent,
+                      },
+                    ]}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
+                  />
+                )}
+                name="question1"
+              />
+              {errors.question1 && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
+              <EText style={localStyles.labelStyle}>{translations['Enroller.question2']}</EText>
               <Controller
                 control={control}
                 rules={{
-                  required: true,
+                  required: !(getValues().question1 === '0' || getValues().question1 === ''),
                 }}
-                render={({field: {onChange, onBlur, value}}) => (
-                  <EButton
-                    title={translations['AddImage']}
-                    onClick={() => showActionSheet()}
-                    style={localStyles.addImageButton}
+                render={() => (
+                  <DropDownPicker
+                    placeholder={translations['Placeholder.selectItem']}
+                    open={openQuestion2DropDown}
+                    items={questionTwoOptions}
+                    setOpen={setOpenQuestion2DropDown}
+                     multiple={true}
+                     value={[...lossTypeList]}
+                    setValue={(value) => {
+                      setLossTypeList(value);
+                      setOpenQuestion2DropDown(!openQuestion2DropDown);
+                    }}
+                    style={[
+                      localStyles.dropDownStyle,
+                      { ...styles.mt10 },
+                      {
+                        borderColor: errors.question2 ? colors.red : colors.transparent,
+                      },
+                    ]}
+                    textStyle={{
+                      color: colors.black,
+                      ...styles.h3,
+                    }}
+                    disableBorderRadius={true}
+                    dropDownContainerStyle={
+                      localStyles.dropDownContainerStyle
+                    }
+                    listMode="SCROLLVIEW"
                   />
                 )}
-                name="images"
+                name="question2"
               />
-              {errors.images && <EText>{translations['Field.required']}</EText>}
+              {errors.question2 && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
+
+              <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
+              {selectedFiles && selectedFiles.length > 0 ? (
+                <ImagesContainer
+                  selectedFileImages={selectedFiles}
+                  setSelectedImages={setSelectedFiles}
+                />
+              ) : (
+                <Controller
+                  control={control}
+                  rules={{ required: translations['Field.required'] }}
+                  render={() => (
+                    <EButton
+                    title={translations['Enroller.imageButton']}
+                      onClick={() => onCameraPress()}
+                      style={localStyles.addImageButton}>
+                      <Pressable>
+                        <CameraIcon />
+                      </Pressable>
+                    </EButton>
+                  )}
+                  name="images"
+                />
+              )}
+              {errors.images && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
 
               <EButton
-                title={translations['Submit']}
-                onClick={handleSubmit(register_user)}
+                title={translations['Enroller.complete']}
+                onClick={onSubmit}
+                loading={loading}
+                style={styles.mb10}
               />
-               {/* <EButton
-                title={translations['Submit']}
-                onClick={() => submitAddEditBook()}
-              /> */}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
       </View>
-      <ScanModal
-        visible={modalVisible}
-        closeModal={setModalVisible}
-        setQrInfo={setQrInfo}
-      />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        maximumDate={new Date()}
-      />
     </SafeAreaView>
   );
 };
 
 const localStyles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.lightGrey,
+  },
+  title: {
+    ...styles.h1,
+    color: colors.black,
+    ...styles.mv8,
+  },
+  subTitle: {
+    color: colors.black,
+    ...styles.h3,
+    ...styles.mv8,
+  },
+  enrollTextContainer: {
+    ...styles.center,
+    ...styles.mt15,
+  },
+  headerContent: {
+    ...styles.rowSpaceBetween,
+    width: wp(85),
+    // ...styles.alignStart,
+  },
+  headerContainer: {
+    ...styles.rowSpaceBetween,
+    ...styles.ph10,
+  },
+  headerButton: {
+    width: '40%',
+    marginHorizontal: 10,
   },
   dropDownStyle: {
-    backgroundColor: colors.white,
-    borderColor: colors.lightBlue,
-    borderRadius: 0,
+    ...styles.radius5,
+    ...styles.mv10,
+    ...styles.mh10,
+    ...styles.selfCenter,
+    ...styles.borderLight,
+    width: wp(90),
+    height: hp(7),
+  },
+  labelStyle: {
+    color: colors.black,
+    ...styles.h2,
+    ...styles.mh25,
+    fontSize: normalize(12),
+  },
+  readOnly: {
+    backgroundColor: colors.cream,
+    color: colors.black,
   },
   datePicker: {
+    ...styles.mv5,
+    ...styles.pv10,
+    ...styles.borderLight,
+    ...styles.ph15,
+    elevation: 0,
+    width: wp(90),
+    ...styles.selfCenter,
     backgroundColor: colors.white,
-    borderColor: colors.black,
-    borderWidth: 1,
-    borderColor: colors.lightBlue,
+    color: 'black',
+    ...styles.radius5,
+    height: hp(7),
+  },
+  dropDownContainerStyle: {
+    ...styles.radius5,
+    ...styles.selfCenter,
+    ...styles.borderLight,
+    zIndex: 9999,
+    elevation: 9999,
+    width: wp(90),
   },
   addImageButton: {
-    backgroundColor: 'green',
+    ...styles.mh20,
+    ...styles.ph15,
+    ...styles.selfStart,
+    ...styles.rowSpaceBetween,
+    ...styles.mv10,
+    width: wp(50),
+  },
+  errorText: {
+    color: colors.red,
+    ...styles.mh20,
+    ...styles.mv10,
+  },
+  inputStyle: {
+    color: colors.black,
+    ...styles.mv10,
+    ...styles.ph10,
+    ...styles.pv10,
+    ...styles.borderLight,
+    ...styles.ph15,
+    elevation: 0,
+    width: wp(90),
+    ...styles.selfCenter,
+    backgroundColor: colors.white,
+    ...styles.radius5,
+    height: hp(7),
   },
 });
 
-const mapStateToProps = ({EnrollReducers}) => {
-  const {enrollData} = EnrollReducers;
-  return {
-    enrollData,
-  };
-};
-
-export default connect(mapStateToProps)(RegisterUser);
+export default RegisterUser;
