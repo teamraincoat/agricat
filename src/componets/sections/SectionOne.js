@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
@@ -7,13 +8,35 @@ import { SECTION_ONE_FIELDS } from '../../config/StaticData';
 import { translations } from '../../provider/LocalizeProvider';
 
 const SectionOne = ({
-  control, errors, reset, getValues, dropDownItems,
+  control,register, errors, reset, getValues, dropDownItems, enrollerData,
 }) => {
   const [openDropDown, setOpenDropDown] = useState(false);
 
   return (
      <View style={styles.container}>
-         {SECTION_ONE_FIELDS.map((field, index) => (
+         {SECTION_ONE_FIELDS.map((field, index) => {
+           let inputValue = '';
+           switch (field.name) {
+             case 'liftingDate':
+               inputValue = moment(new Date()).format('DD-MM-YYYY');
+               break;
+             case 'folioNumber':
+               inputValue = enrollerData.folioNumber;
+               break;
+             case 'sex':
+               inputValue = enrollerData.sex;
+               break;
+             case 'hectareArea':
+               inputValue = enrollerData.coveredAreaHa?.$numberDecimal;
+               break;
+             case 'speakingLanguage':
+               inputValue = enrollerData.spokenLanguages.join(',');
+               break;
+             default:
+               inputValue = '';
+               break;
+           }
+           return (
             <View key={index}>
             <Controller
               control={control}
@@ -26,8 +49,7 @@ const SectionOne = ({
                   onBlur={onBlur}
                   disabled
                   label={translations[`${field.label}`]}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
+                  value={inputValue}
                   error={!!errors.field}
                   errorText={errors.field && errors.field.message}
                 />
@@ -35,7 +57,8 @@ const SectionOne = ({
               name={field.name}
             />
             </View>
-         ))}
+           );
+         })}
 
         <DropDown
               control={control}

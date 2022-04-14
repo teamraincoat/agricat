@@ -203,7 +203,13 @@ const UsersProvider = ({ children }) => {
               navigation.navigate('ImpactReportScreens', {
                 screen: 'Section12Screen',
                 params: {
-                  id: cipheredEnrollment._id,
+                  enrollerData: {
+                    id: cipheredEnrollment._id,
+                    sex: cipheredEnrollment.gender,
+                    spokenLanguages: cipheredEnrollment.spokenLanguages,
+                    coveredAreaHa: cipheredEnrollment.coveredAreaHa,
+                    folioNumber: cipheredEnrollment.govId,
+                  },
                 },
               });
             } else {

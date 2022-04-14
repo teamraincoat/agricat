@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,6 +17,7 @@ import SectionTwo from '../../componets/sections/SectionTwo';
 import EButton from '../../atoms/EButton';
 import { SPRING_SUMMER_CORN_CROP_LIST, RESPONDER_LIST } from '../../config/StaticData';
 import { useReports } from '../../provider/ImpactReportProvider';
+import moment from 'moment';
 
 const Section12Screen = ({ navigation, route }) => {
   const {
@@ -29,10 +30,24 @@ const Section12Screen = ({ navigation, route }) => {
     setEnrollerId,
   } = useReports();
 
-  const id = route.params?.id ?? '';
-  if (enrollerId === null && id !== '') {
-    setEnrollerId(id);
+  const enrollerData = route.params?.enrollerData ?? '';
+  if (enrollerId === null && enrollerData.id !== '') {
+    setEnrollerId(enrollerData.id);
   }
+  useEffect(() => {
+    if (enrollerData !== '') {
+      const currentFields = getValues();
+      const newFields = {
+        ...currentFields,
+        liftingDate: moment(new Date()).format('DD-MM-YYYY'),
+        folioNumber: enrollerData.folioNumber,
+        sex: enrollerData.sex,
+        hectareArea: enrollerData.coveredAreaHa?.$numberDecimal,
+        speakingLanguage: enrollerData.spokenLanguages.join(','),
+      };
+      reset(newFields);
+    }
+  }, [enrollerData]);
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
@@ -51,6 +66,7 @@ const Section12Screen = ({ navigation, route }) => {
             <SectionOne
               control={control}
               errors={errors}
+              enrollerData={enrollerData}
               reset={reset}
               getValues={getValues}
               dropDownItems={RESPONDER_LIST}

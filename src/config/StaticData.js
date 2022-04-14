@@ -571,11 +571,11 @@ export const SECTION_FOUR_QUESTIONS = [
     dropDownList: [
       {
         label: `${translations['Section.Section4.representIncome.option1']}`,
-        value: 'representIncomeYes',
+        value: 'Yes',
       },
       {
         label: `${translations['Section.Section4.representIncome.option2']}`,
-        value: 'representIncomeNo',
+        value: 'No',
       },
     ],
   },
@@ -664,11 +664,11 @@ export const SECTION_FIVE_QUESTIONS = [
     dropDownList: [
       {
         label: `${translations['Section.Section5.agriculturalInsurance.option1']}`,
-        value: 'agriculturalInsuranceYes',
+        value: 'Yes',
       },
       {
         label: `${translations['Section.Section5.agriculturalInsurance.option2']}`,
-        value: 'agriculturalInsuranceNo',
+        value: 'No',
       },
 
     ],
