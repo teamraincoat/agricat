@@ -193,8 +193,6 @@ const UsersProvider = ({ children }) => {
             setUsers(sortedUsers);
             setLoading(false);
 
-            console.log('Survey Enabled', enrollment.surveyEnabled);
-
             if (enrollment.surveyEnabled) {
               navigation.navigate('ImpactReport', {});
             } else {
