@@ -128,7 +128,7 @@
   "Placeholder.confirmPassword": "Enter Confirm Password",
   "Placeholder.languageList": "Please select languages",
   "Placeholder.surName": "Enter Surname",
-  "Placeholder.birthDate": "DD-MM-YYYY",
+  "Placeholder.birthDate": "YYYY-MM-DD",
   "Placeholder.enrollId": "Enter Enrolled id",
   "Placeholder.gender": "Select gender",
   "Placeholder.contactNo": "Enter the phone number",

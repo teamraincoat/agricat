@@ -35,7 +35,7 @@ const ALGORITHM = 'aes-256-cbc';
 
 export const decrypt = async (encryptedMessage, cipherKey, iv) => {
   const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.from(iv, 'base64'));
-  decipher.setAutoPadding(false);
+  decipher.setAutoPadding(true);
 
   let decrypted = decipher.update(Buffer.from(encryptedMessage, 'base64'), 'base64');
   decrypted += decipher.final();

@@ -116,12 +116,11 @@ const RegisterUser = ({ route, navigation }) => {
     handleSubmit,
     formState: { errors },
     reset,
-    register,
   } = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
-      surName: '',
+      secondLastName: '',
       dob: '',
       gender: '',
       mobilePhone: '',
@@ -144,7 +143,7 @@ const RegisterUser = ({ route, navigation }) => {
       const {
         firstName,
         lastName,
-        surName,
+        secondLastName,
         dob,
         gender,
         mobilePhone,
@@ -161,10 +160,10 @@ const RegisterUser = ({ route, navigation }) => {
       reset({
         firstName: firstName || '',
         lastName: lastName || '',
-        surName: surName || '',
-        dob: dob ? moment(new Date(dob)).format('DD-MM-YYYY') : '',
+        secondLastName: secondLastName || '',
+        dob: dob || '',
         gender: gender || '',
-        mobilePhone: mobilePhone || '',
+        mobilePhone: mobilePhone || '+52',
         mobilePhoneOwner: mobilePhoneOwner || '',
         govId: govId || '',
         coveredAreaHa: coveredAreaHa || '0',
@@ -197,9 +196,9 @@ const RegisterUser = ({ route, navigation }) => {
       const payload = {
         firstName: data.firstName,
         lastName: data.lastName,
-        surName: data.surName,
+        secondLastName: data.secondLastName,
         gender: data.gender,
-        dob: moment(data.dob.replace(/-/g, '/'), 'DD-MM-YYYY'),
+        dob: data.dob,
         mobilePhone: data.mobilePhone.replace(/\s/g, ''),
         mobilePhoneOwner: data.mobilePhoneOwner,
         coveredAreaHa: Decimal128.fromString(
@@ -254,7 +253,7 @@ const RegisterUser = ({ route, navigation }) => {
 
   const checkValidation = () => {
     const values = getValues();
-    if (values.firstName === '' || values.lastName === '' || values.surName === '' || values.gender === '' || values.dob === '' || values.mobilePhone === '' || values.govId === '' || values.coveredAreaHa === '' || values.question1 === '' ) {
+    if (values.firstName === '' || values.lastName === '' || values.secondLastName === '' || values.gender === '' || values.dob === '' || values.mobilePhone === '' || values.govId === '' || values.coveredAreaHa === '' || values.question1 === '') {
       return false;
     }
     return true;
@@ -275,7 +274,6 @@ const RegisterUser = ({ route, navigation }) => {
       question2: lossTypeList.length > 0 ? lossTypeList : [],
     });
   }, [selectedFiles, spokenLanguageList, lossTypeList]);
-
 
   const onCameraPress = () => {
     const selectedImage = [];
@@ -382,7 +380,7 @@ const RegisterUser = ({ route, navigation }) => {
                     errorText={errors.surName && errors.surName.message}
                   />
                 )}
-                name="surName"
+                name="secondLastName"
               />
               <EText style={localStyles.labelStyle}>{translations['Enroller.gender']}</EText>
               <Controller
@@ -429,8 +427,8 @@ const RegisterUser = ({ route, navigation }) => {
                 rules={{
                   required: translations['Field.required'],
                   pattern: {
-                    value: /^([0-9]{2})-([0-9]{2})-([0-9]{4})$/,
-                    message: 'invalid date',
+                    value: /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/,
+                    message: 'Fecha inválida',
                   },
                 }}
 
@@ -438,7 +436,7 @@ const RegisterUser = ({ route, navigation }) => {
                   <TextInputMask
                     type={'datetime'}
                     options={{
-                      format: 'DD-MM-YYYY',
+                      format: 'YYYY-MM-DD',
                     }}
                     placeholder={translations['Placeholder.birthDate']}
                     style={[localStyles.datePicker,

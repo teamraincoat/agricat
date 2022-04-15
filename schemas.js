@@ -1,39 +1,27 @@
-export const CampaignSchema = {
-  name: 'Campaign',
-  properties: {
-    _id: 'objectId',
-    _partition: 'string',
-    description: 'string?',
-    encryptionKey: 'string?',
-    endTime: 'date',
-    name: 'string',
-    // organizer: 'Organizer',
-    startTime: 'date',
-    status: 'string',
-  },
-  primaryKey: '_id',
-};
+import Realm from 'realm';
 
 export const EnrollmentSchema = {
   name: 'Enrollment',
   properties: {
     _id: 'objectId',
+    _annotations: 'mixed{}',
     _partition: 'string',
     _userId: 'string?',
-    _annotations: '{}',
     addressLine: 'string?',
     adminArea: 'string',
     adminAreaId: 'string',
     applicationStartTime: 'date?',
     applicationTime: 'date?',
-    // campaign: 'Campaign',
-    coveredAreaHa: 'decimal128?',
-    crop: 'string',
+    coveredAreaHa: 'decimal128',
+    crop: 'string?',
     cropId: 'string?',
-    cropType: 'string?',
-    dob: 'date',
+    dob: 'string',
+    droughtLocationId: 'string?',
+    droughtSeasonStart: 'string?',
+    droughtSeasonStop: 'string?',
+    droughtThresholds: 'string?',
     firstName: 'string',
-    gender: 'string',
+    gender: 'string?',
     geoJson: 'string?',
     govId: 'string?',
     images: 'Enrollment_images[]',
@@ -44,14 +32,20 @@ export const EnrollmentSchema = {
     mobilePhone: 'string?',
     mobilePhoneOwner: 'string?',
     notes: 'string?',
+    originIds: 'string?',
     payoutMethod: 'string?',
     payoutMethodId: 'string?',
-    spokenLanguage: 'string?',
+    propertyIds: 'string?',
+    rainfallLocationId: 'string?',
+    rainfallSeasonStart: 'string?',
+    rainfallSeasonStop: 'string?',
+    rainfallThresholds: 'string?',
+    secondLastName: 'string?',
     spokenLanguages: 'string[]',
     status: 'string?',
-    subLocality: 'string',
-    subLocalityId: 'string',
-    surName: 'string?',
+    subLocality: 'string?',
+    subLocalityId: 'string?',
+    surveyEnabled: 'bool?',
   },
   primaryKey: '_id',
 };
@@ -67,50 +61,36 @@ export const Enrollment_imagesSchema = {
   },
 };
 
-export const InsurerSchema = {
-  name: 'Insurer',
-  properties: {
-    _id: 'objectId',
-    _partition: 'string',
-    adminOf: 'Location[]',
-    name: 'string',
-    status: 'string',
-  },
-  primaryKey: '_id',
-};
-
-export const LocationSchema = {
-  name: 'Location',
-  embedded: true,
-  properties: {
-    name: 'string?',
-    partition: 'string?',
-  },
-};
-
-export const OrganizerSchema = {
-  name: 'Organizer',
-  properties: {
-    _id: 'objectId',
-    _partition: 'string',
-    // insurer: 'Insurer',
-    name: 'string',
-    status: 'string',
-  },
-  primaryKey: '_id',
-};
-
 export const UserSchema = {
   name: 'User',
   properties: {
     _id: 'string',
     _partition: 'string',
+    canReadPartitions: 'string[]',
+    canWritePartitions: 'string[]',
     email: 'string',
     isFirstLogin: 'bool?',
+    languagesList: 'string[]',
     memberOf: 'string[]',
     mobilePhone: 'string?',
     name: 'string',
-    spokenLanguage: 'string?',
+    partitionsCache: 'string[]',
+  },
+  primaryKey: '_id',
+};
+
+export const CampaignSchema = {
+  name: 'Campaign',
+  properties: {
+    _id: 'objectId',
+    _partition: 'string',
+    description: 'string?',
+    encryptionKey: 'string?',
+    endTime: 'date?',
+    name: 'string',
+    organizer: 'objectId?',
+    startTime: 'date?',
+    status: 'string',
   },
   primaryKey: '_id',
 };

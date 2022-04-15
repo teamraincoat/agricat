@@ -62,7 +62,7 @@ const Home = ({ route, navigation }) => {
     checkCampaignData();
   }, []);
   useEffect(() => {
-    setEnrolledLocally(enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active').length : 0);
+    setEnrolledLocally(enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'active').length : 0);
   }, [enrollData]);
   const checkUserData = async () => {
     const userData = await getStorageData(Constants.STORAGE.USER_DATA);
@@ -169,11 +169,11 @@ const Home = ({ route, navigation }) => {
                 </EText>
               ) : isSynced !== true && */}
 
-              {enrollData && enrollData.filter((enrollee) => enrollee.status === 'Active').length > 0 ? (
+              {enrollData && enrollData.filter((enrollee) => enrollee.status === 'active').length > 0 ? (
                 <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>
                   <FlatList
                     nestedScrollEnabled={true}
-                    data={enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'Active') : []}
+                    data={enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'active') : []}
                     renderItem={_offlineRenderItem}
                     keyExtractor={(item) => item._id.toString()}
                     showsVerticalScrollIndicator={false}

@@ -77,7 +77,7 @@ const UsersProvider = ({ children }) => {
           _userId: userData && userData._id,
           applicationStartTime,
           applicationTime: moment(new Date()).toISOString(),
-          status: 'Active',
+          status: 'active',
         };
         getTimeDifference(applicationStartTime, newUser.applicationTime);
         if (storedUserData && storedUserData.length > 0) {
@@ -139,7 +139,7 @@ const UsersProvider = ({ children }) => {
   };
 
   const decipherEnrollmentData = (enrollment, key) => {
-    decryptFields(['firstName', 'lastName', 'surName', 'govId', 'images'], enrollment, key)
+    decryptFields(['firstName', 'lastName', 'secondLastName', 'dob', 'govId', 'images'], enrollment, key)
       .then((decipheredEnrollment) => {
         // console.log('decipheredEnrollment==>', decipheredEnrollment);
         setEnrollDataById(decipheredEnrollment);
@@ -177,7 +177,7 @@ const UsersProvider = ({ children }) => {
   };
 
   const cipherEnrollmentData = (enrollment, key, navigation, isModify, setLoading) => {
-    encryptFields(['firstName', 'lastName', 'surName', 'govId', 'images'], enrollment, key)
+    encryptFields(['firstName', 'lastName', 'secondLastName', 'dob', 'govId', 'images'], enrollment, key)
       .then((cipheredEnrollment) => {
         getRealm()
           .then((projectRealm) => {
@@ -198,8 +198,8 @@ const UsersProvider = ({ children }) => {
           .then((campaignData) => {
             setLoading(false);
             console.log('******cipheredEnrollment*******', cipheredEnrollment);
-            const surveyEnables = true;
-            if (surveyEnables) {
+            const surveyEnabled = true;
+            if (surveyEnabled) {
               navigation.navigate('ImpactReportScreens', {
                 screen: 'Section12Screen',
                 params: {
