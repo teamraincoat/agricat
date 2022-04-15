@@ -17,7 +17,7 @@ import EText from '../atoms/EText';
 import { useUsers } from '../provider/UsersProvider';
 
 import MenuBarIcon from '../assets/icons/MenuBarIcon';
-import { signOut } from '../database/realmConfig';
+// import { signOut } from '../database/realmConfig';
 
 import PendingUserList from '../componets/PendingUserList';
 import SyncIcon from '../assets/icons/SyncIcon';

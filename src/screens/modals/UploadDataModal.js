@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, StyleSheet, Pressable, ActivityIndicator,
+  View, StyleSheet, Pressable,
 } from 'react-native';
 import Modal from 'react-native-modal';
 
@@ -15,7 +15,7 @@ import { translations } from '../../provider/LocalizeProvider';
 import { getStorageData, saveStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
 import getRealm from '../../database/realmConfig';
-import { useUsers } from '../../provider/UsersProvider';
+// import { useUsers } from '../../provider/UsersProvider';
 
 const UploadDataModal = (props) => {
   const { visible, closeModal, enrolledLocally } = props;
@@ -23,7 +23,7 @@ const UploadDataModal = (props) => {
   const [remainFarmer, setRemainFarmer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const { setUsers } = useUsers();
+  // const { setUsers } = useUsers();
   const onCloseModal = () => {
     // setStartSync(false);
     closeModal(false);
@@ -38,7 +38,7 @@ const UploadDataModal = (props) => {
         }
       })
       .catch((e) => {
-        console.log('error localStorage', e);
+        console.error('error localStorage', e);
       });
   }, [visible]);
 
@@ -50,6 +50,18 @@ const UploadDataModal = (props) => {
         if (syncSession) {
           syncSession.resume();
           saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
+          // syncSession.removeProgressNotification()
+          // syncSession.addProgressNotification(
+          //   'download',
+          //   'forCurrentlyOutstandingWork',
+          //   (transferred, transferable) => {
+          //     const downloadProgressPercentage = (100.0 * transferred) / transferable;
+          //     console.log(
+          //       `Total Download ,(${transferred})Byte / (${transferable})Byte  ${downloadProgressPercentage}%`,
+          //     );
+          //   },
+          // );
+          // Upload progress notifications
           syncSession.addProgressNotification(
             'upload',
             'forCurrentlyOutstandingWork',
@@ -59,15 +71,15 @@ const UploadDataModal = (props) => {
               if (transferred < transferable) {
                 setLoading(true);
               } else if (transferred === transferable) {
-                const syncUsers = result.objects('Enrollment');
-                if (syncUsers.length > 0) {
-                  const sortedUsers = syncUsers.sorted('applicationTime', true);
-                  sortedUsers.addListener(() => {
-                    setUsers([...sortedUsers]);
-                  });
-                  setLoading(false);
-                  onCloseModal();
-                }
+                setLoading(false);
+                onCloseModal();
+                // const syncUsers = result.objects('Enrollment');
+                // if (syncUsers.length > 0) {
+                // const sortedUsers = syncUsers.sorted('applicationTime', true);
+                // sortedUsers.addListener(() => {
+                //   setUsers([...sortedUsers]);
+                // });
+                // }
               }
             },
           );

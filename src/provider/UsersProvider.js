@@ -23,7 +23,7 @@ const UsersProvider = ({ children }) => {
       .then((projectRealm) => {
         realmRef.current = projectRealm;
         const syncUsers = projectRealm.objects('Enrollment');
-        console.log('STATUS: Syncing Enrollments', syncUsers.length);
+        // console.log('STATUS: Syncing Enrollments', syncUsers.length);
         const sortedUsers = syncUsers.sorted('applicationTime', true);
         sortedUsers.addListener(() => {
           setUsers([...sortedUsers]);
@@ -209,7 +209,6 @@ const UsersProvider = ({ children }) => {
   };
 
   const setEnrollData = (id, key) => {
-    console.log('setEnrollData--ID==>', id);
     // console.log('setEnrollData--Key==>', key);
     if (users && users.length > 0) {
       // eslint-disable-next-line array-callback-return

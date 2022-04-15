@@ -279,8 +279,8 @@ const RegisterUser = ({ route, navigation }) => {
     const selectedImage = [];
     launchCamera({
       mediaType: 'image',
-      maxWidth: 800,
-      maxHeight: 800,
+      maxWidth: 600,
+      maxHeight: 600,
       quality: 0.8,
       includeBase64: true,
     })
@@ -323,7 +323,32 @@ const RegisterUser = ({ route, navigation }) => {
             style={[styles.flex, styles.justifyBetween]}>
             <ScrollView
               keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={false}
+            >
+              <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
+              {selectedFiles && selectedFiles.length > 0 ? (
+                <ImagesContainer
+                  selectedFileImages={selectedFiles}
+                  setSelectedImages={setSelectedFiles}
+                />
+              ) : (
+                <Controller
+                  control={control}
+                  rules={{ required: translations['Field.required'] }}
+                  render={() => (
+                    <EButton
+                    title={translations['Enroller.imageButton']}
+                      onClick={() => onCameraPress()}
+                      style={localStyles.addImageButton}>
+                      <Pressable>
+                        <CameraIcon />
+                      </Pressable>
+                    </EButton>
+                  )}
+                  name="images"
+                />
+              )}
+              {errors.images && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
               <Controller
                 control={control}
                 rules={{ required: translations['Field.required'] }}
@@ -771,31 +796,6 @@ const RegisterUser = ({ route, navigation }) => {
                 name="question2"
               />
               {errors.question2 && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
-
-              <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
-              {selectedFiles && selectedFiles.length > 0 ? (
-                <ImagesContainer
-                  selectedFileImages={selectedFiles}
-                  setSelectedImages={setSelectedFiles}
-                />
-              ) : (
-                <Controller
-                  control={control}
-                  rules={{ required: translations['Field.required'] }}
-                  render={() => (
-                    <EButton
-                    title={translations['Enroller.imageButton']}
-                      onClick={() => onCameraPress()}
-                      style={localStyles.addImageButton}>
-                      <Pressable>
-                        <CameraIcon />
-                      </Pressable>
-                    </EButton>
-                  )}
-                  name="images"
-                />
-              )}
-              {errors.images && <EText style={localStyles.errorText}>{translations['Field.required']}</EText>}
 
               <EButton
                 title={translations['Enroller.complete']}

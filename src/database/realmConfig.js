@@ -77,38 +77,38 @@ const getRealm = async () => {
   //   }
   syncSession.pause();
 
-  syncSession.addProgressNotification(
-    'upload',
-    'reportIndefinitely',
-    (transferred, transferable) => {
-      const progressPercentage = (100.0 * transferred) / transferable;
-      console.log(
-        `Total Uploaded ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
-      );
-      if (progressPercentage === 100) {
-        console.log('Transfer completed', progressPercentage);
-        // saveStorageData(Constants.STORAGE.USER_DATA, null);
-        // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'synced');
-      }
-      if (transferred < transferable) {
-        // console.log('size less + show loader');
-        // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
-      } else {
-        // console.log('same size or greater');
-      }
-    },
-  );
+  // syncSession.addProgressNotification(
+  //   'upload',
+  //   'reportIndefinitely',
+  //   (transferred, transferable) => {
+  //     const progressPercentage = (100.0 * transferred) / transferable;
+  //     // console.log(
+  //     //   `Total Uploaded ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
+  //     // );
+  //     if (progressPercentage === 100) {
+  //       console.log('Transfer completed', progressPercentage);
+  //       // saveStorageData(Constants.STORAGE.USER_DATA, null);
+  //       // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'synced');
+  //     }
+  //     if (transferred < transferable) {
+  //       // console.log('size less + show loader');
+  //       // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
+  //     } else {
+  //       // console.log('same size or greater');
+  //     }
+  //   },
+  // );
 
-  syncSession.addProgressNotification(
-    'download',
-    'reportIndefinitely',
-    (transferred, transferable) => {
-      const progressPercentage = (100.0 * transferred) / transferable;
-      console.log(
-        `Total Download ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
-      );
-    },
-  );
+  // syncSession.addProgressNotification(
+  //   'download',
+  //   'reportIndefinitely',
+  //   (transferred, transferable) => {
+  //     const progressPercentage = (100.0 * transferred) / transferable;
+  //     console.log(
+  //       `Total Download ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
+  //     );
+  //   },
+  // );
 
   return realm;
 };
@@ -116,17 +116,18 @@ const getRealm = async () => {
 export const checkCampaignMatrix = async (campaignData) => {
   const partitionInfo = campaignData && campaignData._partition;
   if (partitionInfo) {
-    const campaignId = partitionInfo.replace('campaign=', '');
-    try {
-      // eslint-disable-next-line no-undef
-      const response = await fetch(`https://data.mongodb-api.com/app/${Constants.REALM.APP_ID}/endpoint/campaign/metrics?campaignId=${campaignId}`);
-      const res = await response.json();
-      if (res.metrics && res.metrics.finishedPercent) {
-        return res.metrics.finishedPercent;
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
+    // const campaignId = partitionInfo.replace('campaign=', '');
+    return '0';
+    // try {
+    //   // eslint-disable-next-line no-undef
+    //   // const response = await fetch(`https://data.mongodb-api.com/app/${Constants.REALM.APP_ID}/endpoint/campaign/metrics?campaignId=${campaignId}`);
+    //   // const res = await response.json();
+    //   // if (res.metrics && res.metrics.finishedPercent) {
+    //   //   return res.metrics.finishedPercent;
+    //   // }
+    // } catch (error) {
+    //   console.log('error', error);
+    // }
   }
 };
 
@@ -162,7 +163,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
         },
       },
     );
-    const campaignMetrics = await checkCampaignMatrix(campaignData);
+    // const campaignMetrics = await checkCampaignMatrix(campaignData);
 
     saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
     saveStorageData(Constants.STORAGE.USER_DATA, userData);
@@ -190,7 +191,6 @@ export const signIn = async (email, password, navigation, setLoading) => {
                 params: {
                   userData,
                   campaignData,
-                  campaignMetrics,
                 },
               });
             }

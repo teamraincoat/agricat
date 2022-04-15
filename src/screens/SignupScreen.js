@@ -75,7 +75,7 @@ const SignupScreen = ({ navigation }) => {
       await app.emailPasswordAuth.callResetPasswordFunction(
         resetParams,
       );
-      const campaignMetrics = await checkCampaignMatrix(userData);
+      // const campaignMetrics = await checkCampaignMatrix(userData);
 
       setLoading(false);
       if (newUserData.modifiedCount === 1) {
@@ -83,7 +83,7 @@ const SignupScreen = ({ navigation }) => {
         navigation.navigate('Main', {
           screen: 'Home',
           params: {
-            campaignMetrics,
+            // campaignMetrics,
           },
         });
       }
