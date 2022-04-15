@@ -63,7 +63,7 @@ const SignupScreen = ({ navigation }) => {
           $set: {
             name: data.name,
             languagesList: [...data.languagesList],
-            telephone: data.telephone.replace(/ /g, ''),
+            mobilePhone: data.telephone.replace(/ /g, ''),
             isFirstLogin: false,
           },
         },
