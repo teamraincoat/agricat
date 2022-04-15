@@ -24,7 +24,7 @@
   "Campaign.title": "Campaña",
   "Campaign.assign": "Hay {0} agricultores asignados a esta campaña.",
   "Campaign.completed": "Porcentaje de terminación",
-  "Campaign.rolledUp": "Agricultores enrolados",
+  "Campaign.rolledUp": "Enrolados sin sincronizar",
   "Campaign.locallyRolled": "Enrolados localmente",
   "Campaign.nodata": "¡No hay agricultores para subir!",
   "ScanQr.title": "Escanee el código QR del certificado",

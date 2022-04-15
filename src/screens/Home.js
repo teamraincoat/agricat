@@ -41,21 +41,21 @@ const Home = ({ route, navigation }) => {
   const { users: enrollData, completionRate } = useUsers();
 
   let campaignInfo;
-  let campaignMetrics;
-  let deviceOffline = false;
+  // let campaignMetrics;
+  // let deviceOffline = false;
   if (route && route.params && route.params.campaignData) {
     campaignInfo = route.params.campaignData;
   } else if (campaignData) {
     campaignInfo = campaignData;
   }
-  if (route && route.params && route.params.campaignMetrics) {
-    campaignMetrics = route.params.campaignMetrics;
-  } else if (completionRate) {
-    campaignMetrics = completionRate;
-  }
-  if (route && route.params && route.params.deviceOffline) {
-    deviceOffline = route.params.deviceOffline;
-  }
+  // if (route && route.params && route.params.campaignMetrics) {
+  //   campaignMetrics = route.params.campaignMetrics;
+  // } else if (completionRate) {
+  //   campaignMetrics = completionRate;
+  // }
+  // if (route && route.params && route.params.deviceOffline) {
+  //   deviceOffline = route.params.deviceOffline;
+  // }
 
   useEffect(() => {
     checkUserData();
@@ -143,17 +143,10 @@ const Home = ({ route, navigation }) => {
                 </EText>
               </View>
               <View style={localStyles.container}>
-                {deviceOffline ? (
-                  <FarmerDataBlock
-                    title={`${translations['Campaign.completed']}`}
-                    value="n/a"
-                  />
-                ) : (
-                  <FarmerDataBlock
-                    title={`${translations['Campaign.completed']}`}
-                    value={campaignMetrics ? `${campaignMetrics}%` : 'loading'}
-                  />
-                )}
+                <FarmerDataBlock
+                  title={`${translations['Campaign.completed']}`}
+                  value="n/a"
+                />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
                   value={enrolledLocally}
@@ -207,13 +200,13 @@ const Home = ({ route, navigation }) => {
               {translations['Menu.faq']}
             </EText>
           </Pressable>
-          <Pressable
+          {/* <Pressable
             onPress={() => signOut(navigation)}
             style={localStyles.menuItemContainer}>
             <EText style={localStyles.menuTitle}>
               {translations['Menu.logout']}
             </EText>
-          </Pressable>
+          </Pressable> */}
           <Pressable
             style={[localStyles.menuItemContainer, { borderBottomWidth: 0 }]}>
             <EText style={localStyles.menuTitle}>

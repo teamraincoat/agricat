@@ -3,7 +3,7 @@ import React, {
   useContext, useState, useEffect, useRef,
 } from 'react';
 import moment from 'moment';
-import getRealm, { checkCampaignMatrix } from '../database/realmConfig';
+import getRealm from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
 import Constants from '../constants/Constants';
@@ -43,16 +43,16 @@ const UsersProvider = ({ children }) => {
     };
   }, []);
 
-  useEffect(() => {
-    getStorageData(Constants.STORAGE.CAMPAIGN_DATA).then(async (campaignData) => {
-      if (campaignData) {
-        const completeRate = await checkCampaignMatrix(campaignData);
-        if (completeRate) {
-          setCompletionRate(completeRate);
-        }
-      }
-    });
-  }, [completionRate]);
+  // useEffect(() => {
+  //   getStorageData(Constants.STORAGE.CAMPAIGN_DATA).then(async (campaignData) => {
+  //     if (campaignData) {
+  //       const completeRate = await checkCampaignMatrix(campaignData);
+  //       if (completeRate) {
+  //         setCompletionRate(completeRate);
+  //       }
+  //     }
+  //   });
+  // }, [completionRate]);
 
   const getTimeDifference = (startTime, endTime) => {
     const start = moment(startTime);
@@ -94,7 +94,6 @@ const UsersProvider = ({ children }) => {
         cipherEnrollmentData(newUser, campaignKey, navigation, isModify, setLoading);
       } catch (error) {
         setLoading(false);
-        console.error('submitAddUser error==>', error);
       }
     }
   };
@@ -122,7 +121,6 @@ const UsersProvider = ({ children }) => {
           const filteredImage = value.filter((img) => img.name === image.name);
           if (filteredImage.length > 0) {
             const decryptedImageUri = await decrypt(filteredImage[0].uri.split('|')[1], key, filteredImage[0].uri.split('|')[0]);
-            console.log('decryptedImageUri==>', decryptedImageUri);
             image.uri = decryptedImageUri;
             return image;
           }
@@ -197,24 +195,7 @@ const UsersProvider = ({ children }) => {
           })
           .then((campaignData) => {
             setLoading(false);
-            console.log('******cipheredEnrollment*******', cipheredEnrollment);
-            const surveyEnabled = true;
-            if (surveyEnabled) {
-              navigation.navigate('ImpactReportScreens', {
-                screen: 'Section12Screen',
-                params: {
-                  enrollerData: {
-                    id: cipheredEnrollment._id,
-                    sex: cipheredEnrollment.gender,
-                    spokenLanguages: cipheredEnrollment.spokenLanguages,
-                    coveredAreaHa: cipheredEnrollment.coveredAreaHa,
-                    folioNumber: cipheredEnrollment.govId,
-                  },
-                },
-              });
-            } else {
-              navigation.navigate('Complete', { campaignData });
-            }
+            navigation.navigate('Complete', { campaignData });
           })
           .catch((error) => {
             setLoading(false);
