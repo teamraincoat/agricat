@@ -15,18 +15,18 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgotPassword from '../screens/ForgotPassword';
 import { LocalizeContext } from '../provider/LocalizeProvider';
-import { checkCampaignMatrix } from '../database/realmConfig';
-import Section12Screen from '../screens/ImpactReportScreen/Section12Screen';
-import Section3Screen from '../screens/ImpactReportScreen/Section3Screen';
-import Section4Screen from '../screens/ImpactReportScreen/Section4Screen';
-import Section5Screen from '../screens/ImpactReportScreen/Section5Screen';
-import { ImpactReportProvider } from '../provider/ImpactReportProvider';
+// import { checkCampaignMatrix } from '../database/realmConfig';
+// import Section12Screen from '../screens/ImpactReportScreen/Section12Screen';
+// import Section3Screen from '../screens/ImpactReportScreen/Section3Screen';
+// import Section4Screen from '../screens/ImpactReportScreen/Section4Screen';
+// import Section5Screen from '../screens/ImpactReportScreen/Section5Screen';
+// import { ImpactReportProvider } from '../provider/ImpactReportProvider';
 
 const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
 const NavigationWrapper = () => {
   const [userId, setUserId] = useState(null);
-  const [campaignCompletionRate, setCampaignCompletionRate] = useState(null);
+  // const [campaignCompletionRate, setCampaignCompletionRate] = useState(null);
   const [deviceOffline, setDeviceOffline] = useState(null);
   const [initializing, setInitializing] = useState(true);
   const { initializeAppLanguage } = useContext(LocalizeContext);
@@ -41,14 +41,9 @@ const NavigationWrapper = () => {
       })
       .then((netState) => {
         if (netState.isConnected && netState.isInternetReachable && _userInfo) {
-          return checkCampaignMatrix(_userInfo);
+          return true;
         }
         setDeviceOffline(true);
-      })
-      .then((completeRate) => {
-        if (completeRate) {
-          setCampaignCompletionRate(completeRate);
-        }
       })
       .finally(() => {
         setInitializing(false);
@@ -59,18 +54,18 @@ const NavigationWrapper = () => {
       });
   }, [userId]);
 
-  const ImpactReportNavigator = () => (
-    <ImpactReportProvider>
-      <MainStack.Navigator
-        initialRouteName="Section12Screen"
-        screenOptions={{ headerShown: false }}>
-        <MainStack.Screen name="Section12Screen" component={Section12Screen} />
-        <MainStack.Screen name="Section3Screen" component={Section3Screen} />
-        <MainStack.Screen name="Section4Screen" component={Section4Screen} />
-        <MainStack.Screen name="Section5Screen" component={Section5Screen} />
-      </MainStack.Navigator>
-    </ImpactReportProvider>
-  );
+  // const ImpactReportNavigator = () => (
+  //   <ImpactReportProvider>
+  //     <MainStack.Navigator
+  //       initialRouteName="Section12Screen"
+  //       screenOptions={{ headerShown: false }}>
+  //       <MainStack.Screen name="Section12Screen" component={Section12Screen} />
+  //       <MainStack.Screen name="Section3Screen" component={Section3Screen} />
+  //       <MainStack.Screen name="Section4Screen" component={Section4Screen} />
+  //       <MainStack.Screen name="Section5Screen" component={Section5Screen} />
+  //     </MainStack.Navigator>
+  //   </ImpactReportProvider>
+  // );
 
   const MainStackNavigator = () => (
     <UsersProvider>
@@ -81,7 +76,7 @@ const NavigationWrapper = () => {
           name="Home"
           initialParams={{
             deviceOffline,
-            campaignMetrics: campaignCompletionRate,
+            // campaignMetrics: campaignCompletionRate,
           }}
           component={Home}
         />
@@ -91,10 +86,10 @@ const NavigationWrapper = () => {
         <MainStack.Screen name="Complete" component={CompleteScreen} />
         <MainStack.Screen name="SignUp" component={SignupScreen} />
         <MainStack.Screen name="Auth" component={AuthStackNavigator} />
-        <MainStack.Screen
+        {/* <MainStack.Screen
           name="ImpactReportScreens"
           component={ImpactReportNavigator}
-        />
+        /> */}
       </MainStack.Navigator>
     </UsersProvider>
   );

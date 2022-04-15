@@ -190,12 +190,16 @@ const UsersProvider = ({ children }) => {
             syncSession.pause();
             const userListUpdated = projectRealm.objects('Enrollment');
             const sortedUsers = userListUpdated.sorted('applicationTime', true);
-            setUsers([...sortedUsers]);
-            getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
-          })
-          .then((campaignData) => {
+            setUsers(sortedUsers);
             setLoading(false);
-            navigation.navigate('Complete', { campaignData });
+
+            console.log('Survey Enabled', enrollment.surveyEnabled);
+
+            if (enrollment.surveyEnabled) {
+              navigation.navigate('ImpactReport', {});
+            } else {
+              navigation.navigate('Complete', {});
+            }
           })
           .catch((error) => {
             setLoading(false);

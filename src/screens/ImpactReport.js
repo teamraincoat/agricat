@@ -1,12 +1,20 @@
 import React from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import DocumentIcon from '../assets/icons/DocumentIcon';
 import EButton from '../atoms/EButton';
 import EText from '../atoms/EText';
-import {translations} from '../provider/LocalizeProvider';
-import {colors, styles} from '../styles';
+import { translations } from '../provider/LocalizeProvider';
+import { useUsers } from '../provider/UsersProvider';
+import { colors, styles } from '../styles';
+import ScanModal from './ScanModal';
 
-const ImpactReport = props => {
+const ImpactReport = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const { setEnrollDataById } = useUsers();
+  const onComplete = () => {
+    setEnrollDataById(null);
+    setModalVisible(true);
+  };
   return (
     <View style={localStyles.mainContainer}>
       <DocumentIcon />
@@ -19,8 +27,13 @@ const ImpactReport = props => {
       </EText>
       <EButton
         title={translations['Impact.continue']}
-        onClick={() => console.log('click')}
+        onClick={() => onComplete()}
         style={localStyles.button}
+      />
+      <ScanModal
+        visible={modalVisible}
+        closeModal={setModalVisible}
+        route={navigation}
       />
     </View>
   );

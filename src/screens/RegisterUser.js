@@ -155,6 +155,7 @@ const RegisterUser = ({ route, navigation }) => {
         spokenLanguages,
         notes,
         images,
+        surveyEnabled,
         _annotations,
       } = enrollDataById;
       reset({
@@ -178,6 +179,7 @@ const RegisterUser = ({ route, navigation }) => {
         enrollmentLocation: _annotations.location ? _annotations.location : '',
         question1: _annotations.lossLevel ? _annotations.lossLevel : '',
         question2: _annotations.lossType ? _annotations.lossType : '',
+        surveyEnabled: surveyEnabled || false,
       });
       if (enrollDataById && enrollDataById.images
         && enrollDataById.images.length > 0 && selectedFiles && selectedFiles.length === 0) {
@@ -213,6 +215,7 @@ const RegisterUser = ({ route, navigation }) => {
         notes: data.notes,
         images: data.images,
         applicationTime: new Date(),
+        surveyEnabled: data.surveyEnabled,
         _annotations: {
           presence: data.enrollmentPresence,
           location: data.enrollmentLocation,
