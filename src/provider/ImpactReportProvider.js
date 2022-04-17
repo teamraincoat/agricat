@@ -1,5 +1,5 @@
 import React, {
-  useContext, useState, useEffect, useRef,
+  useContext, useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { SPRING_SUMMER_CORN_CROP_LIST } from '../config/StaticData';
@@ -7,32 +7,29 @@ import { SPRING_SUMMER_CORN_CROP_LIST } from '../config/StaticData';
 const ImpactReportContext = React.createContext(null);
 
 const ImpactReportProvider = ({ children }) => {
-  const [enrollerId, setEnrollerId] = useState(null);
+  const [enrollmentId, setEnrollmentId] = useState(null);
   const {
     control,
     getValues,
-    handleSubmit,
     formState: { errors },
     reset,
-    register,
   } = useForm({
     defaultValues: {
       maizeCultivation: [...SPRING_SUMMER_CORN_CROP_LIST],
     },
   });
 
-
   const reportData = {
     control,
     getValues,
     errors,
     reset,
-    enrollerId,
-    setEnrollerId,
+    enrollmentId,
+    setEnrollmentId,
   };
 
   return (
-      <ImpactReportContext.Provider value={reportData}>{children}</ImpactReportContext.Provider>
+    <ImpactReportContext.Provider value={reportData}>{children}</ImpactReportContext.Provider>
   );
 };
 

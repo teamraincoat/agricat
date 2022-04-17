@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import moment from 'moment';
 
 import SectionHeader from '../../atoms/Section/SectionHeader';
 import { translations } from '../../provider/LocalizeProvider';
@@ -17,7 +18,6 @@ import SectionTwo from '../../componets/sections/SectionTwo';
 import EButton from '../../atoms/EButton';
 import { SPRING_SUMMER_CORN_CROP_LIST, RESPONDER_LIST } from '../../config/StaticData';
 import { useReports } from '../../provider/ImpactReportProvider';
-import moment from 'moment';
 
 const Section12Screen = ({ navigation, route }) => {
   const {
@@ -26,28 +26,28 @@ const Section12Screen = ({ navigation, route }) => {
     reset,
     register,
     errors,
-    enrollerId,
-    setEnrollerId,
+    enrollmentId,
+    setEnrollmentId,
   } = useReports();
 
-  const enrollerData = route.params?.enrollerData ?? '';
-  if (enrollerId === null && enrollerData.id !== '') {
-    setEnrollerId(enrollerData.id);
-  }
+  const enrollmentData = route.params?.enrollmentData ?? '';
   useEffect(() => {
-    if (enrollerData !== '') {
+    if (enrollmentData !== '') {
       const currentFields = getValues();
       const newFields = {
         ...currentFields,
         liftingDate: moment(new Date()).format('DD-MM-YYYY'),
-        folioNumber: enrollerData.folioNumber,
-        sex: enrollerData.sex,
-        hectareArea: enrollerData.coveredAreaHa?.$numberDecimal,
-        speakingLanguage: enrollerData.spokenLanguages.join(','),
+        folioNumber: enrollmentData.id,
+        sex: enrollmentData.sex,
+        hectareArea: enrollmentData.hectareArea,
+        spokenLanguages: enrollmentData.spokenLanguages,
       };
       reset(newFields);
+      if (enrollmentId === null && enrollmentData.id !== '') {
+        setEnrollmentId(enrollmentData.id);
+      }
     }
-  }, [enrollerData]);
+  }, [enrollmentData]);
   return (
     <SafeAreaView style={localStyles.mainContainer}>
       <SectionHeader
@@ -66,7 +66,7 @@ const Section12Screen = ({ navigation, route }) => {
             <SectionOne
               control={control}
               errors={errors}
-              enrollerData={enrollerData}
+              enrollmentData={enrollmentData}
               reset={reset}
               getValues={getValues}
               dropDownItems={RESPONDER_LIST}

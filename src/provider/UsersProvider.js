@@ -193,11 +193,23 @@ const UsersProvider = ({ children }) => {
             setUsers(sortedUsers);
             setLoading(false);
 
-            if (enrollment.surveyEnabled) {
-              navigation.navigate('ImpactReport', {});
-            } else {
-              navigation.navigate('Complete', {});
-            }
+            const enrollmentData = {
+              id: enrollment._id.toString(),
+              folioNumber: enrollment._id.toString(),
+              sex: enrollment.gender,
+              hectareArea: enrollment.coveredAreaHa.toString(),
+              spokenLanguages: enrollment.spokenLanguages.join(', '),
+            };
+
+            navigation.navigate('ImpactReport', {
+              enrollmentData,
+            });
+
+            // if (enrollment.surveyEnabled) {
+            //   navigation.navigate('ImpactReport', {});
+            // } else {
+            //   navigation.navigate('Complete', {});
+            // }
           })
           .catch((error) => {
             setLoading(false);

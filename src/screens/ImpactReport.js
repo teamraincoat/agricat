@@ -6,14 +6,15 @@ import EText from '../atoms/EText';
 import { translations } from '../provider/LocalizeProvider';
 import { useUsers } from '../provider/UsersProvider';
 import { colors, styles } from '../styles';
-import ScanModal from './ScanModal';
 
-const ImpactReport = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = React.useState(false);
+const ImpactReport = ({ route, navigation }) => {
   const { setEnrollDataById } = useUsers();
   const onComplete = () => {
     setEnrollDataById(null);
-    setModalVisible(true);
+    navigation.navigate('ImpactReportScreens', {
+      screen: 'Section12Screen',
+      params: { enrollmentData: route.params?.enrollmentData ?? {} },
+    });
   };
   return (
     <View style={localStyles.mainContainer}>
@@ -29,11 +30,6 @@ const ImpactReport = ({ navigation }) => {
         title={translations['Impact.continue']}
         onClick={() => onComplete()}
         style={localStyles.button}
-      />
-      <ScanModal
-        visible={modalVisible}
-        closeModal={setModalVisible}
-        route={navigation}
       />
     </View>
   );

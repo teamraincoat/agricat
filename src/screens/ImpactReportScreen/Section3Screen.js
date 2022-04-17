@@ -62,13 +62,12 @@ const Section3Screen = ({ navigation }) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   // placeholder={translations['Placeholder.firstName']}
-                  style={[styles.p10]}
+                  style={[styles.p10, localStyles.smallInput]}
                   onBlur={onBlur}
                   leftLabel
-                  style={localStyles.smallInput}
                   label={'Kilos'}
                   number
-                  onChangeText={(value) => onChange(value)}
+                  onChangeText={(_value) => onChange(_value)}
                   value={value}
                   error={!!errors.cornHarvestedInKilo}
                   errorText={
@@ -137,12 +136,11 @@ const Section3Screen = ({ navigation }) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
                   // placeholder={translations['Section.Section3.lostHarvestAmount']}
-                  style={[styles.p10]}
+                  style={[styles.p10, localStyles.smallInput]}
                   onBlur={onBlur}
                   leftLabel
-                  style={localStyles.smallInput}
                   label={translations['Section.Section3.lostHarvestAmount']}
-                  onChangeText={(value) => onChange(value)}
+                  onChangeText={(_value) => onChange(_value)}
                   value={value}
                   number
                   error={!!errors.LostHarvestAmount}

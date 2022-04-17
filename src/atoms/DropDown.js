@@ -36,22 +36,25 @@ const DropDown = ({
     {label && <EText style={localStyles.labelStyle}>{label}</EText>}
     <Controller
       control={control}
-      render={({ field: { value, onChange } }) => (
+      render={({ field: { value } }) => (
         <DropDownPicker
           multiple={!!multipleItems}
           placeholder={placeholder || translations['Placeholder.selectItem']}
           open={openDropDown}
           value={multipleItems ? [...multipleItem] : defaultValue || value}
           showArrowIcon={true}
-         showBadgeDot={true}
+          showBadgeDot={true}
           items={dropDownItems}
           showTickIcon={true}
           setOpen={setOpenDropDown}
-          onSelectItem={(value) => {
+          textStyle={{
+            color: colors.black,
+          }}
+          onSelectItem={(_value) => {
             if (multipleItems) {
               setMultipleItem(() => {
-                if (value.length > 0) {
-                  const itemArray = value.map((item) => item.value);
+                if (_value.length > 0) {
+                  const itemArray = _value.map((item) => item.value);
                   return [...itemArray];
                 }
               });
@@ -60,7 +63,7 @@ const DropDown = ({
               const currentFormData = getValues();
               resetValue({
                 ...currentFormData,
-                [fieldName]: value.value,
+                [fieldName]: _value.value,
               });
             }
           }}
@@ -74,7 +77,11 @@ const DropDown = ({
             medium && localStyles.mediumDropDownStyle,
           ]}
           disableBorderRadius={true}
-          dropDownContainerStyle={[localStyles.dropDownContainerStyle, small && localStyles.smallDropDownContainerStyle, medium && localStyles.mediumDropDownContainerStyle]}
+          dropDownContainerStyle={[
+            localStyles.dropDownContainerStyle,
+            small && localStyles.smallDropDownContainerStyle,
+            medium && localStyles.mediumDropDownContainerStyle,
+          ]}
           listMode="SCROLLVIEW"
             {...rest}
         />
@@ -101,7 +108,6 @@ const localStyles = StyleSheet.create({
     width: wp(90),
     height: hp(7),
     zIndex: 99,
-
   },
   dropDownContainerStyle: {
     ...styles.radius5,
