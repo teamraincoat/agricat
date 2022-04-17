@@ -201,15 +201,13 @@ const UsersProvider = ({ children }) => {
               spokenLanguages: enrollment.spokenLanguages.join(', '),
             };
 
-            navigation.navigate('ImpactReport', {
-              enrollmentData,
-            });
-
-            // if (enrollment.surveyEnabled) {
-            //   navigation.navigate('ImpactReport', {});
-            // } else {
-            //   navigation.navigate('Complete', {});
-            // }
+            if (enrollment.surveyEnabled) {
+              navigation.navigate('ImpactReport', {
+                enrollmentData,
+              });
+            } else {
+              navigation.navigate('Complete', {});
+            }
           })
           .catch((error) => {
             setLoading(false);
