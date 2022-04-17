@@ -38,7 +38,7 @@ const Home = ({ route, navigation }) => {
   const [campaignData, setCampaignData] = useState(null);
   const [enrolledLocally, setEnrolledLocally] = useState(null);
 
-  const { users: enrollData, completionRate } = useUsers();
+  const { users: enrollData } = useUsers();
 
   let campaignInfo;
   // let campaignMetrics;

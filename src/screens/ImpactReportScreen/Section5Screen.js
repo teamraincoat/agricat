@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { ObjectId } from 'bson';
 import {
   View,
   StyleSheet,
@@ -8,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EText from '../../atoms/EText';
-import ETextInput from '../../atoms/ETextInput';
+// import ETextInput from '../../atoms/ETextInput';
 import SectionCard from '../../atoms/Section/SectionCard';
 import SectionHeader from '../../atoms/Section/SectionHeader';
 import { translations } from '../../provider/LocalizeProvider';
@@ -33,14 +34,14 @@ const Section5Screen = ({ navigation }) => {
     control,
     getValues,
     reset,
-    errors,
-    enrollerId,
+    // errors,
+    enrollmentId,
   } = useReports();
   const submitReport = () => {
     const reportData = getValues();
 
     const payload = {
-      _id: enrollerId,
+      _id: new ObjectId(enrollmentId),
       _annotations: {
         liftingDate: reportData.liftingDate ?? '',
         folioNumber: reportData.folioNumber ?? '',
@@ -94,7 +95,6 @@ const Section5Screen = ({ navigation }) => {
         haveOtherInsurance: reportData.haveOtherInsurance ?? '',
         PayForOtherInsurance: reportData.PayForOtherInsurance ?? '',
         howMuchPayForOtherInsurance: reportData.howMuchPayForOtherInsurance ?? '',
-
       },
 
     };
@@ -103,8 +103,9 @@ const Section5Screen = ({ navigation }) => {
         projectRealm.write(() => {
           projectRealm.create('Enrollment', payload, 'modified');
         });
-        const userListUpdated = projectRealm.objects('Enrollment');
-        console.log('userListUpdated', JSON.stringify(userListUpdated));
+        // const userListUpdated = projectRealm.objects('Enrollment');
+        // console.log('userListUpdated', JSON.stringify(userListUpdated));
+        navigation.navigate('Complete', {});
       }).catch((error) => {
         console.log('error', error);
       });

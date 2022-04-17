@@ -126,7 +126,7 @@ export const SECTION_ONE_FIELDS = [
     placeholder: 'Modelo de teléfono',
   },
   {
-    name: 'speakingLanguage',
+    name: 'spokenLanguages',
     label: 'Section.Section1.languageSpeak',
     placeholder: 'Modelo de teléfono',
   },
@@ -658,24 +658,23 @@ export const SECTION_FIVE_QUESTIONS = [
     ],
   },
   {
-    field: 'agriculturalInsurance',
-    label: 'Section.Section5.agriculturalInsurance',
+    field: 'haveOtherInsurance',
+    label: 'Section.Section5.haveOtherInsurance',
     type: 'dropDown',
     dropDownList: [
       {
-        label: `${translations['Section.Section5.agriculturalInsurance.option1']}`,
+        label: `${translations['Section.Section5.haveOtherInsurance.option1']}`,
         value: 'Yes',
       },
       {
-        label: `${translations['Section.Section5.agriculturalInsurance.option2']}`,
+        label: `${translations['Section.Section5.haveOtherInsurance.option2']}`,
         value: 'No',
       },
-
     ],
   },
   {
-    field: 'haveOtherInsurance',
-    label: 'Section.Section5.haveOtherInsurance',
+    field: 'agriculturalInsurance',
+    label: 'Section.Section5.agriculturalInsurance',
     type: 'text',
   },
   {

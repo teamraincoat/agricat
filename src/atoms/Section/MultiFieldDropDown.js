@@ -4,7 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import { useReports } from '../../provider/ImpactReportProvider';
 
 import { translations } from '../../provider/LocalizeProvider';
-import { styles } from '../../styles';
+import { styles, colors } from '../../styles';
 import DropDown from '../DropDown';
 import ETextInput from '../ETextInput';
 
@@ -32,12 +32,12 @@ const MultiFieldDropDown = ({
           rules={{ required: false }}
           render={({ field: { onChange, onBlur, value } }) => (
             <ETextInput
-               placeholder={placeholder && translations[placeholder]}
-              style={[styles.p10]}
+              placeholder={placeholder && translations[placeholder]}
+              style={[styles.p10, { color: colors.black }]}
               onBlur={onBlur}
               number={type === 'number'}
-              label={translations[label]}
-              onChangeText={(value) => onChange(value)}
+              label={translations[label] || ''}
+              onChangeText={(_value) => onChange(_value)}
               value={value}
               error={!!errors.field}
               errorText={errors.field && errors.field.message}
@@ -48,8 +48,8 @@ const MultiFieldDropDown = ({
       ) : (
         <DropDown
           control={control}
-          label={translations[label]}
-          placeholder={translations['Placeholder.selectItem']}
+          label={translations[label] || ''}
+          placeholder={translations['Placeholder.selectItem'] || ''}
           openDropDown={openDropDown}
           setOpenDropDown={setOpenDropDown}
           dropDownItems={DropDownData}

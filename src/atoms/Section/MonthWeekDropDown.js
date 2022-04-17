@@ -47,7 +47,7 @@ const MonthWeekDropDown = ({
     <>
       <DropDown
         control={control}
-        placeholder={'month'}
+        placeholder={'mes'}
         openDropDown={openMonthDropDown}
         setOpenDropDown={setOpenMonthDropDown}
         dropDownItems={MONTH_LIST}
@@ -69,7 +69,7 @@ const MonthWeekDropDown = ({
       />
       <DropDown
         control={control}
-        placeholder={'week'}
+        placeholder={'semana'}
         openDropDown={openWeekDropDown}
         setOpenDropDown={setOpenWeekDropDown}
         dropDownItems={WEEK_LIST}
