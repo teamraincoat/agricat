@@ -31,6 +31,7 @@ import ScanModal from './ScanModal';
 import { translations } from '../provider/LocalizeProvider';
 import { getStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
+import VersionNumber from 'react-native-version-number';
 
 const Home = ({ route, navigation }) => {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
@@ -218,7 +219,7 @@ const Home = ({ route, navigation }) => {
           <Pressable
             style={localStyles.menuItemContainer}>
             <EText style={localStyles.subTitle}>
-              Versión: 1.1.0 Build 3
+                {`${translations['App.version']}: ${VersionNumber.appVersion} Build (${VersionNumber.buildVersion})`}
             </EText>
           </Pressable>
         </View>
