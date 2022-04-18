@@ -57,6 +57,7 @@ const DropDown = ({
                   const itemArray = _value.map((item) => item.value);
                   return [...itemArray];
                 }
+                return [];
               });
               setOpenDropDown(!openDropDown);
             } else {
