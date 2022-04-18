@@ -1,4 +1,5 @@
 {
+  "App.version": "Version",
   "Home.search": "Search Enrollment",
   "Login.title": "Log in",
   "Login.subTitle": "Use your credentials to login",
