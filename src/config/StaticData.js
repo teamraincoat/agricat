@@ -101,12 +101,12 @@ export const WEEK_LIST = [
   { label: '4', value: '4' },
 ];
 export const TOTAL_COST_LIST = [
-  { label: `${translations['Section.Section2.seeds']}`, field: 'Seeds', value: '' },
-  { label: `${translations['Section.Section2.Machinery']}`, field: 'Machinery', value: '' },
-  { label: `${translations['Section.Section2.Salaries']}`, field: 'Salaries', value: '' },
-  { label: `${translations['Section.Section2.Fertilizers']}`, field: 'Fertilizers', value: '' },
-  { label: `${translations['Section.Section2.Irrigation']}`, field: 'Irrigation', value: '' },
-  { label: `${translations['Section.Section2.OtherCost']}`, field: 'OtherCost', value: '' },
+  { label: `${translations['Section.Section2.seeds']}`, field: 'seeds', value: '' },
+  { label: `${translations['Section.Section2.Machinery']}`, field: 'machinery', value: '' },
+  { label: `${translations['Section.Section2.Salaries']}`, field: 'salaries', value: '' },
+  { label: `${translations['Section.Section2.Fertilizers']}`, field: 'fertilizers', value: '' },
+  { label: `${translations['Section.Section2.Irrigation']}`, field: 'irrigation', value: '' },
+  { label: `${translations['Section.Section2.OtherCost']}`, field: 'otherCost', value: '' },
 ];
 
 export const SECTION_ONE_FIELDS = [

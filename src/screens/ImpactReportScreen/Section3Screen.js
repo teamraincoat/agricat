@@ -143,13 +143,13 @@ const Section3Screen = ({ navigation }) => {
                   onChangeText={(_value) => onChange(_value)}
                   value={value}
                   number
-                  error={!!errors.LostHarvestAmount}
+                  error={!!errors.lostHarvestAmount}
                   errorText={
-                    errors.LostHarvestAmount && errors.LostHarvestAmount.message
+                    errors.lostHarvestAmount && errors.lostHarvestAmount.message
                   }
                 />
               )}
-              name={'LostHarvestAmount'}
+              name={'lostHarvestAmount'}
             />
 
             {SECTION_THREE_QUESTIONS.map((question, index) => (
