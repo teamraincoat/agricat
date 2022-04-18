@@ -18,28 +18,15 @@ const MonthWeekDropDown = ({
   const [isValueChanged, setIsValueChanged] = useState(false);
   const maizeCultivation = getValues('maizeCultivation');
   const [newMaizeCultivation, setNewMaizeCultivation] = useState(maizeCultivation);
-  const [weekList, setWeekList] = useState([]);
   const [defaultMonth, setDefaultMonth] = useState('');
   const [defaultWeek, setDefaultWeek] = useState('');
 
-  const { unregister } = useForm();
-
   useEffect(() => {
-    if (newMaizeCultivation) {
-      const formData = getValues();
-      reset({
-        ...formData,
-        maizeCultivation: [...newMaizeCultivation],
-      });
-      unregister(`${Object.keys(newMaizeCultivation[index])[2]}`);
-    }
-    if (weekList && weekList.length > 0) {
-      const formData = getValues();
-      reset({
-        ...formData,
-        maizeCultivation: [...weekList],
-      });
-    }
+    const formData = getValues();
+    reset({
+      ...formData,
+      maizeCultivation: [...newMaizeCultivation],
+    });
   }, [isValueChanged]);
 
 
@@ -60,7 +47,6 @@ const MonthWeekDropDown = ({
             return copyMaizeCultivation;
           });
           setDefaultMonth(value.value);
-          unregister(`${Object.keys(newMaizeCultivation[index])[2]}`);
           setIsValueChanged(!isValueChanged);
           setOpenMonthDropDown(!openMonthDropDown);
         }}
@@ -77,13 +63,12 @@ const MonthWeekDropDown = ({
         fieldName={Object.keys(newMaizeCultivation[index])[3]}
         //  resetValue={reset}
         onSelectItem={(value) => {
-          setWeekList(() => {
-            const copyMaizeCultivation = [...maizeCultivation];
+          setNewMaizeCultivation((prevState) => {
+            const copyMaizeCultivation = [...prevState];
             copyMaizeCultivation[index].week = value.value;
             return copyMaizeCultivation;
           });
           setDefaultWeek(value.value);
-          unregister(`${Object.keys(newMaizeCultivation[index])[3]}`);
           setIsValueChanged(!isValueChanged);
           setOpenWeekDropDown(!openWeekDropDown);
         }}
