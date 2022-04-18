@@ -39,7 +39,7 @@ const Home = ({ route, navigation }) => {
   const [isCampaignAssign, setIsCampaignAssign] = useState(false);
   const [campaignData, setCampaignData] = useState(null);
   const [enrolledLocally, setEnrolledLocally] = useState(null);
-  const [avgEnrollTime, setAvgEnrollTime] = useState('0:00');
+  const [avgEnrollTime, setAvgEnrollTime] = useState('0s');
 
   const { users: enrollData } = useUsers();
 
@@ -65,7 +65,7 @@ const Home = ({ route, navigation }) => {
         accDiff += diff;
       });
       const avgDuration = moment.duration(accDiff / localEnrolled.length);
-      setAvgEnrollTime(`${avgDuration.asSeconds().toFixed(0)}s`);
+      setAvgEnrollTime(Number.isNaN(+avgDuration) ? '0s' : `${avgDuration.asSeconds().toFixed(0)}s`);
       setEnrolledLocally(localEnrolled.length);
     } else {
       setEnrolledLocally(0);
