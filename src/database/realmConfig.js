@@ -28,7 +28,10 @@ const getRealm = async () => {
   // console.log('campaignData--->', campaignData);
 
   // User memberOf is an array but only allows one campaign partition at a time
-  const partitionValue = userData && userData.memberOf && userData.memberOf[0];
+  const partitionValue = userData
+  && userData.memberOf
+  && userData.memberOf.length > 0
+    ? userData.memberOf[0] : userData._partition;
 
   const configuration = {
     schema: [
@@ -149,12 +152,14 @@ export const signIn = async (email, password, navigation, setLoading) => {
     }
     // Get Campaign instance from partition value
     //     `campaign=<the object id>`
-    const campaignData = await campaigns.findOne(
+    const campaignData = userData
+    && userData.memberOf
+    && userData.memberOf.length > 0 && await campaigns.findOne(
       {
         _id:
           userData
           && userData.memberOf
-          && ObjectId(userData.memberOf[0].split('=')[1]),
+          && ObjectId(userData.memberOf[0]?.split('=')[1]),
       },
       {
         projection: {
@@ -199,6 +204,8 @@ export const signIn = async (email, password, navigation, setLoading) => {
           }
         },
       );
+    }).catch((error) => {
+      console.error('error', error);
     });
     return newUser;
   } catch (error) {
