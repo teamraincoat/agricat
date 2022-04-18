@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 
 import ScanIcon from '../assets/icons/ScanIcon';
@@ -17,7 +18,7 @@ import EText from '../atoms/EText';
 import { useUsers } from '../provider/UsersProvider';
 
 import MenuBarIcon from '../assets/icons/MenuBarIcon';
-// import { signOut } from '../database/realmConfig';
+import { signOut } from '../database/realmConfig';
 
 import PendingUserList from '../componets/PendingUserList';
 import SyncIcon from '../assets/icons/SyncIcon';
@@ -195,22 +196,22 @@ const Home = ({ route, navigation }) => {
 
       {isMenuOpen && (
         <View style={localStyles.menuItems}>
-          <Pressable style={localStyles.menuItemContainer}>
-            <EText style={localStyles.menuTitle}>
-              {translations['Menu.faq']}
-            </EText>
-          </Pressable>
-          {/* <Pressable
-            onPress={() => signOut(navigation)}
+          <Pressable
+            onPress={() => {
+              if (+enrolledLocally > 0) {
+                return Alert.alert('Tiene que sincronizar sus enrolamientos antes de salir.');
+              }
+              signOut(navigation);
+            }}
             style={localStyles.menuItemContainer}>
             <EText style={localStyles.menuTitle}>
               {translations['Menu.logout']}
             </EText>
-          </Pressable> */}
+          </Pressable>
           <Pressable
-            style={[localStyles.menuItemContainer, { borderBottomWidth: 0 }]}>
-            <EText style={localStyles.menuTitle}>
-              {translations['Menu.settings']}
+            style={localStyles.menuItemContainer}>
+            <EText style={localStyles.subTitle}>
+              Versión: 1.1.0 Build 3
             </EText>
           </Pressable>
         </View>

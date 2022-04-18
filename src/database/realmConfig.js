@@ -2,6 +2,8 @@
 import { ObjectId } from 'bson';
 import { Alert } from 'react-native';
 import Realm from 'realm';
+import NetInfo from '@react-native-community/netinfo';
+
 import {
   UserSchema,
   EnrollmentSchema,
@@ -221,10 +223,15 @@ export const signUp = async (email, password, route, setLoading) => {
 };
 
 export const signOut = async (navigation) => {
-  await app.allUsers[app.currentUser.id].logOut();
-  removeStorageData(Constants.STORAGE.USER_ID);
-  removeStorageData(Constants.STORAGE.USER_DATA);
-  navigation.navigate('Auth');
+  const netState = await NetInfo.fetch();
+  if (netState.isConnected && netState.isInternetReachable) {
+    await app.allUsers[app.currentUser.id].logOut();
+    removeStorageData(Constants.STORAGE.USER_ID);
+    removeStorageData(Constants.STORAGE.USER_DATA);
+    navigation.navigate('Auth');
+  } else {
+    Alert.alert('Debe tener conección de internet para salir.');
+  }
 };
 export const forgotPassword = async (email) => {
   await app.emailPasswordAuth.sendResetPasswordEmail({ email });
