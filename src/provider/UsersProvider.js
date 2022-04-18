@@ -79,7 +79,7 @@ const UsersProvider = ({ children }) => {
           applicationTime: moment(new Date()).toISOString(),
           status: 'active',
         };
-        getTimeDifference(applicationStartTime, newUser.applicationTime);
+        // getTimeDifference(applicationStartTime, newUser.applicationTime);
         if (storedUserData && storedUserData.length > 0) {
           saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, [
             ...storedUserData,

@@ -25,6 +25,7 @@
   "Campaign.title": "Campaign",
   "Campaign.assign": "There are {0} farmers assigned to this campaign.",
   "Campaign.completed": "Completion rate",
+  "Campaign.avgTime": "Average enrollment time",
   "Campaign.rolledUp": "Farmers rolled up",
   "Campaign.locallyRolled": "Locally rolled",
   "Campaign.nodata": "There are no farmers to climb!",

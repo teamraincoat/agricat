@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import moment from 'moment';
 
 import ScanIcon from '../assets/icons/ScanIcon';
 import { colors, styles } from '../styles';
@@ -38,33 +39,39 @@ const Home = ({ route, navigation }) => {
   const [isCampaignAssign, setIsCampaignAssign] = useState(false);
   const [campaignData, setCampaignData] = useState(null);
   const [enrolledLocally, setEnrolledLocally] = useState(null);
+  const [avgEnrollTime, setAvgEnrollTime] = useState('0:00');
 
   const { users: enrollData } = useUsers();
 
   let campaignInfo;
-  // let campaignMetrics;
-  // let deviceOffline = false;
   if (route && route.params && route.params.campaignData) {
     campaignInfo = route.params.campaignData;
   } else if (campaignData) {
     campaignInfo = campaignData;
   }
-  // if (route && route.params && route.params.campaignMetrics) {
-  //   campaignMetrics = route.params.campaignMetrics;
-  // } else if (completionRate) {
-  //   campaignMetrics = completionRate;
-  // }
-  // if (route && route.params && route.params.deviceOffline) {
-  //   deviceOffline = route.params.deviceOffline;
-  // }
 
   useEffect(() => {
     checkUserData();
     checkCampaignData();
   }, []);
   useEffect(() => {
-    setEnrolledLocally(enrollData && enrollData.length > 0 ? enrollData.filter((enrollee) => enrollee.status === 'active').length : 0);
+    if (enrollData && enrollData.length > 0) {
+      const localEnrolled = enrollData.filter((enrollee) => enrollee.status === 'active');
+      let accDiff = 0;
+      localEnrolled.forEach((enrolled) => {
+        const start = moment(enrolled.applicationStartTime);
+        const end = moment(enrolled.applicationTime);
+        const diff = end.diff(start);
+        accDiff += diff;
+      });
+      const avgDuration = moment.duration(accDiff / localEnrolled.length);
+      setAvgEnrollTime(`${avgDuration.asSeconds().toFixed(0)}s`);
+      setEnrolledLocally(localEnrolled.length);
+    } else {
+      setEnrolledLocally(0);
+    }
   }, [enrollData]);
+
   const checkUserData = async () => {
     const userData = await getStorageData(Constants.STORAGE.USER_DATA);
     if (userData && userData.memberOf && userData.memberOf.length > 0) {
@@ -145,8 +152,8 @@ const Home = ({ route, navigation }) => {
               </View>
               <View style={localStyles.container}>
                 <FarmerDataBlock
-                  title={`${translations['Campaign.completed']}`}
-                  value="n/a"
+                  title={`${translations['Campaign.avgTime']}`}
+                  value={avgEnrollTime}
                 />
                 <FarmerDataBlock
                   title={`${translations['Campaign.rolledUp']}`}
