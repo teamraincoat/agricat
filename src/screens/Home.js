@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import moment from 'moment';
+import VersionNumber from 'react-native-version-number';
 
 import ScanIcon from '../assets/icons/ScanIcon';
 import { colors, styles } from '../styles';
@@ -19,7 +20,7 @@ import EText from '../atoms/EText';
 import { useUsers } from '../provider/UsersProvider';
 
 import MenuBarIcon from '../assets/icons/MenuBarIcon';
-import { signOut } from '../database/realmConfig';
+import { signOut, exitCampaign } from '../database/realmConfig';
 
 import PendingUserList from '../componets/PendingUserList';
 import SyncIcon from '../assets/icons/SyncIcon';
@@ -31,7 +32,6 @@ import ScanModal from './ScanModal';
 import { translations } from '../provider/LocalizeProvider';
 import { getStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
-import VersionNumber from 'react-native-version-number';
 
 const Home = ({ route, navigation }) => {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
@@ -131,8 +131,7 @@ const Home = ({ route, navigation }) => {
             </Pressable>
           ) : (
             <Pressable style={localStyles.syncIconContainer}>
-              <SyncIcon />
-              <EText style={localStyles.syncText}>{translations['SyncInfo.title']}</EText>
+              <EText style={localStyles.syncText} />
             </Pressable>
           )}
 
@@ -206,9 +205,6 @@ const Home = ({ route, navigation }) => {
         <View style={localStyles.menuItems}>
           <Pressable
             onPress={() => {
-              if (+enrolledLocally > 0) {
-                return Alert.alert('Tiene que sincronizar sus enrolamientos antes de salir.');
-              }
               signOut(navigation);
             }}
             style={localStyles.menuItemContainer}>
@@ -216,6 +212,20 @@ const Home = ({ route, navigation }) => {
               {translations['Menu.logout']}
             </EText>
           </Pressable>
+          {isCampaignAssign && (
+            <Pressable
+              onPress={() => {
+                if (+enrolledLocally > 0) {
+                  return Alert.alert('AVISO IMPORTANTE', 'Tiene que sincronizar sus enrolamientos antes de salir.');
+                }
+                exitCampaign(navigation);
+              }}
+              style={localStyles.menuItemContainer}>
+              <EText style={localStyles.menuTitle}>
+                {translations['Menu.exitCampaign']}
+              </EText>
+            </Pressable>
+          )}
           <Pressable
             style={localStyles.menuItemContainer}>
             <EText style={localStyles.subTitle}>

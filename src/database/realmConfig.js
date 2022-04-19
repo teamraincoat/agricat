@@ -23,10 +23,10 @@ const getRealm = async () => {
     type: 'openImmediately',
   };
   const userData = await getStorageData(Constants.STORAGE.USER_DATA);
-  // console.log('userData--->', userData);
-  // const campaignData = await getStorageData(Constants.STORAGE.CAMPAIGN_DATA);
-  // console.log('campaignData--->', campaignData);
 
+  if (!userData || !userData.memberOf || !userData._partition) {
+    return false;
+  }
   // User memberOf is an array but only allows one campaign partition at a time
   const partitionValue = userData
   && userData.memberOf
@@ -74,66 +74,10 @@ const getRealm = async () => {
 
   const realm = await Realm.open(configuration);
   const { syncSession } = realm;
-  // const isPendingEnrollment = await getStorageData(
-  //   Constants.STORAGE.ENROLL_USER_DATA,
-  // );
-  //   if (isPendingEnrollment) {
-  //     syncSession.pause();
-  //   }
+
   syncSession.pause();
 
-  // syncSession.addProgressNotification(
-  //   'upload',
-  //   'reportIndefinitely',
-  //   (transferred, transferable) => {
-  //     const progressPercentage = (100.0 * transferred) / transferable;
-  //     // console.log(
-  //     //   `Total Uploaded ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
-  //     // );
-  //     if (progressPercentage === 100) {
-  //       console.log('Transfer completed', progressPercentage);
-  //       // saveStorageData(Constants.STORAGE.USER_DATA, null);
-  //       // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'synced');
-  //     }
-  //     if (transferred < transferable) {
-  //       // console.log('size less + show loader');
-  //       // saveStorageData(Constants.STORAGE.USER_DATA_SYNCED, 'false');
-  //     } else {
-  //       // console.log('same size or greater');
-  //     }
-  //   },
-  // );
-
-  // syncSession.addProgressNotification(
-  //   'download',
-  //   'reportIndefinitely',
-  //   (transferred, transferable) => {
-  //     const progressPercentage = (100.0 * transferred) / transferable;
-  //     console.log(
-  //       `Total Download ,(${transferred})Byte / (${transferable})Byte  ${progressPercentage}%`,
-  //     );
-  //   },
-  // );
-
   return realm;
-};
-
-export const checkCampaignMatrix = async (campaignData) => {
-  const partitionInfo = campaignData && campaignData._partition;
-  if (partitionInfo) {
-    // const campaignId = partitionInfo.replace('campaign=', '');
-    return '0';
-    // try {
-    //   // eslint-disable-next-line no-undef
-    //   // const response = await fetch(`https://data.mongodb-api.com/app/${Constants.REALM.APP_ID}/endpoint/campaign/metrics?campaignId=${campaignId}`);
-    //   // const res = await response.json();
-    //   // if (res.metrics && res.metrics.finishedPercent) {
-    //   //   return res.metrics.finishedPercent;
-    //   // }
-    // } catch (error) {
-    //   console.log('error', error);
-    // }
-  }
 };
 
 export const signIn = async (email, password, navigation, setLoading) => {
@@ -170,11 +114,10 @@ export const signIn = async (email, password, navigation, setLoading) => {
         },
       },
     );
-    // const campaignMetrics = await checkCampaignMatrix(campaignData);
 
-    saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
-    saveStorageData(Constants.STORAGE.USER_DATA, userData);
-    saveStorageData(Constants.STORAGE.CAMPAIGN_DATA, campaignData);
+    await saveStorageData(Constants.STORAGE.USER_ID, newUser.id);
+    await saveStorageData(Constants.STORAGE.USER_DATA, userData);
+    await saveStorageData(Constants.STORAGE.CAMPAIGN_DATA, campaignData);
 
     getRealm().then((result) => {
       const { syncSession } = result;
@@ -231,15 +174,54 @@ export const signUp = async (email, password, route, setLoading) => {
 
 export const signOut = async (navigation) => {
   const netState = await NetInfo.fetch();
-  if (netState.isConnected && netState.isInternetReachable) {
-    await app.allUsers[app.currentUser.id].logOut();
+  if (
+    netState.isConnected && netState.isInternetReachable
+  ) {
+    if (app && app.currentUser && app.currentUser.id) {
+      await app.allUsers[app.currentUser.id].logOut();
+    }
     removeStorageData(Constants.STORAGE.USER_ID);
     removeStorageData(Constants.STORAGE.USER_DATA);
     navigation.navigate('Auth');
   } else {
-    Alert.alert('Debe tener conección de internet para salir.');
+    Alert.alert('NO HAY CONNECIÓN', 'Debe tener conección de internet para cerrar la sesión.');
   }
 };
+
+const doExitCampaign = async (navigation) => {
+  // Need to empty memberOf array
+  // Then proceed with logout
+  await app.currentUser.functions.exitCampaign({ query: { userId: app.currentUser.id } });
+  await app.allUsers[app.currentUser.id].logOut();
+  removeStorageData(Constants.STORAGE.USER_ID);
+  removeStorageData(Constants.STORAGE.USER_DATA);
+  navigation.navigate('Auth');
+};
+
+export const exitCampaign = async (navigation) => {
+  Alert.alert(
+    'AVISO IMPORTANTE',
+    'Salir de la campaña es una acción irreversible ¿Está seguro/a que quiere salir?',
+    [
+      {
+        text: 'Cancelar',
+      },
+      {
+        text: 'Salir',
+        onPress: async () => {
+          const netState = await NetInfo.fetch();
+          if (netState.isConnected && netState.isInternetReachable) {
+            doExitCampaign(navigation);
+          } else {
+            Alert.alert('NO HAY CONNECIÓN', 'Debe tener conección de internet para salir.');
+          }
+        },
+      },
+    ],
+    { cancelable: false },
+  );
+};
+
 export const forgotPassword = async (email) => {
   await app.emailPasswordAuth.sendResetPasswordEmail({ email });
 };
