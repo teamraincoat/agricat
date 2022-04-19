@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 import React, {
   useContext, useState, useEffect, useRef,
@@ -114,14 +115,22 @@ const UsersProvider = ({ children }) => {
       await previousPromise;
       const value = document[field];
       if (value && typeof value === 'string') {
-        const decryptedField = await decrypt(value.split('|')[1], key, value.split('|')[0]);
-        clonedDocument[field] = decryptedField;
+        try {
+          const decryptedField = await decrypt(value.split('|')[1], key, value.split('|')[0]);
+          clonedDocument[field] = decryptedField;
+        } catch (error) {
+          clonedDocument[field] = '';
+        }
       } else if (value && field === 'images') {
         const decryptImage = clonedDocument.images.map(async (image) => {
           const filteredImage = value.filter((img) => img.name === image.name);
           if (filteredImage.length > 0) {
-            const decryptedImageUri = await decrypt(filteredImage[0].uri.split('|')[1], key, filteredImage[0].uri.split('|')[0]);
-            image.uri = decryptedImageUri;
+            try {
+              const decryptedImageUri = await decrypt(filteredImage[0].uri.split('|')[1], key, filteredImage[0].uri.split('|')[0]);
+              image.uri = decryptedImageUri;
+            } catch (error) {
+              image.uri = '';
+            }
             return image;
           }
         });
@@ -154,15 +163,23 @@ const UsersProvider = ({ children }) => {
       await previousPromise;
       const value = document[field];
       if (value && typeof value === 'string') {
-        const encryptedField = await encrypt(document[field], key);
-        clonedDocument[field] = encryptedField;
+        try {
+          const encryptedField = await encrypt(document[field], key);
+          clonedDocument[field] = encryptedField;
+        } catch (error) {
+          clonedDocument[field] = '';
+        }
       }
       if (field === 'images') {
         const imageEncrypt = clonedDocument.images.map(async (image) => {
           const filteredImage = value.filter((img) => img.name === image.name);
           if (filteredImage.length > 0) {
-            const encryptedImageUri = await encrypt(filteredImage[0].uri, key);
-            image.uri = encryptedImageUri;
+            try {
+              const encryptedImageUri = await encrypt(filteredImage[0].uri, key);
+              image.uri = encryptedImageUri;
+            } catch (error) {
+              image.uri = '';
+            }
             return image;
           }
         });

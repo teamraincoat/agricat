@@ -15,7 +15,7 @@ import { Buffer } from 'buffer';
 
 import { randomBytes } from 'react-native-randombytes';
 
-import { createDecipheriv, createCipheriv, createHash } from '../../lib/crypto';
+import { createDecipheriv, createCipheriv } from '../../lib/crypto';
 
 const ALGORITHM = 'aes-256-cbc';
 
@@ -34,14 +34,25 @@ const ALGORITHM = 'aes-256-cbc';
  */
 
 export const decrypt = async (encryptedMessage, cipherKey, iv) => {
-  const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.from(iv, 'base64'));
-  decipher.setAutoPadding(true);
+  let decrypted = null;
+  try {
+    // try decipher with autopadding
+    const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.from(iv, 'base64'));
+    decipher.setAutoPadding(true);
+    decrypted = decipher.update(Buffer.from(encryptedMessage, 'base64'), 'base64');
+    decrypted += decipher.final();
+  } catch (error) {
+    // if deceipher error raised then try without autopadding. Any other error will
+    // get caught hire in the stack
+    const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.from(iv, 'base64'));
+    decipher.setAutoPadding(false);
+    decrypted = decipher.update(Buffer.from(encryptedMessage, 'base64'), 'base64');
+    decrypted += decipher.final();
+  }
 
-  let decrypted = decipher.update(Buffer.from(encryptedMessage, 'base64'), 'base64');
-  decrypted += decipher.final();
   const plainMessage = decrypted.toString('utf8');
 
-  // console.log('utils::crypto::decrypt', plainMessage);
+  // console.log('utils::crypto::decrypt', encodeURIComponent(plainMessage));
   return plainMessage;
 };
 
