@@ -25,7 +25,7 @@
   "Campaign.title": "Campaña",
   "Campaign.assign": "Hay {0} agricultores asignados a esta campaña.",
   "Campaign.completed": "Porcentaje de terminación",
-  "Campaign.avgTime": "Prom. tiempo por enrolamiento",
+  "Campaign.avgTime": "Tiempo prom. por enrolamiento",
   "Campaign.rolledUp": "Enrolados por sincronizar",
   "Campaign.locallyRolled": "Enrolados localmente",
   "Campaign.nodata": "¡No hay agricultores para subir!",
