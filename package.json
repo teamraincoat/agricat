@@ -1,6 +1,6 @@
 {
-  "name": "agricatApp",
-  "version": "1.2.0",
+  "name": "agricat",
+  "version": "1.2.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
