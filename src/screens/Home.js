@@ -23,7 +23,6 @@ import MenuBarIcon from '../assets/icons/MenuBarIcon';
 import { signOut, exitCampaign } from '../database/realmConfig';
 
 import PendingUserList from '../componets/PendingUserList';
-import SyncIcon from '../assets/icons/SyncIcon';
 import NoCompaign from '../componets/NoCompaign';
 import UploadIcon from '../assets/icons/UploadIcon';
 import { hp, normalize, wp } from '../styles/metrics';

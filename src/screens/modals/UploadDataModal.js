@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, StyleSheet, Pressable,
+  View, StyleSheet, Pressable, Alert,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import NetInfo from '@react-native-community/netinfo';
 
 import CloseIcon from '../../assets/icons/CloseIcon';
 
@@ -43,6 +44,13 @@ const UploadDataModal = (props) => {
   }, [visible]);
 
   const syncData = async () => {
+    const netState = await NetInfo.fetch();
+    if (
+      !netState.isConnected || !netState.isInternetReachable
+    ) {
+      Alert.alert('NO HAY CONNECIÓN', 'Debe tener conección para sincronizar.');
+      return;
+    }
     setLoading(true);
     getRealm()
       .then((result) => {
@@ -50,17 +58,6 @@ const UploadDataModal = (props) => {
         if (syncSession) {
           syncSession.resume();
           saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
-          // syncSession.removeProgressNotification()
-          // syncSession.addProgressNotification(
-          //   'download',
-          //   'forCurrentlyOutstandingWork',
-          //   (transferred, transferable) => {
-          //     const downloadProgressPercentage = (100.0 * transferred) / transferable;
-          //     console.log(
-          //       `Total Download ,(${transferred})Byte / (${transferable})Byte  ${downloadProgressPercentage}%`,
-          //     );
-          //   },
-          // );
           // Upload progress notifications
           syncSession.addProgressNotification(
             'upload',
@@ -73,13 +70,6 @@ const UploadDataModal = (props) => {
               } else if (transferred === transferable) {
                 setLoading(false);
                 onCloseModal();
-                // const syncUsers = result.objects('Enrollment');
-                // if (syncUsers.length > 0) {
-                // const sortedUsers = syncUsers.sorted('applicationTime', true);
-                // sortedUsers.addListener(() => {
-                //   setUsers([...sortedUsers]);
-                // });
-                // }
               }
             },
           );
