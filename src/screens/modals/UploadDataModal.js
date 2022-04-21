@@ -69,6 +69,7 @@ const UploadDataModal = (props) => {
                 setLoading(true);
               } else if (transferred === transferable) {
                 setLoading(false);
+                setProgressPercentage(0);
                 onCloseModal();
               }
             },
