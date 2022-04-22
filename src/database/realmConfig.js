@@ -161,17 +161,6 @@ export const signIn = async (email, password, navigation, setLoading) => {
   }
 };
 
-export const signUp = async (email, password, route, setLoading) => {
-  try {
-    await app.emailPasswordAuth.registerUser({ email, password });
-    route.navigate('SignUp', { userCredential: { email, password } });
-  } catch (error) {
-    if (error && error.code === 49) {
-      await signIn(email, password, route, setLoading);
-    }
-  }
-};
-
 export const signOut = async (navigation) => {
   const netState = await NetInfo.fetch();
   if (

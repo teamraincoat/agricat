@@ -16,7 +16,6 @@ const UsersProvider = ({ children }) => {
   const [applicationStartTime, setApplicationStartTime] = useState(null);
   const [storedUserData, setStoredUserData] = useState(null);
   const [enrollDataById, setEnrollDataById] = useState(null);
-  const [completionRate, setCompletionRate] = useState(null);
   const realmRef = useRef(null);
 
   useEffect(() => {
@@ -43,29 +42,6 @@ const UsersProvider = ({ children }) => {
       }
     };
   }, []);
-
-  // useEffect(() => {
-  //   getStorageData(Constants.STORAGE.CAMPAIGN_DATA).then(async (campaignData) => {
-  //     if (campaignData) {
-  //       const completeRate = await checkCampaignMatrix(campaignData);
-  //       if (completeRate) {
-  //         setCompletionRate(completeRate);
-  //       }
-  //     }
-  //   });
-  // }, [completionRate]);
-
-  const getTimeDifference = (startTime, endTime) => {
-    const start = moment(startTime);
-    const end = moment(endTime);
-    const diff = end.diff(start);
-
-    const day = moment.duration(diff, 'milliseconds');
-    const hours = Math.floor(day.asHours());
-    const mins = Math.floor(day.asMinutes()) - hours * 60;
-    const secs = Math.floor(day.asSeconds()) - mins * 60 - hours * 60 * 60;
-    return `${hours}:${mins}:${secs}`;
-  };
 
   const submitAddUser = async (UserInfo, navigation, isModify, campaignKey, setLoading) => {
     if (UserInfo.firstName) {
@@ -260,8 +236,6 @@ const UsersProvider = ({ children }) => {
     users,
     setUsers,
     enrollDataById,
-    completionRate,
-    setCompletionRate,
     setEnrollData,
     setApplicationStartTime,
     setEnrollDataById,
