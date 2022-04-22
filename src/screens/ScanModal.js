@@ -3,12 +3,12 @@ import {
   Alert,
   StyleSheet, TouchableOpacity, View,
 } from 'react-native';
-import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal';
 import { Buffer } from 'buffer';
 import { useRoute } from '@react-navigation/native';
 
 import moment from 'moment';
+import { CameraScreen } from 'react-native-camera-kit';
 import { colors, styles } from '../styles';
 import { useLocal } from '../contex/index';
 import { hp, wp } from '../styles/metrics';
@@ -25,11 +25,13 @@ const ScanModal = (props) => {
   } = props;
   const { setEnrollData, setApplicationStartTime } = useUsers();
   const [id, setId] = useState('');
+  const [error, setError] = useState(false);
   const { translations } = useLocal();
   const currentRoute = useRoute();
   const onSuccessScan = (e) => {
+    const qrCodeResult = e?.nativeEvent?.codeStringValue;
     try {
-      const qrData = Buffer.from(e.data, 'base64').toString('utf-8').split('|');
+      const qrData = Buffer.from(qrCodeResult, 'base64').toString('utf-8').split('|');
       const applicationStartTime = moment(new Date()).toISOString();
       // const newQrData = e && e.data && (e.data).split('|');
       const enrollmentId = qrData[1];
@@ -40,12 +42,14 @@ const ScanModal = (props) => {
         route.navigate('Consent', { campaignKey });
         closeModal(false);
       } else {
+        setError(true);
         Alert.alert(
           'Error',
           translations['ScanQr.error'],
           [
             {
               text: 'OK',
+              onPress: () => setError(false),
             },
           ],
           { cancelable: false },
@@ -64,6 +68,7 @@ const ScanModal = (props) => {
       closeModal(false);
     }
   };
+  const failedQrCode = () => null;
   return (
     <>
       <Modal
@@ -71,7 +76,7 @@ const ScanModal = (props) => {
         style={[localStyles.mainContainer, styles.selfCenter, styles.m0]}
         onRequestClose={onCloseModal}
         >
-          <View style={{ zIndex: 1 }}>
+          <View style={{ zIndex: 1, ...styles.absolute, top: 0 }}>
             <View
             style={[
               styles.rowSpaceBetween,
@@ -107,12 +112,13 @@ const ScanModal = (props) => {
             // keyboardShouldPersistTaps
           />
         </View>
-
-        <QRCodeScanner
-          cameraStyle={[localStyles.cameraStyle, styles.selfCenter]}
-          onRead={onSuccessScan}
-          reactivate={true}
-          reactivateTimeout={3000}
+        <CameraScreen
+            style={localStyles.cameraStyle}
+            onReadCode={error ? failedQrCode : onSuccessScan}
+            scanBarcode={true}
+            frameColor={colors.white}
+            showFrame={true}
+            laserColor={colors.red}
         />
         <EButton
           title={translations['ScanQr.enterManually']}
@@ -137,7 +143,8 @@ const localStyles = StyleSheet.create({
   },
   headerContainer: { width: wp(90), alignSelf: 'center' },
   cameraStyle: {
-    width: hp(100),
+    width: wp(100),
+    height: hp(100),
   },
   input: {
     color: colors.black,
@@ -154,6 +161,8 @@ const localStyles = StyleSheet.create({
   },
   scanButton: {
     ...styles.mv15,
+    ...styles.absolute,
+    bottom: 5,
   },
 });
 
