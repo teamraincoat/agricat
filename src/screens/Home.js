@@ -92,7 +92,6 @@ const Home = ({ route, navigation }) => {
   const onHandleScan = () => {
     setModalVisible(true);
   };
-  // eslint-disable-next-line no-unused-vars
 
   const showUploadModal = () => {
     setUploadModalVisible(true);
@@ -162,12 +161,6 @@ const Home = ({ route, navigation }) => {
               <EText style={[localStyles.title, { ...styles.ml15 }]}>
                 {translations['Campaign.locallyRolled']}
               </EText>
-
-              {/* {isSynced ? (
-                <EText style={[localStyles.subTitle, {...styles.ml15}]}>
-                  Data Synced
-                </EText>
-              ) : isSynced !== true && */}
 
               {enrollData && enrollData.filter((enrollee) => enrollee.status === 'active').length > 0 ? (
                 <View onStartShouldSetResponder={() => true} style={{ flex: 1 }}>

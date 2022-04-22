@@ -16,19 +16,17 @@ import { translations } from '../../provider/LocalizeProvider';
 import { getStorageData, saveStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
 import getRealm from '../../database/realmConfig';
-// import { useUsers } from '../../provider/UsersProvider';
 
 const UploadDataModal = (props) => {
   const { visible, closeModal, enrolledLocally } = props;
-  // const [startSync, setStartSync] = useState(false);
   const [remainFarmer, setRemainFarmer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
-  // const { setUsers } = useUsers();
+
   const onCloseModal = () => {
-    // setStartSync(false);
     closeModal(false);
   };
+
   useEffect(() => {
     getStorageData(Constants.STORAGE.ENROLL_USER_DATA)
       .then((result) => {
@@ -53,8 +51,8 @@ const UploadDataModal = (props) => {
     }
     setLoading(true);
     getRealm()
-      .then((result) => {
-        const { syncSession } = result;
+      .then((projectRealm) => {
+        const { syncSession } = projectRealm;
         if (syncSession) {
           syncSession.resume();
           saveStorageData(Constants.STORAGE.ENROLL_USER_DATA, null);
