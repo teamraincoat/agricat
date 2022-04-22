@@ -27,7 +27,7 @@
     "moment": "^2.29.1",
     "react": "17.0.2",
     "react-hook-form": "^7.20.2",
-    "react-native": "0.66.3",
+    "react-native": "0.66.4",
     "react-native-actionsheet": "^2.4.2",
     "react-native-camera": "^4.2.1",
     "react-native-config": "^1.4.5",
@@ -48,7 +48,7 @@
     "react-native-uuid": "^2.0.1",
     "react-native-version-number": "^0.3.6",
     "react-redux": "^7.2.6",
-    "realm": "10.13.0",
+    "realm": "10.16.0",
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.0"
