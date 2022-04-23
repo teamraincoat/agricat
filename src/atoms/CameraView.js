@@ -1,5 +1,11 @@
+/* eslint-disable global-require */
 import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Platform,
+  Alert,
+} from 'react-native';
 import { CameraScreen, CameraType } from 'react-native-camera-kit';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import { hp, wp } from '../styles/metrics';
@@ -41,22 +47,23 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
       });
       setSelectedFiles(selectedFiles.concat(selectedImage));
     } catch {
-      console.log('Image error');
+      Alert.alert('Error leyendo la imagen.');
     }
   };
 
   return (
     <View style={localStyles.container}>
       <CameraScreen
-        actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+        actions={{ rightButtonText: 'Done', leftButtonText: 'Cancelar' }}
         onBottomButtonPressed={onBottomButtonPressed}
         cameraType={CameraType.Back}
         focusMode="on"
+        zoomMode="off"
         captureButtonImage={require('../assets/capture.png')}
+        // captureButtonImageStyle={{ width: 50, height: 50 }}
         hideControls={false}
-        showCapturedImageCount={true}
-        ratioOverlay="16:9"
-        captureButtonImageStyle={{ width: 50, height: 50 }}
+        showCapturedImageCount={false}
+        saveToCameraRoll={false}
       />
     </View>
   );

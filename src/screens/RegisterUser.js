@@ -13,8 +13,6 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { launchCamera } from 'react-native-image-picker';
-// import CheckBox from '@react-native-community/checkbox';
 import { Decimal128, ObjectId } from 'bson';
 
 import { TextInputMask } from 'react-native-masked-text';
@@ -789,11 +787,13 @@ const RegisterUser = ({ route, navigation }) => {
           </KeyboardAvoidingView>
         </View>
       </View>
-        {isCameraVisible
-        && <CameraView
-        selectedFiles={selectedFiles}
-        setSelectedFiles={setSelectedFiles}
-        setIsCameraVisible={setIsCameraVisible} />}
+      {isCameraVisible && (
+        <CameraView
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          setIsCameraVisible={setIsCameraVisible}
+        />
+      )}
     </SafeAreaView>
   );
 };

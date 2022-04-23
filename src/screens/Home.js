@@ -54,6 +54,7 @@ const Home = ({ route, navigation }) => {
     checkUserData();
     checkCampaignData();
   }, []);
+
   useEffect(() => {
     if (enrollData && enrollData.length > 0) {
       const localEnrolled = enrollData.filter((enrollee) => enrollee.status === 'active');

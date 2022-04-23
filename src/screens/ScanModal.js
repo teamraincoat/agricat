@@ -28,12 +28,12 @@ const ScanModal = (props) => {
   const [error, setError] = useState(false);
   const { translations } = useLocal();
   const currentRoute = useRoute();
+
   const onSuccessScan = (e) => {
     const qrCodeResult = e?.nativeEvent?.codeStringValue;
     try {
       const qrData = Buffer.from(qrCodeResult, 'base64').toString('utf-8').split('|');
       const applicationStartTime = moment(new Date()).toISOString();
-      // const newQrData = e && e.data && (e.data).split('|');
       const enrollmentId = qrData[1];
       const campaignKey = qrData[0];
       const scanResult = setEnrollData(enrollmentId, campaignKey);
@@ -68,7 +68,9 @@ const ScanModal = (props) => {
       closeModal(false);
     }
   };
+
   const failedQrCode = () => null;
+
   return (
     <>
       <Modal
@@ -112,14 +114,16 @@ const ScanModal = (props) => {
             // keyboardShouldPersistTaps
           />
         </View>
-        <CameraScreen
+        {visible && (
+          <CameraScreen
             style={localStyles.cameraStyle}
             onReadCode={error ? failedQrCode : onSuccessScan}
             scanBarcode={true}
             frameColor={colors.white}
             showFrame={true}
             laserColor={colors.red}
-        />
+          />
+        )}
         <EButton
           title={translations['ScanQr.enterManually']}
           onClick={() => {
