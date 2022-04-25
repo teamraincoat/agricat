@@ -7,13 +7,18 @@ import { translations } from '../provider/LocalizeProvider';
 import { useUsers } from '../provider/UsersProvider';
 import { colors, styles } from '../styles';
 import ScanModal from './ScanModal';
+import usePermission from '../hooks/usePermission';
 
 const CompleteScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const { setEnrollDataById } = useUsers();
-  const onComplete = () => {
+  const { requestCameraPermission } = usePermission();
+  const onComplete = async () => {
     setEnrollDataById(null);
-    setModalVisible(true);
+    const granted = await requestCameraPermission();
+    if (granted) {
+      setModalVisible(true);
+    }
   };
   return (
     <View style={localStyles.mainContainer}>

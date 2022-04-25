@@ -1,13 +1,15 @@
 /* eslint-disable global-require */
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
   Platform,
   Alert,
+  BackHandler,
 } from 'react-native';
 import { CameraScreen, CameraType } from 'react-native-camera-kit';
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import ImageResizer from 'react-native-image-resizer';
 import { hp, wp } from '../styles/metrics';
 
 const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => {
@@ -29,10 +31,9 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
       const re = /(?:\.([^.]+))?$/;
       const ext = re.exec(imageData)[1];
       const imagePath = filePrefix.concat(imageData.path);
-      console.log('imagePath--->>', imagePath);
-      console.log('imageData>>', imageData);
+      const compressedImage = await ImageResizer.createResizedImage(imagePath, 600, 600, 'JPEG', 100, 0);
       const realURI = Platform.select({
-        android: imagePath,
+        android: compressedImage.path,
         // ios: decodeURI(res.uri),
       });
       const base64Image = await ReactNativeBlobUtil.fs.readFile(
@@ -50,6 +51,14 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
       Alert.alert('Error leyendo la imagen.');
     }
   };
+  const backAction = () => {
+    setIsCameraVisible(false);
+    return true;
+  };
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+  }, []);
 
   return (
     <View style={localStyles.container}>

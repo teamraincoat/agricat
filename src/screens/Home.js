@@ -31,6 +31,7 @@ import ScanModal from './ScanModal';
 import { translations } from '../provider/LocalizeProvider';
 import { getStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
+import usePermission from '../hooks/usePermission';
 
 const Home = ({ route, navigation }) => {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
@@ -42,6 +43,7 @@ const Home = ({ route, navigation }) => {
   const [avgEnrollTime, setAvgEnrollTime] = useState('0s');
 
   const { users: enrollData } = useUsers();
+  const { requestCameraPermission } = usePermission();
 
   let campaignInfo;
   if (route && route.params && route.params.campaignData) {
@@ -90,8 +92,11 @@ const Home = ({ route, navigation }) => {
       setCampaignData(getCampaignData);
     }
   };
-  const onHandleScan = () => {
-    setModalVisible(true);
+  const onHandleScan = async () => {
+    const granted = await requestCameraPermission();
+    if (granted) {
+      setModalVisible(true);
+    }
   };
 
   const showUploadModal = () => {

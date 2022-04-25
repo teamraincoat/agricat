@@ -30,6 +30,7 @@ import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
 import CameraView from '../atoms/CameraView';
+import usePermission from '../hooks/usePermission';
 // import checkEnrollInfo from '../utils/curp';
 
 const gender = [
@@ -105,6 +106,7 @@ const RegisterUser = ({ route, navigation }) => {
   const [qrInfo, setQrInfo] = React.useState('');
 
   const { submitAddUser, enrollDataById } = useUsers();
+  const { requestCameraPermission } = usePermission();
   const [loading, setLoading] = useState(false);
   const [spokenLanguageList, setSpokenLanguageList] = useState([]);
   const [lossTypeList, setLossTypeList] = useState([]);
@@ -278,8 +280,11 @@ const RegisterUser = ({ route, navigation }) => {
     });
   }, [selectedFiles, spokenLanguageList, lossTypeList]);
 
-  const onCameraPress = () => {
-    setIsCameraVisible(true);
+  const onCameraPress = async () => {
+    const permissionGranted = await requestCameraPermission();
+    if (permissionGranted) {
+      setIsCameraVisible(true);
+    }
   };
 
   return (
