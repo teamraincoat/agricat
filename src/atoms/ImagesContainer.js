@@ -24,7 +24,7 @@ const ImagesContainer = (props) => {
     <View style={localStyles.imageContainer}>
       <View style={localStyles.imageInnerContainer}>
       <Image
-        source={{ uri: `data:image/png;base64,${selectedFileImages[0].uri}` }}
+        source={{ uri: `data:image/jpeg;base64,${selectedFileImages[0].uri}` }}
         style={localStyles.imageStyle}
       />
       <TouchableOpacity
@@ -46,8 +46,8 @@ const localStyles = StyleSheet.create({
     paddingVertical: PixelRatio.roundToNearestPixel(5),
   },
   imageStyle: {
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
     borderRadius: 10,
   },
   imageInnerContainer: {

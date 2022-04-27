@@ -29,9 +29,9 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
       const imageData = await ReactNativeBlobUtil.fs.stat(captureImage);
       const filePrefix = 'file://';
       const re = /(?:\.([^.]+))?$/;
-      const ext = re.exec(imageData)[1];
+      const ext = re.exec(imageData.filename)[1];
       const imagePath = filePrefix.concat(imageData.path);
-      const compressedImage = await ImageResizer.createResizedImage(imagePath, 600, 600, 'JPEG', 100, 0);
+      const compressedImage = await ImageResizer.createResizedImage(imagePath, 600, 600, 'JPEG', 80, 0);
       const realURI = Platform.select({
         android: compressedImage.path,
         // ios: decodeURI(res.uri),
@@ -43,7 +43,7 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
       selectedImage.push({
         name: imageData.filename,
         uri: base64Image,
-        size: imageData.size,
+        size: compressedImage.size.toString(),
         type: ext,
       });
       setSelectedFiles(selectedFiles.concat(selectedImage));
@@ -63,13 +63,13 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
   return (
     <View style={localStyles.container}>
       <CameraScreen
-        actions={{ rightButtonText: 'Done', leftButtonText: 'Cancelar' }}
+        actions={{ leftButtonText: 'Cancelar' }}
         onBottomButtonPressed={onBottomButtonPressed}
         cameraType={CameraType.Back}
         focusMode="on"
         zoomMode="off"
         captureButtonImage={require('../assets/capture.png')}
-        // captureButtonImageStyle={{ width: 50, height: 50 }}
+        captureButtonImageStyle={{ width: 100, height: 100 }}
         hideControls={false}
         showCapturedImageCount={false}
         saveToCameraRoll={false}
