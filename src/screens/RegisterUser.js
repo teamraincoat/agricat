@@ -13,8 +13,6 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { launchCamera } from 'react-native-image-picker';
-// import CheckBox from '@react-native-community/checkbox';
 import { Decimal128, ObjectId } from 'bson';
 
 import { TextInputMask } from 'react-native-masked-text';
@@ -31,6 +29,8 @@ import { LocalizeContext } from '../provider/LocalizeProvider';
 import { hp, normalize, wp } from '../styles/metrics';
 import CameraIcon from '../assets/icons/CameraIcon';
 import CloseIcon from '../assets/icons/CloseIcon';
+import CameraView from '../atoms/CameraView';
+import usePermission from '../hooks/usePermission';
 // import checkEnrollInfo from '../utils/curp';
 
 const gender = [
@@ -106,9 +106,11 @@ const RegisterUser = ({ route, navigation }) => {
   const [qrInfo, setQrInfo] = React.useState('');
 
   const { submitAddUser, enrollDataById } = useUsers();
+  const { requestCameraPermission } = usePermission();
   const [loading, setLoading] = useState(false);
   const [spokenLanguageList, setSpokenLanguageList] = useState([]);
   const [lossTypeList, setLossTypeList] = useState([]);
+  const [isCameraVisible, setIsCameraVisible] = useState(false);
 
   const {
     control,
@@ -278,31 +280,11 @@ const RegisterUser = ({ route, navigation }) => {
     });
   }, [selectedFiles, spokenLanguageList, lossTypeList]);
 
-  const onCameraPress = () => {
-    const selectedImage = [];
-    launchCamera({
-      mediaType: 'image',
-      maxWidth: 600,
-      maxHeight: 600,
-      quality: 0.8,
-      includeBase64: true,
-    })
-      .then((response) => {
-        if (response.didCancel) {
-          return;
-        }
-        selectedImage.push({
-          name: response.assets[0].fileName,
-          size: response.assets[0].fileSize.toString(),
-          uri: response.assets[0].base64,
-          type: response.assets[0].type,
-        });
-        setSelectedFiles(selectedFiles.concat(selectedImage));
-      })
-      .catch((err) => {
-        if (err.code === 'E_PICKER_CANCELLED') return;
-        console.error('Error while choosing image from camera:', err);
-      });
+  const onCameraPress = async () => {
+    const permissionGranted = await requestCameraPermission();
+    if (permissionGranted) {
+      setIsCameraVisible(true);
+    }
   };
 
   return (
@@ -810,6 +792,13 @@ const RegisterUser = ({ route, navigation }) => {
           </KeyboardAvoidingView>
         </View>
       </View>
+      {isCameraVisible && (
+        <CameraView
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          setIsCameraVisible={setIsCameraVisible}
+        />
+      )}
     </SafeAreaView>
   );
 };
