@@ -86,10 +86,6 @@ const localStyles = StyleSheet.create({
   captureButtonImage: {
     width: 100,
     height: 100,
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: -hp(5),
-    right: wp(12),
   },
 });
 
