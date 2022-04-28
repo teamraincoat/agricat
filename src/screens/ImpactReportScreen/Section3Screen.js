@@ -135,7 +135,7 @@ const Section3Screen = ({ navigation }) => {
               rules={{ required: false }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <ETextInput
-                  // placeholder={translations['Section.Section3.lostHarvestAmount']}
+                  placeholder="kg"
                   style={[styles.p10, localStyles.smallInput]}
                   onBlur={onBlur}
                   leftLabel
