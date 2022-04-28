@@ -69,7 +69,7 @@ const CameraView = ({ setIsCameraVisible, selectedFiles, setSelectedFiles }) => 
         focusMode="on"
         zoomMode="off"
         captureButtonImage={require('../assets/capture.png')}
-        captureButtonImageStyle={{ width: 100, height: 100 }}
+        captureButtonImageStyle={localStyles.captureButtonImage}
         hideControls={false}
         showCapturedImageCount={false}
         saveToCameraRoll={false}
@@ -82,6 +82,14 @@ const localStyles = StyleSheet.create({
   container: {
     height: hp(100),
     width: wp(100),
+  },
+  captureButtonImage: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: -hp(5),
+    right: wp(12),
   },
 });
 
