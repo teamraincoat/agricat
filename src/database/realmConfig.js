@@ -126,8 +126,8 @@ export const signIn = async (email, password, navigation, setLoading) => {
         'download',
         'forCurrentlyOutstandingWork',
         (transferred, transferable) => {
-          const progressPercentage = (100.0 * transferred) / transferable;
-          if (progressPercentage === 100) {
+          // const progressPercentage = (100.0 * transferred) / transferable;
+          if (transferred === transferable) {
             // console.log('<===userData userData====>>', userData);
             setLoading(false);
             if (userData && userData.isFirstLogin) {
