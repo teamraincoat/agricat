@@ -15,11 +15,6 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgotPassword from '../screens/ForgotPassword';
 import { LocalizeContext } from '../provider/LocalizeProvider';
-import Section12Screen from '../screens/ImpactReportScreen/Section12Screen';
-import Section3Screen from '../screens/ImpactReportScreen/Section3Screen';
-import Section4Screen from '../screens/ImpactReportScreen/Section4Screen';
-import Section5Screen from '../screens/ImpactReportScreen/Section5Screen';
-import { ImpactReportProvider } from '../provider/ImpactReportProvider';
 
 const Stack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
@@ -53,19 +48,6 @@ const NavigationWrapper = () => {
       });
   }, [userId]);
 
-  const ImpactReportNavigator = () => (
-    <ImpactReportProvider>
-      <MainStack.Navigator
-        initialRouteName="Section12Screen"
-        screenOptions={{ headerShown: false }}>
-        <MainStack.Screen name="Section12Screen" component={Section12Screen} />
-        <MainStack.Screen name="Section3Screen" component={Section3Screen} />
-        <MainStack.Screen name="Section4Screen" component={Section4Screen} />
-        <MainStack.Screen name="Section5Screen" component={Section5Screen} />
-      </MainStack.Navigator>
-    </ImpactReportProvider>
-  );
-
   const MainStackNavigator = () => (
     <UsersProvider>
       <MainStack.Navigator
@@ -84,10 +66,6 @@ const NavigationWrapper = () => {
         <MainStack.Screen name="Complete" component={CompleteScreen} />
         <MainStack.Screen name="SignUp" component={SignupScreen} />
         <MainStack.Screen name="Auth" component={AuthStackNavigator} />
-        <MainStack.Screen
-          name="ImpactReportScreens"
-          component={ImpactReportNavigator}
-        />
       </MainStack.Navigator>
     </UsersProvider>
   );
