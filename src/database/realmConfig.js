@@ -3,7 +3,7 @@ import { ObjectId } from 'bson';
 import { Alert } from 'react-native';
 import Realm from 'realm';
 import NetInfo from '@react-native-community/netinfo';
-
+import crashlytics from '@react-native-firebase/crashlytics';
 import {
   UserSchema,
   EnrollmentSchema,
@@ -52,6 +52,7 @@ const getRealm = async () => {
             const realmPath = realm.path;
             realm.close();
             console.error(`Error ${error.message}, need to reset ${realmPath}…`);
+            crashlytics().recordError(new Error(error.message));
             // pass your realm app instance, and realm path to initiateClientReset()
             Realm.App.Sync.initiateClientReset(app, realmPath);
             console.log(`Creating backup from ${error.config.path}…`);
@@ -61,6 +62,7 @@ const getRealm = async () => {
             realm = null;
           } else {
             console.log(`Received error ${error.message}`);
+            crashlytics().recordError(new Error(error.message));
           }
         }
       },
@@ -68,6 +70,7 @@ const getRealm = async () => {
     error: (_session, error) => {
       if (error) {
         console.error(error.name, error.message);
+        crashlytics().recordError(new Error(error.message));
       }
     },
   };
@@ -82,6 +85,7 @@ const getRealm = async () => {
 
 export const signIn = async (email, password, navigation, setLoading) => {
   try {
+    crashlytics().log('User sign in');
     const credential = Realm.Credentials.emailPassword(email, password);
     const newUser = await app.logIn(credential);
     const userData = await newUser.refreshCustomData();
@@ -149,11 +153,13 @@ export const signIn = async (email, password, navigation, setLoading) => {
       );
     }).catch((error) => {
       console.error('error', error);
+      crashlytics().recordError(new Error(error.message));
     });
     return newUser;
   } catch (error) {
     setLoading(false);
     if (error && error.code === 50) {
+      crashlytics().recordError(new Error(error.message));
       Alert.alert('Error', 'Invalid email or password', [{ text: 'OK' }], {
         cancelable: false,
       });

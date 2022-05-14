@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 import NetInfo from '@react-native-community/netinfo';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import CloseIcon from '../../assets/icons/CloseIcon';
 
@@ -38,6 +39,7 @@ const UploadDataModal = (props) => {
       })
       .catch((e) => {
         console.error('error localStorage', e);
+        crashlytics().recordError(e);
       });
   }, [visible]);
 
@@ -76,6 +78,7 @@ const UploadDataModal = (props) => {
       })
       .catch((error) => {
         console.error(error);
+        crashlytics().recordError(new Error(error.message));
       });
   };
   return (

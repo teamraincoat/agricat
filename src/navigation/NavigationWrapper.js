@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from 'react-native-splash-screen';
 import NetInfo from '@react-native-community/netinfo';
 
+import crashlytics from '@react-native-firebase/crashlytics';
 import { getStorageData } from '../utils/localStorage';
 import Constants from '../constants/Constants';
 import { UsersProvider } from '../provider/UsersProvider';
@@ -50,6 +51,7 @@ const NavigationWrapper = () => {
       })
       .catch((e) => {
         console.error('LocalStorage', e);
+        crashlytics().recordError(new Error(e.message));
       });
   }, [userId]);
 

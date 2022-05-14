@@ -14,6 +14,7 @@ import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Decimal128, ObjectId } from 'bson';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import { TextInputMask } from 'react-native-masked-text';
 import ETextInput from '../atoms/ETextInput';
@@ -253,6 +254,7 @@ const RegisterUser = ({ route, navigation }) => {
       }
     } catch (err) {
       console.error(err);
+      crashlytics().recordError(new Error(err));
     }
   };
 
