@@ -8,6 +8,7 @@ import getRealm from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
 import Constants from '../constants/Constants';
+import { addAnalyticsLogs } from '../utils/firebase';
 
 const UsersContext = React.createContext(null);
 
@@ -179,6 +180,7 @@ const UsersProvider = ({ children }) => {
                 projectRealm.create('Enrollment', cipheredEnrollment);
               }
             });
+            addAnalyticsLogs(enrollment._userId, 'enrollmentDetail', { enrollment_status: 'success' });
             const { syncSession } = projectRealm;
             syncSession.pause();
             const userListUpdated = projectRealm.objects('Enrollment');
@@ -209,6 +211,7 @@ const UsersProvider = ({ children }) => {
       })
       .catch((err) => {
         setLoading(false);
+        addAnalyticsLogs(enrollment._userId, 'enrollmentDetail', { enrollment_status: 'failed' });
         console.error(err);
       });
   };

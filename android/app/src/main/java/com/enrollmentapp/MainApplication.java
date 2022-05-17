@@ -13,7 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.apsl.versionnumber.RNVersionNumberPackage;
-public class MainApplication extends Application implements ReactApplication {
+import androidx.multidex.MultiDexApplication;
+import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
+public class MainApplication extends Application  implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
@@ -30,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
           new ReactCheckBoxPackage();
           new RNVersionNumberPackage();
+          new ReactNativeFirebaseAnalyticsPackage();
           return packages;
         }
 

@@ -15,6 +15,7 @@ target 'enrollmentApp' do
   pod 'react-native-blob-util',
     :path => '../node_modules/react-native-blob-util'
 
+    pod 'RNFBAnalytics', :path => '../node_modules/@react-native-firebase/analytics'
   target 'enrollmentAppTests' do
     inherit! :complete
     # Pods for testing
