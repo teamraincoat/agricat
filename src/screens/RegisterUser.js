@@ -286,6 +286,7 @@ const RegisterUser = ({ route, navigation }) => {
       setIsCameraVisible(true);
     }
   };
+  const imageUri = selectedFiles && selectedFiles.length > 0 && selectedFiles[0]?.uri ? { uri: `data:image/jpeg;base64,${selectedFiles[0]?.uri}` } : null;
 
   return (
     <SafeAreaView style={styles.flex}>
@@ -313,6 +314,7 @@ const RegisterUser = ({ route, navigation }) => {
               <EText style={localStyles.labelStyle}>{translations['Enroller.image']}</EText>
               {selectedFiles && selectedFiles.length > 0 ? (
                 <ImagesContainer
+                  imageUri={imageUri}
                   selectedFileImages={selectedFiles}
                   setSelectedImages={setSelectedFiles}
                 />

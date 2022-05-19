@@ -1,0 +1,425 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render BackgroundImage component 1`] = `
+<View
+  accessibilityIgnoresInvertColors={true}
+  style={
+    Array [
+      Object {
+        "height": 1334,
+        "width": 750,
+      },
+      undefined,
+    ]
+  }
+>
+  <Image
+    resizeMode="cover"
+    style={
+      Array [
+        Object {
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+        },
+        Object {
+          "height": undefined,
+          "width": undefined,
+        },
+        undefined,
+      ]
+    }
+  />
+</View>
+`;
+
+exports[`render Button component 1`] = `
+<View
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  nativeID="animatedComponent"
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "alignItems": "center",
+      "alignSelf": "center",
+      "backgroundColor": "#242424",
+      "borderRadius": 8,
+      "color": "#ffffff",
+      "elevation": 5,
+      "height": 93,
+      "justifyContent": "center",
+      "marginTop": 15,
+      "opacity": 1,
+      "padding": 10,
+      "shadowColor": "#000000",
+      "shadowOffset": Object {
+        "height": 3,
+        "width": 0,
+      },
+      "shadowOpacity": 0.29,
+      "shadowRadius": 4.84,
+      "width": 675,
+    }
+  }
+>
+  <Text
+    style={
+      Array [
+        Object {
+          "color": "#ffffff",
+          "fontFamily": "Proxima Nova",
+          "fontSize": 36,
+          "fontWeight": "700",
+          "lineHeight": 20,
+        },
+        undefined,
+      ]
+    }
+  />
+</View>
+`;
+
+exports[`render Camera component 1`] = `
+<View
+  style={
+    Object {
+      "height": 1334,
+      "width": 750,
+    }
+  }
+>
+  CameraScreen
+</View>
+`;
+
+exports[`render CameraView Component 1`] = `
+<View
+  style={
+    Object {
+      "height": 1334,
+      "width": 750,
+    }
+  }
+>
+  CameraScreen
+</View>
+`;
+
+exports[`render DropDownBtn component 1`] = `
+<View
+  style={
+    Object {
+      "height": 1334,
+      "width": 750,
+    }
+  }
+>
+  CameraScreen
+</View>
+`;
+
+exports[`render EText component 1`] = `
+<Text
+  style={
+    Array [
+      Object {},
+      undefined,
+    ]
+  }
+/>
+`;
+
+exports[`render ETextInput component 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "marginVertical": 5,
+      },
+      Object {
+        "marginTop": 10,
+      },
+      undefined,
+    ]
+  }
+>
+  <View />
+  <TextInput
+    autoCapitalize="none"
+    autoComplete="off"
+    autoCorrect={false}
+    blurOnSubmit={false}
+    editable={true}
+    keyboardType="default"
+    placeholderTextColor="#818181"
+    style={
+      Array [
+        Object {
+          "backgroundColor": "#ffffff",
+          "borderColor": "transparent",
+          "borderRadius": 5,
+          "borderWidth": 2,
+          "color": "#000000",
+          "fontFamily": "Proxima Nova",
+          "fontSize": 28,
+          "fontWeight": "400",
+          "height": 93,
+          "lineHeight": 17,
+          "marginHorizontal": 20,
+          "marginVertical": 5,
+          "paddingHorizontal": 15,
+          "paddingVertical": 10,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ]
+    }
+    underlineColorAndroid="transparent"
+  />
+</View>
+`;
+
+exports[`render ImagesContainer component 1`] = `
+<View
+  style={
+    Object {
+      "flexDirection": "row",
+      "flexWrap": "wrap",
+      "justifyContent": "flex-start",
+      "marginVertical": 5,
+      "paddingVertical": 5,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 5,
+        "marginLeft": 20,
+        "position": "relative",
+      }
+    }
+  >
+    <Image
+      source={
+        Object {
+          "uri": undefined,
+        }
+      }
+      style={
+        Object {
+          "borderRadius": 10,
+          "height": 150,
+          "width": 150,
+        }
+      }
+    />
+    <View
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      nativeID="animatedComponent"
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignSelf": "center",
+          "bottom": 10,
+          "opacity": 1,
+          "position": "absolute",
+        }
+      }
+    >
+      <RNSVGSvgView
+        bbHeight={22}
+        bbWidth={22}
+        fill="none"
+        focusable={false}
+        height={22}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "transparent",
+              "borderWidth": 0,
+            },
+            Object {
+              "flex": 0,
+              "height": 22,
+              "width": 22,
+            },
+          ]
+        }
+        width={22}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <RNSVGGroup
+          fill={null}
+          propList={
+            Array [
+              "fill",
+            ]
+          }
+        >
+          <RNSVGCircle
+            cx={11}
+            cy={11}
+            fill={4294901760}
+            propList={
+              Array [
+                "fill",
+              ]
+            }
+            r={11}
+          />
+          <RNSVGPath
+            d="M9.931 6.138a.38.38 0 0 0-.384.38H7.276a.38.38 0 1 0 0 .758h6.827a.379.379 0 1 0 0-.759h-2.27a.379.379 0 0 0-.385-.38H9.931ZM7.276 8.034v6.07c0 .419.34.758.758.758h5.31c.42 0 .76-.34.76-.759V8.034H7.275Z"
+            fill={4294967295}
+            propList={
+              Array [
+                "fill",
+              ]
+            }
+          />
+        </RNSVGGroup>
+      </RNSVGSvgView>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`render SectionCard component 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "alignSelf": "center",
+        "borderRadius": 5,
+        "justifyContent": "center",
+        "marginBottom": 10,
+        "padding": 10,
+        "width": 675,
+      },
+      undefined,
+      Object {
+        "backgroundColor": "#F9DFBB",
+      },
+    ]
+  }
+>
+  <Text
+    style={
+      Object {
+        "color": "#000000",
+        "fontFamily": "Proxima Nova",
+        "fontSize": 24,
+        "fontWeight": "400",
+        "lineHeight": 17,
+        "marginVertical": 5,
+        "textAlign": "center",
+      }
+    }
+  />
+  <Text
+    style={
+      Array [
+        Object {
+          "color": "#000000",
+          "fontFamily": "Proxima Nova",
+          "fontSize": 24,
+          "fontWeight": "400",
+          "lineHeight": 17,
+          "marginVertical": 5,
+          "textAlign": "center",
+        },
+        Object {
+          "marginTop": 15,
+        },
+      ]
+    }
+  />
+</View>
+`;
+
+exports[`render SectionHeader component 1`] = `
+<View
+  style={
+    Object {
+      "marginVertical": 8,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "alignSelf": "center",
+        "justifyContent": "center",
+        "width": 675,
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+          },
+          Object {
+            "alignSelf": "center",
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#000000",
+              "fontFamily": "Proxima Nova",
+              "fontSize": 48,
+              "fontWeight": "700",
+              "lineHeight": 29,
+              "marginRight": 225,
+            },
+            Object {
+              "marginRight": 0,
+            },
+          ]
+        }
+      />
+    </View>
+    <Text
+      style={
+        Object {
+          "alignSelf": "center",
+          "color": "#000000",
+          "fontFamily": "Proxima Nova",
+          "fontSize": 28,
+          "fontWeight": "400",
+          "lineHeight": 17,
+          "marginVertical": 10,
+        }
+      }
+    />
+  </View>
+</View>
+`;
