@@ -7,14 +7,11 @@ import { translations } from '../provider/LocalizeProvider';
 import { useUsers } from '../provider/UsersProvider';
 import { colors, styles } from '../styles';
 
-const ImpactReport = ({ route, navigation }) => {
+const ImpactReport = ({ navigation }) => {
   const { setEnrollDataById } = useUsers();
   const onComplete = () => {
     setEnrollDataById(null);
-    navigation.navigate('ImpactReportScreens', {
-      screen: 'Section12Screen',
-      params: { enrollmentData: route.params?.enrollmentData ?? {} },
-    });
+    navigation.navigate('Complete');
   };
   return (
     <View style={localStyles.mainContainer}>
