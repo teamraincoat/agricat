@@ -17,6 +17,7 @@
     "@react-native-community/netinfo": "^8.2.0",
     "@react-native-firebase/analytics": "^14.9.4",
     "@react-native-firebase/app": "^14.9.3",
+    "@react-native-firebase/crashlytics": "^14.9.3",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "bson": "^4.6.1",

@@ -1,6 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'com.google.firebase.crashlytics'
 import com.android.build.OutputFile
 
 /**
@@ -203,6 +203,7 @@ dependencies {
     implementation project(':react-native-version-number')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation project(path: ":@react-native-firebase_analytics")
+    implementation project(path: ":@react-native-firebase_crashlytics")
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }

@@ -6,7 +6,7 @@ import {
 import Modal from 'react-native-modal';
 import { Buffer } from 'buffer';
 import { useRoute } from '@react-navigation/native';
-
+import crashlytics from '@react-native-firebase/crashlytics';
 import moment from 'moment';
 import { CameraScreen } from 'react-native-camera-kit';
 import { colors, styles } from '../styles';
@@ -57,6 +57,7 @@ const ScanModal = (props) => {
       }
     } catch (err) {
       console.error('An error occurred', err);
+      crashlytics().recordError(err);
     }
   };
 

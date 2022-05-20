@@ -15,6 +15,7 @@ import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.apsl.versionnumber.RNVersionNumberPackage;
 import androidx.multidex.MultiDexApplication;
 import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
+import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
 public class MainApplication extends Application  implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -33,6 +34,7 @@ public class MainApplication extends Application  implements ReactApplication {
           new ReactCheckBoxPackage();
           new RNVersionNumberPackage();
           new ReactNativeFirebaseAnalyticsPackage();
+          new ReactNativeFirebaseCrashlyticsPackage();
           return packages;
         }
 
