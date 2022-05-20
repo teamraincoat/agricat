@@ -9,7 +9,7 @@ import {
 import DeleteIcon from '../assets/icons/DeleteIcon';
 
 const ImagesContainer = (props) => {
-  const { selectedFileImages, setSelectedImages } = props;
+  const { imageUri, selectedFileImages, setSelectedImages } = props;
 
   const removeImage = useCallback(
     (imageName) => {
@@ -24,7 +24,7 @@ const ImagesContainer = (props) => {
     <View style={localStyles.imageContainer}>
       <View style={localStyles.imageInnerContainer}>
       <Image
-        source={{ uri: `data:image/jpeg;base64,${selectedFileImages[0].uri}` }}
+        source={imageUri}
         style={localStyles.imageStyle}
       />
       <TouchableOpacity
