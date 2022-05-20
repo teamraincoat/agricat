@@ -12,6 +12,8 @@ import { colors, styles } from '../styles';
 import { hp } from '../styles/metrics';
 import { LocalizeContext } from '../provider/LocalizeProvider';
 
+const backgroundImage = require('../assets/SplashBackground.png');
+
 const LoginScreen = ({ navigation }) => {
   const { translations } = useContext(LocalizeContext);
   const [email, setEmail] = useState({
@@ -58,8 +60,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
   return (
-    // eslint-disable-next-line global-require
-    <BackgroundImage src={require('../assets/SplashBackground.png')}>
+    <BackgroundImage src={backgroundImage}>
       <View style={localStyles.loginTextContainer}>
         <EText style={localStyles.title}>{translations['Login.title']}</EText>
         <EText style={localStyles.subTitle}>

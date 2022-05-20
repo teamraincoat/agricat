@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import DoneIcon from '../assets/icons/DoneIcon';
 import EButton from '../atoms/EButton';
 import EText from '../atoms/EText';
@@ -35,6 +35,11 @@ const CompleteScreen = ({ navigation }) => {
         onClick={() => onComplete()}
         style={localStyles.button}
       />
+      <Pressable onPress={() => navigation.navigate('Home')}>
+      <EText style={[localStyles.subTitle, localStyles.link]}>
+      {translations['Complete.back']}
+        </EText>
+      </Pressable>
       <ScanModal
         visible={modalVisible}
         closeModal={setModalVisible}
@@ -62,6 +67,9 @@ const localStyles = StyleSheet.create({
     ...styles.mt2,
   },
   button: {
+    ...styles.mt30,
+  },
+  link: {
     ...styles.mt30,
   },
 });

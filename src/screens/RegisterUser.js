@@ -583,7 +583,7 @@ const RegisterUser = ({ route, navigation }) => {
             <EText style={localStyles.labelStyle}>{translations['Enroller.spokenLanguage']}</EText>
               <Controller
                 control={control}
-                render={({ field: { value, onChange } }) => (
+                render={() => (
                   <DropDownPicker
                     placeholder={translations['Placeholder.selectItem']}
                     open={openSpokenLangDropDown}
