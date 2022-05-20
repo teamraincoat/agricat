@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "131154843814",
+    "project_id": "agricat-a2dba",
+    "storage_bucket": "agricat-a2dba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131154843814:android:10f7b15f519b89d9323c67",
+        "android_client_info": {
+          "package_name": "com.agricat.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131154843814-2gfe4nbh2kaaraal368l16ogt827d1bj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7jOAmPxsZTPEJHdiLJneZ8ODr40_avhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131154843814-2gfe4nbh2kaaraal368l16ogt827d1bj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "131154843814-j3960vcd6a2vsfe3devkeo59fvpkp0ss.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.enrollmentApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

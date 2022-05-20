@@ -4,6 +4,7 @@ import React, {
   useContext, useState, useEffect, useRef,
 } from 'react';
 import moment from 'moment';
+import crashlytics from '@react-native-firebase/crashlytics';
 import getRealm from '../database/realmConfig';
 import { getStorageData, saveStorageData } from '../utils/localStorage';
 import { decrypt, encrypt } from '../utils/crypto';
@@ -31,6 +32,7 @@ const UsersProvider = ({ children }) => {
       })
       .catch((error) => {
         console.error(error);
+        crashlytics().recordError(new Error(error.message));
       });
 
     return () => {
@@ -129,6 +131,7 @@ const UsersProvider = ({ children }) => {
       })
       .catch((err) => {
         console.error(err);
+        crashlytics().recordError(new Error(err));
       });
   };
 
@@ -205,11 +208,13 @@ const UsersProvider = ({ children }) => {
           .catch((error) => {
             setLoading(false);
             console.error(error);
+            crashlytics().recordError(new Error(error));
           });
       })
       .catch((err) => {
         setLoading(false);
         console.error(err);
+        crashlytics().recordError(new Error(err));
       });
   };
 

@@ -16,6 +16,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TextInputMask } from 'react-native-masked-text';
+import crashlytics from '@react-native-firebase/crashlytics';
 import EText from '../atoms/EText';
 import ETextInput from '../atoms/ETextInput';
 import EButton from '../atoms/EButton';
@@ -90,6 +91,7 @@ const SignupScreen = ({ navigation }) => {
     } catch (error) {
       setLoading(false);
       console.error('Sign up error', error);
+      crashlytics().recordError(error);
       Alert.alert(`Failed to sign up: ${error.message}`);
     }
   };
