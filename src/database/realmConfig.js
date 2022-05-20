@@ -3,7 +3,9 @@ import { ObjectId } from 'bson';
 import { Alert } from 'react-native';
 import Realm from 'realm';
 import NetInfo from '@react-native-community/netinfo';
+import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
+
 import {
   UserSchema,
   EnrollmentSchema,
@@ -16,6 +18,7 @@ import {
   saveStorageData,
   getStorageData,
 } from '../utils/localStorage';
+import { addAnalyticsLogs } from '../utils/firebase';
 
 export const app = new Realm.App({ id: Constants.REALM.APP_ID, timeout: 10000 });
 const getRealm = async () => {
@@ -132,6 +135,7 @@ export const signIn = async (email, password, navigation, setLoading) => {
         (transferred, transferable) => {
           // const progressPercentage = (100.0 * transferred) / transferable;
           if (transferred === transferable) {
+            addAnalyticsLogs(userData._id, 'syncStatus', { sync_status: 'success' });
             // console.log('<===userData userData====>>', userData);
             setLoading(false);
             if (userData && userData.isFirstLogin) {
@@ -140,6 +144,10 @@ export const signIn = async (email, password, navigation, setLoading) => {
                 screen: 'SignUp',
               });
             } else {
+              addAnalyticsLogs(userData._id, 'loginData', {
+                login_method: 'email',
+                login_result: 'success',
+              });
               navigation.navigate('Main', {
                 screen: 'Home',
                 params: {
@@ -160,7 +168,15 @@ export const signIn = async (email, password, navigation, setLoading) => {
     setLoading(false);
     if (error && error.code === 50) {
       crashlytics().recordError(new Error(error.message));
-      Alert.alert('Error', 'Invalid email or password', [{ text: 'OK' }], {
+      Alert.alert('Error', 'Invalid email or password', [
+        {
+          text: 'OK',
+          onPress: () => analytics().logEvent('loginData', {
+            login_method: 'email',
+            login_result: 'failed',
+          }),
+        },
+      ], {
         cancelable: false,
       });
     }

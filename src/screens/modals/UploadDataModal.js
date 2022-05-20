@@ -17,6 +17,7 @@ import { translations } from '../../provider/LocalizeProvider';
 import { getStorageData, saveStorageData } from '../../utils/localStorage';
 import Constants from '../../constants/Constants';
 import getRealm from '../../database/realmConfig';
+import { addAnalyticsLogs } from '../../utils/firebase';
 
 const UploadDataModal = (props) => {
   const { visible, closeModal, enrolledLocally } = props;
@@ -52,6 +53,7 @@ const UploadDataModal = (props) => {
       return;
     }
     setLoading(true);
+    const userData = await getStorageData(Constants.STORAGE.USER_DATA);
     getRealm()
       .then((projectRealm) => {
         const { syncSession } = projectRealm;
@@ -63,11 +65,13 @@ const UploadDataModal = (props) => {
             'upload',
             'forCurrentlyOutstandingWork',
             (transferred, transferable) => {
+              addAnalyticsLogs(userData._id, 'uploadStatus', { upload_status: 'startUploading' });
               const Percentage = (100.0 * transferred) / transferable;
               setProgressPercentage(Percentage);
               if (transferred < transferable) {
                 setLoading(true);
               } else if (transferred === transferable) {
+                addAnalyticsLogs(userData._id, 'uploadStatus', { upload_status: 'success' });
                 setLoading(false);
                 setProgressPercentage(0);
                 onCloseModal();
